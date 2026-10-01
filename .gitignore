@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Generated locally, not committed
+model/measure_registry.json
+sql/data/
+sql/output/
+
+# Porsche source documents and their cell-by-cell extract (copyrighted; see data/README.md)
+*.pdf
+!presentation/Porsche_Margin_Recovery_Deck.pdf
+fact_sheet_long.csv
+fact_sheet_qc.txt
+*fact-sheet*.xlsx
+
+# OS / editor
+.DS_Store
+Thumbs.db
+~$*
