@@ -1,0 +1,48 @@
+PCL_05_Porsche_Margin_Model_FINAL.xlsx - verification report (final workbook)
+Generated from the repository with qa/lint_portability.py and qa/verify_against_sql.py.
+
+== Audit_Checks sheet (cached result of the workbook's own formulas) ==
+Overall model status: ALL 50 CHECKS PASS   (50 of 50 checks PASS)
+
+== Portability lint (all formulas) ==
+formulas scanned: 2997   portability issues: 0
+
+== calcPr in saved workbook ==
+<calcPr calcId="191029" calcMode="auto" fullCalcOnLoad="1" forceFullCalc="1" iterate="false" refMode="A1"/>
+
+== Independent value verification vs SQL exports (data/excel_import) ==
+area                   item                                                                      n fail   max|diff|
+1 Data_Panel           39 variables x 7 periods vs core.fact_financial                         273    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 8 = ebit_l0_reported                                    7    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 19 = ebit_l1_ex_realignment                             7    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 21 = ebit_l2_ex_realignment_tariffs                     7    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 35 = ebit_l3_hybrid_sensitivity                         7    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 9 = margin_l0_reported_pct                              7    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 20 = margin_l1_pct                                      7    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 22 = margin_l2_pct                                      7    0    0.00e+00
+2 Analysis vs SQL      RD_DA row 34 = da_clean                                                   7    0    0.00e+00
+2 Analysis vs SQL      RD_DA row 13 = rd_pl_charge                                               7    0    0.00e+00
+2 Analysis vs SQL      RD_DA row 21 = ebit_effect_of_cap_rate_change                             5    0    0.00e+00
+2 Analysis vs SQL      Commercial row 11 = asp_calc_eur_k                                        7    0    0.00e+00
+2 Analysis vs SQL      Commercial row 20 = volume_effect                                         5    0    0.00e+00
+2 Analysis vs SQL      Commercial row 21 = asp_effect                                            5    0    0.00e+00
+2 Analysis vs SQL      Cash_Crosscheck row 16 = ncf_margin_pct                                   7    0    0.00e+00
+2 Analysis vs SQL      Cash_Crosscheck row 29 = simple_cash_proxy                                7    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 46 = eff_residual_other_drivers                         5    0    0.00e+00
+2 Analysis vs SQL      EBIT_Analysis row 56 = pp_residual_other_drivers                          5    0    0.00e+00
+3 KPI_Overview vs SQL  L0 Reported EBIT                                                          7    0    0.00e+00
+3 KPI_Overview vs SQL  L0 Reported margin                                                        7    0    0.00e+00
+3 KPI_Overview vs SQL  L1 EBIT excl. realignment & battery                                       7    0    0.00e+00
+3 KPI_Overview vs SQL  L1 margin                                                                 7    0    0.00e+00
+3 KPI_Overview vs SQL  L2 EBIT excl. realignment, battery & tariffs                              7    0    0.00e+00
+3 KPI_Overview vs SQL  L2 margin                                                                 7    0    0.00e+00
+3 KPI_Overview vs SQL  ASP (automotive revenue per vehicle sold)                                 7    0    0.00e+00
+3 KPI_Overview vs SQL  Net cash flow margin                                                      7    0    0.00e+00
+3 KPI_Overview vs SQL  Group sales revenue (G01)                                                 7    0    0.00e+00
+4 Guidance vs SQL      27 combinations x L0/L1/L2 H2 margin                                     81    0    0.00e+00
+4 Guidance vs SQL      Summary min / all-midpoints / max (L0, L1, L2)                            9    0    0.00e+00
+4 Guidance vs SQL      9 automotive combinations (H2 EBITDA and NCF margin)                     18    0    0.00e+00
+5 Error scan           cells showing an Excel error value                                       13    0    0.00e+00
+
+TOTAL comparisons: 553   failures: 0   error cells: 0
+RESULT: PASS

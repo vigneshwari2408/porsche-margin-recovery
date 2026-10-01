@@ -1,0 +1,8 @@
+check group                      compared failed   max |diff|
+R1 QA page vs RefSQL                  388      0     4.90e-02
+R2 replica vs live SQL                351      0     4.90e-02
+R3 replica vs Excel PCL_05            566      0     4.70e-04
+R4 identities                          51      0     1.10e-01
+R5 export integrity                   168      0     0.00e+00
+
+TOTAL comparisons: 1524   failures: 0   RESULT: PASS
