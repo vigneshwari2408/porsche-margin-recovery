@@ -234,4 +234,4 @@ All figures are taken from, or derived as documented from, Porsche AG's public i
 
 ---
 
-**Vigneshwari Nalla** | MSc Data Analytics for Business, KEDGE Business School | LinkedIn: *add your profile link*
+**Vigneshwari Nalla** | MSc Data Analytics for Business, KEDGE Business School | LinkedIn: *www.linkedin.com/in/vigna24*
