@@ -1,0 +1,2396 @@
+createOrReplace
+
+	expression DataFolder = "C:\PCL\pcl_powerbi\data\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+	/// Half-year periods 2023-H1..2026-H1 (analysis grain). prior_same_half_code drives all YoY measures.
+	table DimPeriod
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column period_label
+			dataType: string
+			sortByColumn: sort_key
+			sourceColumn: period_label
+
+		column sort_key
+			dataType: int64
+			summarizeBy: none
+			isHidden
+			sourceColumn: sort_key
+
+		column fiscal_year
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: fiscal_year
+
+		column half_no
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: half_no
+
+		column half_label
+			dataType: string
+			sourceColumn: half_label
+
+		column prior_same_half_code
+			dataType: string
+			sourceColumn: prior_same_half_code
+
+		column has_prior_in_window
+			dataType: boolean
+			sourceColumn: has_prior_in_window
+
+		column is_latest
+			dataType: boolean
+			sourceColumn: is_latest
+
+		column n_fact_values
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: n_fact_values
+
+		column n_derived_values
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: n_derived_values
+
+		column derived_var_ids
+			dataType: string
+			sourceColumn: derived_var_ids
+
+		column period_basis
+			dataType: string
+			sourceColumn: period_basis
+
+		partition DimPeriod = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "DimPeriod.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"period_code", type text}, {"period_label", type text}, {"sort_key", Int64.Type}, {"fiscal_year", Int64.Type}, {"half_no", Int64.Type}, {"half_label", type text}, {"prior_same_half_code", type text}, {"has_prior_in_window", type logical}, {"is_latest", type logical}, {"n_fact_values", Int64.Type}, {"n_derived_values", Int64.Type}, {"derived_var_ids", type text}, {"period_basis", type text}}, "en-US")
+					in
+						Typed
+
+	/// EBIT level legend: L0 reported, L1/L2 adjusted headline, L3 supplementary hybrid sensitivity (never headline).
+	table DimLevel
+
+		column level_id
+			dataType: string
+			sourceColumn: level_id
+
+		column level_name
+			dataType: string
+			sortByColumn: sort_order
+			sourceColumn: level_name
+
+		column level_class
+			dataType: string
+			sourceColumn: level_class
+
+		column is_headline
+			dataType: boolean
+			sourceColumn: is_headline
+
+		column sort_order
+			dataType: int64
+			summarizeBy: none
+			isHidden
+			sourceColumn: sort_order
+
+		column definition
+			dataType: string
+			sourceColumn: definition
+
+		partition DimLevel = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "DimLevel.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"level_id", type text}, {"level_name", type text}, {"level_class", type text}, {"is_headline", type logical}, {"sort_order", Int64.Type}, {"definition", type text}}, "en-US")
+					in
+						Typed
+
+	/// Steps of the L0 -> L1 -> L2 waterfall (disconnected; values come from measures).
+	table DimLevelStep
+
+		column lstep_id
+			dataType: string
+			sourceColumn: lstep_id
+
+		column lstep_name
+			dataType: string
+			sortByColumn: lstep_order
+			sourceColumn: lstep_name
+
+		column lstep_order
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: lstep_order
+
+		partition DimLevelStep = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "DimLevelStep.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"lstep_id", type text}, {"lstep_name", type text}, {"lstep_order", Int64.Type}}, "en-US")
+					in
+						Typed
+
+	/// Steps of the automotive revenue waterfall (disconnected; values from measures).
+	table DimRevenueStep
+
+		column rstep_id
+			dataType: string
+			sourceColumn: rstep_id
+
+		column rstep_name
+			dataType: string
+			sortByColumn: rstep_order
+			sourceColumn: rstep_name
+
+		column rstep_order
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: rstep_order
+
+		partition DimRevenueStep = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "DimRevenueStep.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"rstep_id", type text}, {"rstep_name", type text}, {"rstep_order", Int64.Type}}, "en-US")
+					in
+						Typed
+
+	/// Components of the SQL year-on-year EBIT bridge (mart.v_ebit_bridge_yoy).
+	table DimBridgeStep
+
+		column step_id
+			dataType: string
+			sourceColumn: step_id
+
+		column step_name
+			dataType: string
+			sortByColumn: step_order
+			sourceColumn: step_name
+
+		column step_order
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: step_order
+
+		column step_group
+			dataType: string
+			sourceColumn: step_group
+
+		column sign_note
+			dataType: string
+			sourceColumn: sign_note
+
+		partition DimBridgeStep = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "DimBridgeStep.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"step_id", type text}, {"step_name", type text}, {"step_order", Int64.Type}, {"step_group", type text}, {"sign_note", type text}}, "en-US")
+					in
+						Typed
+
+	/// One row per half-year: base values from mart.v_panel_hy plus SQL decompositions (v_ebit_adjusted, v_rd_capitalisation, v_da_clean, v_asp_volume, v_cash_crosscheck). Use measures, not columns.
+	table FactHalfYear
+
+		/// Group sales revenue, EUR m (G01, S025).
+		measure Revenue = SUM ( FactHalfYear[grp_revenue] )
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// L0 reported group operating profit, EUR m (G07, S025).
+		measure 'EBIT L0 Reported' = SUM ( FactHalfYear[grp_ebit] )
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// Strategic realignment incl. battery activities, net charge added back (X01; A-01 = 0 where not disclosed).
+		measure 'Adj Realignment Battery' = SUM ( FactHalfYear[adj_realignment_net] )
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// US import tariff charge added back (X03; A-02 = 0 before April 2025).
+		measure 'Adj US Tariffs' = SUM ( FactHalfYear[adj_us_tariffs] )
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// Total disclosed items added back from L0 to L2.
+		measure 'Exceptional Items Added Back' = [Adj Realignment Battery] + [Adj US Tariffs]
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// L1 = L0 + X01. Main underlying (headline adjusted) level.
+		measure 'EBIT L1' = [EBIT L0 Reported] + [Adj Realignment Battery]
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// L2 = L1 + X03 (also excl. US tariffs). Headline adjusted level.
+		measure 'EBIT L2' = [EBIT L1] + [Adj US Tariffs]
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// Reported return on sales.
+		measure 'Margin L0' = DIVIDE ( [EBIT L0 Reported], [Revenue] )
+			formatString: 0.0%
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// Margin excl. realignment & battery (headline adjusted).
+		measure 'Margin L1' = DIVIDE ( [EBIT L1], [Revenue] )
+			formatString: 0.0%
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// Margin also excl. US tariffs (headline adjusted).
+		measure 'Margin L2' = DIVIDE ( [EBIT L2], [Revenue] )
+			formatString: 0.0%
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// How much the disclosed one-offs depress the reported margin, in margin points.
+		measure 'Margin L1 minus L0 (pp)' = ( [Margin L1] - [Margin L0] ) * 100
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// +/- uncertainty of the added-back items: EUR 50m per item rounded to 0.1bn, doubled for derived H2 (A-09).
+		measure 'Adjustment Rounding Band' = SUM ( FactHalfYear[rounding_band_eur_m] )
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// Value per step of the L0 -> L1 -> L2 waterfall (use with DimLevelStep[lstep_name]; waterfall total = L2).
+		measure 'Level Bridge Value' =
+				SWITCH (
+					SELECTEDVALUE ( DimLevelStep[lstep_id] ),
+					"LB0", [EBIT L0 Reported],
+					"LB1", [Adj Realignment Battery],
+					"LB2", [Adj US Tariffs]
+				)
+			formatString: #,##0
+			displayFolder: 01 Revenue & EBIT levels
+
+		/// Automotive D&A excluding disclosed impairments (A12 - X05; A-03, A-04).
+		measure 'Clean DA' = SUM ( FactHalfYear[da_total] ) - SUM ( FactHalfYear[impairment_used] )
+			formatString: #,##0
+			displayFolder: 02 L3 supplementary sensitivity
+
+		/// Automotive capitalised development costs (A06).
+		measure 'Capitalised Dev Costs' = SUM ( FactHalfYear[rd_capitalised] )
+			formatString: #,##0
+			displayFolder: 02 L3 supplementary sensitivity
+
+		/// SUPPLEMENTARY HYBRID SENSITIVITY: L1 + clean automotive D&A - automotive capitalised development costs. Not underlying profitability; never headline.
+		measure 'EBIT L3 Hybrid Sensitivity' = [EBIT L1] + [Clean DA] - [Capitalised Dev Costs]
+			formatString: #,##0
+			displayFolder: 02 L3 supplementary sensitivity
+
+		/// SUPPLEMENTARY HYBRID SENSITIVITY margin. Not a KPI.
+		measure 'Margin L3 Hybrid Sensitivity' = DIVIDE ( [EBIT L3 Hybrid Sensitivity], [Revenue] )
+			formatString: 0.0%
+			displayFolder: 02 L3 supplementary sensitivity
+
+		/// L3 if the H1 2026 impairments are NOT inside D&A (assumption A-04 false).
+		measure 'EBIT L3 Hybrid Sensitivity alt A-04' = CALCULATE ( SUM ( FactSensitivity[value_eur_m] ), FactSensitivity[sensitivity_id] = "SENS_A04_L3" )
+			formatString: #,##0
+			displayFolder: 02 L3 supplementary sensitivity
+
+		/// Fixed warning text for every L3 visual.
+		measure 'L3 Warning' = "L3 = SUPPLEMENTARY HYBRID SENSITIVITY: group EBIT mixed with automotive-only D&A and R&D. Not underlying profitability - not a KPI."
+			displayFolder: 02 L3 supplementary sensitivity
+
+		/// Same half of the prior year; blank when outside the analysis window.
+		measure 'Prior Period Code' = SELECTEDVALUE ( DimPeriod[prior_same_half_code] )
+			displayFolder: 03 Prior year (same half)
+
+		/// [Revenue] in the same half of the prior year.
+		measure 'Revenue PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [EBIT L0 Reported] in the same half of the prior year.
+		measure 'EBIT L0 PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [EBIT L0 Reported], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [EBIT L1] in the same half of the prior year.
+		measure 'EBIT L1 PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [EBIT L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [EBIT L2] in the same half of the prior year.
+		measure 'EBIT L2 PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [EBIT L2], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [Margin L0] in the same half of the prior year.
+		measure 'Margin L0 PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Margin L0], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: 0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// [Margin L1] in the same half of the prior year.
+		measure 'Margin L1 PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Margin L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: 0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// [Margin L2] in the same half of the prior year.
+		measure 'Margin L2 PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Margin L2], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: 0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// [Adj Realignment Battery] in the same half of the prior year.
+		measure 'Adj Realignment PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Adj Realignment Battery], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [Adj US Tariffs] in the same half of the prior year.
+		measure 'Adj Tariffs PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Adj US Tariffs], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [Capitalised Dev Costs] in the same half of the prior year.
+		measure 'Capitalised Dev Costs PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Capitalised Dev Costs], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [Clean DA] in the same half of the prior year.
+		measure 'Clean DA PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Clean DA], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [FS EBIT] in the same half of the prior year.
+		measure 'FS EBIT PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [FS EBIT], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [RD PL Charge] in the same half of the prior year.
+		measure 'RD PL Charge PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [RD PL Charge], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [Cap Rate Calc] in the same half of the prior year.
+		measure 'Cap Rate Calc PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Cap Rate Calc], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: 0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// [Auto Revenue] in the same half of the prior year.
+		measure 'Auto Revenue PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Auto Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [Vehicle Sales] in the same half of the prior year.
+		measure 'Vehicle Sales PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Vehicle Sales], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [ASP (EUR k)] in the same half of the prior year.
+		measure 'ASP PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [ASP (EUR k)], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0.0
+			displayFolder: 03 Prior year (same half)
+
+		/// [Auto NCF] in the same half of the prior year.
+		measure 'Auto NCF PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Auto NCF], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: #,##0
+			displayFolder: 03 Prior year (same half)
+
+		/// [NCF Margin] in the same half of the prior year.
+		measure 'NCF Margin PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [NCF Margin], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: 0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// Group revenue change vs same half prior year.
+		measure 'YoY Revenue %' = IF ( NOT ISBLANK ( [Revenue PY] ), DIVIDE ( [Revenue], [Revenue PY] ) - 1 )
+			formatString: +0.0%;-0.0%;0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in reported EBIT, EUR m.
+		measure 'YoY EBIT L0' = IF ( NOT ISBLANK ( [EBIT L0 PY] ), [EBIT L0 Reported] - [EBIT L0 PY] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in L1 EBIT, EUR m.
+		measure 'YoY EBIT L1' = IF ( NOT ISBLANK ( [EBIT L1 PY] ), [EBIT L1] - [EBIT L1 PY] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in L2 EBIT, EUR m.
+		measure 'YoY EBIT L2' = IF ( NOT ISBLANK ( [EBIT L2 PY] ), [EBIT L2] - [EBIT L2 PY] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in reported margin, pp.
+		measure 'YoY Margin L0 (pp)' = IF ( NOT ISBLANK ( [Margin L0 PY] ), ( [Margin L0] - [Margin L0 PY] ) * 100 )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in L1 margin, pp.
+		measure 'YoY Margin L1 (pp)' = IF ( NOT ISBLANK ( [Margin L1 PY] ), ( [Margin L1] - [Margin L1 PY] ) * 100 )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in L2 margin, pp.
+		measure 'YoY Margin L2 (pp)' = IF ( NOT ISBLANK ( [Margin L2 PY] ), ( [Margin L2] - [Margin L2 PY] ) * 100 )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in clean automotive D&A, EUR m.
+		measure 'YoY Clean DA' = IF ( NOT ISBLANK ( [Clean DA PY] ), [Clean DA] - [Clean DA PY] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in R&D P&L charge, EUR m.
+		measure 'YoY RD PL Charge' = IF ( NOT ISBLANK ( [RD PL Charge PY] ), [RD PL Charge] - [RD PL Charge PY] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in the capitalisation rate, pp.
+		measure 'YoY Cap Rate (pp)' = IF ( NOT ISBLANK ( [Cap Rate Calc PY] ), ( [Cap Rate Calc] - [Cap Rate Calc PY] ) * 100 )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in automotive revenue, EUR m.
+		measure 'YoY Auto Revenue' = IF ( NOT ISBLANK ( [Auto Revenue PY] ), [Auto Revenue] - [Auto Revenue PY] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in wholesale vehicle sales.
+		measure 'YoY Vehicle Sales %' = IF ( NOT ISBLANK ( [Vehicle Sales PY] ), DIVIDE ( [Vehicle Sales], [Vehicle Sales PY] ) - 1 )
+			formatString: +0.0%;-0.0%;0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in ASP (automotive revenue per vehicle sold).
+		measure 'YoY ASP %' = IF ( NOT ISBLANK ( [ASP PY] ), DIVIDE ( [ASP (EUR k)], [ASP PY] ) - 1 )
+			formatString: +0.0%;-0.0%;0.0%
+			displayFolder: 03 Prior year (same half)
+
+		/// Change in automotive net cash flow margin, pp.
+		measure 'YoY NCF Margin (pp)' = IF ( NOT ISBLANK ( [NCF Margin PY] ), ( [NCF Margin] - [NCF Margin PY] ) * 100 )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 03 Prior year (same half)
+
+		/// Financial Services operating profit (F02).
+		measure 'FS EBIT' = SUM ( FactHalfYear[fs_ebit] )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// DAX recomputation of the SQL bridge step (QA).
+		measure 'Recompute Eff Exceptional' = IF ( NOT ISBLANK ( [Prior Period Code] ), - ( [Adj Realignment Battery] - [Adj Realignment PY] ) )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation (QA).
+		measure 'Recompute Eff Tariffs' = IF ( NOT ISBLANK ( [Prior Period Code] ), - ( [Adj US Tariffs] - [Adj Tariffs PY] ) )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation (QA).
+		measure 'Recompute Eff Cap Dev' = IF ( NOT ISBLANK ( [Prior Period Code] ), [Capitalised Dev Costs] - [Capitalised Dev Costs PY] )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation (QA).
+		measure 'Recompute Eff Clean DA' = IF ( NOT ISBLANK ( [Prior Period Code] ), - ( [Clean DA] - [Clean DA PY] ) )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation (QA).
+		measure 'Recompute Eff FS' = IF ( NOT ISBLANK ( [Prior Period Code] ), [FS EBIT] - [FS EBIT PY] )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation of residual / other EBIT drivers (QA).
+		measure 'Recompute Residual' = IF ( NOT ISBLANK ( [Prior Period Code] ), [YoY EBIT L0] - [Recompute Eff Exceptional] - [Recompute Eff Tariffs] - [Recompute Eff Cap Dev] - [Recompute Eff Clean DA] - [Recompute Eff FS] )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// Total automotive R&D costs (A05) - Porsche accounting definition, not a cash figure.
+		measure 'RD Total Costs' = SUM ( FactHalfYear[rd_total] )
+			formatString: #,##0
+			displayFolder: 05 R&D & D&A
+
+		/// R&D costs expensed as incurred (A08).
+		measure 'RD Expensed' = SUM ( FactHalfYear[rd_expensed] )
+			formatString: #,##0
+			displayFolder: 05 R&D & D&A
+
+		/// Amortisation of capitalised development costs (A09).
+		measure 'Amortisation Cap RD' = SUM ( FactHalfYear[amort_capitalised_rd] )
+			formatString: #,##0
+			displayFolder: 05 R&D & D&A
+
+		/// R&D charge in the P&L = expensed + amortisation.
+		measure 'RD PL Charge' = [RD Expensed] + [Amortisation Cap RD]
+			formatString: #,##0
+			displayFolder: 05 R&D & D&A
+
+		/// Capitalisation rate = capitalised / total R&D costs.
+		measure 'Cap Rate Calc' = DIVIDE ( [Capitalised Dev Costs], [RD Total Costs] )
+			formatString: 0.0%
+			displayFolder: 05 R&D & D&A
+
+		/// Capitalisation rate as published (A07); H1 periods only.
+		measure 'Cap Rate Published' = IF ( HASONEVALUE ( DimPeriod[period_code] ), DIVIDE ( SUM ( FactHalfYear[rd_cap_rate_published] ), 100 ) )
+			formatString: 0.0%
+			displayFolder: 05 R&D & D&A
+
+		/// >0: the P&L R&D charge is below total R&D costs (capitalisation supports EBIT).
+		measure 'Net Capitalisation' = [Capitalised Dev Costs] - [Amortisation Cap RD]
+			formatString: #,##0
+			displayFolder: 05 R&D & D&A
+
+		/// R&D cost intensity.
+		measure 'RD Total % Auto Revenue' = DIVIDE ( [RD Total Costs], [Auto Revenue] )
+			formatString: 0.0%
+			displayFolder: 05 R&D & D&A
+
+		/// R&D P&L charge intensity.
+		measure 'RD PL % Auto Revenue' = DIVIDE ( [RD PL Charge], [Auto Revenue] )
+			formatString: 0.0%
+			displayFolder: 05 R&D & D&A
+
+		/// SQL: actual R&D P&L charge - charge at prior-year same-half capitalisation rate. >0 = extra charge (EBIT headwind); <0 = EBIT support. Illustrative counterfactual (amortisation held fixed).
+		measure 'Cap Rate Effect (SQL)' = SUM ( FactHalfYear[sql_ebit_effect_of_cap_rate_change] )
+			formatString: +#,##0.0;-#,##0.0;0.0
+			displayFolder: 05 R&D & D&A
+
+		/// DAX recomputation of the capitalisation-rate effect (QA).
+		measure 'Cap Rate Effect (DAX recompute)' = IF ( NOT ISBLANK ( [Cap Rate Calc PY] ), [RD PL Charge] - ( [RD Total Costs] * ( 1 - [Cap Rate Calc PY] ) + [Amortisation Cap RD] ) )
+			formatString: #,##0.0
+			displayFolder: 11 QA recompute
+
+		/// Automotive D&A incl. impairments (A12).
+		measure 'DA Total' = SUM ( FactHalfYear[da_total] )
+			formatString: #,##0
+			displayFolder: 05 R&D & D&A
+
+		/// Disclosed impairments inside automotive D&A as used (X05; A-03 = 0 where undisclosed; A-04 for H1 2026).
+		measure 'Impairments in DA' = SUM ( FactHalfYear[impairment_used] )
+			formatString: #,##0
+			displayFolder: 05 R&D & D&A
+
+		/// FACT / assumption used for impairments in the selected half-year.
+		measure 'Impairment Status' = SELECTEDVALUE ( FactHalfYear[impairment_status] )
+			displayFolder: 05 R&D & D&A
+
+		/// Clean D&A intensity.
+		measure 'Clean DA % Auto Revenue' = DIVIDE ( [Clean DA], [Auto Revenue] )
+			formatString: 0.0%
+			displayFolder: 05 R&D & D&A
+
+		/// Automotive sales revenue (A01).
+		measure 'Auto Revenue' = SUM ( FactHalfYear[auto_revenue] )
+			formatString: #,##0
+			displayFolder: 06 Commercial
+
+		/// Wholesale vehicle sales (O04) - drives revenue.
+		measure 'Vehicle Sales' = SUM ( FactHalfYear[vehicle_sales] )
+			formatString: #,##0
+			displayFolder: 06 Commercial
+
+		/// Retail deliveries (O01).
+		measure 'Retail Deliveries' = SUM ( FactHalfYear[deliveries] )
+			formatString: #,##0
+			displayFolder: 06 Commercial
+
+		/// Porsche ASP definition: automotive revenue per vehicle sold, EUR k.
+		measure 'ASP (EUR k)' = DIVIDE ( [Auto Revenue] * 1000, [Vehicle Sales] )
+			formatString: #,##0.0
+			displayFolder: 06 Commercial
+
+		/// ASP as published by Porsche (O06), rounded to EUR 1k.
+		measure 'ASP Published (EUR k)' = IF ( HASONEVALUE ( DimPeriod[period_code] ), SUM ( FactHalfYear[asp_published_eur_k] ) )
+			formatString: #,##0.0
+			displayFolder: 06 Commercial
+
+		/// SQL: change in vehicle sales x prior ASP / 1000, EUR m.
+		measure 'Volume Effect (SQL)' = SUM ( FactHalfYear[sql_volume_effect] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 06 Commercial
+
+		/// SQL: change in ASP x current vehicle sales / 1000, EUR m. A residual of price, model/derivative mix, options, FX and non-vehicle revenue - not 'price'.
+		measure 'ASP Effect (SQL)' = SUM ( FactHalfYear[sql_asp_effect] )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 06 Commercial
+
+		/// DAX recomputation (QA).
+		measure 'Volume Effect (DAX recompute)' = IF ( NOT ISBLANK ( [Vehicle Sales PY] ), ( [Vehicle Sales] - [Vehicle Sales PY] ) * [ASP PY] / 1000 )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation (QA).
+		measure 'ASP Effect (DAX recompute)' = IF ( NOT ISBLANK ( [ASP PY] ), ( [ASP (EUR k)] - [ASP PY] ) * [Vehicle Sales] / 1000 )
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		/// QA: volume + ASP effect - revenue change; within 0.1 (SQL rounds each effect to 0.1).
+		measure 'Volume ASP Closure Check' = IF ( NOT ISBLANK ( [Auto Revenue PY] ), [Volume Effect (SQL)] + [ASP Effect (SQL)] - [YoY Auto Revenue] )
+			formatString: 0.0
+			displayFolder: 11 QA recompute
+
+		/// PROXY for channel stock movement (wholesale - retail units).
+		measure 'Wholesale minus Retail' = [Vehicle Sales] - [Retail Deliveries]
+			formatString: #,##0
+			displayFolder: 06 Commercial
+
+		/// BEV share of deliveries as published (O07); H1 periods only.
+		measure 'BEV Share Published' = IF ( HASONEVALUE ( DimPeriod[period_code] ), DIVIDE ( SUM ( FactHalfYear[bev_share_published] ), 100 ) )
+			formatString: 0.0%
+			displayFolder: 06 Commercial
+
+		/// Automotive net cash flow (A13).
+		measure 'Auto NCF' = SUM ( FactHalfYear[auto_net_cash_flow] )
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Automotive cash flow from operating activities (A13a).
+		measure 'Auto CFO' = SUM ( FactHalfYear[auto_cfo] )
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Automotive investing activities of current operations (A13b).
+		measure 'Auto CFI' = SUM ( FactHalfYear[auto_cfi_operating] )
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Automotive EBITDA (A03).
+		measure 'Auto EBITDA' = SUM ( FactHalfYear[auto_ebitda] )
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Automotive operating profit (A02).
+		measure 'Auto EBIT' = SUM ( FactHalfYear[auto_ebit] )
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Automotive capex (A10).
+		measure 'Auto Capex' = SUM ( FactHalfYear[capex] )
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Automotive net cash flow / automotive revenue.
+		measure 'NCF Margin' = DIVIDE ( [Auto NCF], [Auto Revenue] )
+			formatString: 0.0%
+			displayFolder: 07 Cash
+
+		/// Automotive EBITDA margin (calculated).
+		measure 'EBITDA Margin' = DIVIDE ( [Auto EBITDA], [Auto Revenue] )
+			formatString: 0.0%
+			displayFolder: 07 Cash
+
+		/// Automotive EBITDA margin as published (A04); H1 periods only.
+		measure 'EBITDA Margin Published' = IF ( HASONEVALUE ( DimPeriod[period_code] ), DIVIDE ( SUM ( FactHalfYear[auto_ebitda_margin_published] ), 100 ) )
+			formatString: 0.0%
+			displayFolder: 07 Cash
+
+		/// Cash conversion of EBITDA.
+		measure 'CFO to EBITDA' = DIVIDE ( [Auto CFO], [Auto EBITDA] )
+			formatString: 0.00
+			displayFolder: 07 Cash
+
+		/// Net cash flow per euro of automotive EBIT (blank if EBIT <= 0).
+		measure 'NCF to EBIT' = IF ( [Auto EBIT] > 0, DIVIDE ( [Auto NCF], [Auto EBIT] ) )
+			formatString: 0.00
+			displayFolder: 07 Cash
+
+		/// EBITDA - capex - capitalised development costs.
+		measure 'Simple Cash Proxy' = [Auto EBITDA] - [Auto Capex] - [Capitalised Dev Costs]
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Working capital, tax, provisions and other items (not decomposed).
+		measure 'NCF minus Proxy' = [Auto NCF] - [Simple Cash Proxy]
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Automotive net liquidity at the end of the latest period in context (stock, not summed).
+		measure 'Net Liquidity (period end)' =
+				VAR _k = MAX ( DimPeriod[sort_key] )
+				RETURN
+					CALCULATE ( SUM ( FactHalfYear[auto_net_liquidity] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[sort_key] = _k )
+			formatString: #,##0
+			displayFolder: 07 Cash
+
+		/// Qualitative cash timing notes from the SQL mart.
+		measure 'Cash Notes' = SELECTEDVALUE ( FactHalfYear[cash_notes] )
+			displayFolder: 07 Cash
+
+		/// QA: NCF - (CFO + CFI); within 0.5 (AF-12 rounding).
+		measure 'NCF Identity Check' = ROUND ( [Auto NCF] - ( [Auto CFO] + [Auto CFI] ), 3 )
+			formatString: 0.00
+			displayFolder: 11 QA recompute
+
+		/// Label of the latest published half-year.
+		measure 'Latest Period Label' = CALCULATE ( SELECTEDVALUE ( DimPeriod[period_label] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Revenue] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Revenue' = CALCULATE ( [Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: #,##0
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [EBIT L0 Reported] in the latest published half-year, independent of the page slicer.
+		measure 'Latest EBIT L0' = CALCULATE ( [EBIT L0 Reported], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: #,##0
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Adj Realignment Battery] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Adj Realignment' = CALCULATE ( [Adj Realignment Battery], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: #,##0
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Adj US Tariffs] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Adj Tariffs' = CALCULATE ( [Adj US Tariffs], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: #,##0
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Margin L0] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Margin L0' = CALCULATE ( [Margin L0], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: 0.0%
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Margin L1] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Margin L1' = CALCULATE ( [Margin L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: 0.0%
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Margin L2] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Margin L2' = CALCULATE ( [Margin L2], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: 0.0%
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Auto Revenue] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Auto Revenue' = CALCULATE ( [Auto Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: #,##0
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Auto EBITDA] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Auto EBITDA' = CALCULATE ( [Auto EBITDA], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: #,##0
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Auto NCF] in the latest published half-year, independent of the page slicer.
+		measure 'Latest Auto NCF' = CALCULATE ( [Auto NCF], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: #,##0
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [EBITDA Margin] in the latest published half-year, independent of the page slicer.
+		measure 'Latest EBITDA Margin' = CALCULATE ( [EBITDA Margin], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: 0.0%
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [NCF Margin] in the latest published half-year, independent of the page slicer.
+		measure 'Latest NCF Margin' = CALCULATE ( [NCF Margin], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+			formatString: 0.0%
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Margin L0] in H2 of the prior fiscal year (comparator for guidance).
+		measure 'Prior H2 Margin L0' =
+				VAR _fy = CALCULATE ( MAX ( DimPeriod[fiscal_year] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+				RETURN
+					CALCULATE ( [Margin L0], REMOVEFILTERS ( DimPeriod ), DimPeriod[fiscal_year] = _fy - 1, DimPeriod[half_no] = 2 )
+			formatString: 0.0%
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// [Margin L1] in H2 of the prior fiscal year (comparator for guidance).
+		measure 'Prior H2 Margin L1' =
+				VAR _fy = CALCULATE ( MAX ( DimPeriod[fiscal_year] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+				RETURN
+					CALCULATE ( [Margin L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[fiscal_year] = _fy - 1, DimPeriod[half_no] = 2 )
+			formatString: 0.0%
+			displayFolder: 08 Latest half-year (fixed)
+
+		/// Direction of the headline adjusted (L1) margin.
+		measure 'Signal Underlying Margin' =
+				VAR _d = [YoY Margin L1 (pp)]
+				RETURN
+					IF ( ISBLANK ( _d ), "No prior-year half in window",
+						"L1 margin " & FORMAT ( _d, "+0.0;-0.0" ) & " pp vs same half prior year: " & IF ( _d < 0, "underlying margin DOWN", "underlying margin UP" ) )
+			displayFolder: 10 Recovery signals
+
+		/// Is the reported EBIT gain explained by lower disclosed one-offs?
+		measure 'Signal Recovery Source' =
+				VAR _exc = [Bridge Exceptional] + [Bridge Tariffs]
+				VAR _d = [YoY EBIT L0]
+				RETURN
+					SWITCH ( TRUE (),
+						ISBLANK ( _d ), "No prior-year half in window",
+						_d > 0 && _exc >= _d, "Lower one-offs (" & FORMAT ( _exc, "+#,##0;-#,##0" ) & " EUR m) exceed the whole reported EBIT gain (" & FORMAT ( _d, "+#,##0;-#,##0" ) & " EUR m)",
+						_d > 0, "Lower one-offs explain " & FORMAT ( DIVIDE ( _exc, _d ), "0%" ) & " of the reported EBIT gain",
+						"Reported EBIT " & FORMAT ( _d, "+#,##0;-#,##0" ) & " EUR m vs same half prior year" )
+			displayFolder: 10 Recovery signals
+
+		/// Sign of the unexplained part of the EBIT change.
+		measure 'Signal Other Drivers' =
+				VAR _r = [Bridge Residual]
+				RETURN
+					IF ( ISBLANK ( _r ), "No prior-year half in window",
+						"Residual / other EBIT drivers " & FORMAT ( _r, "+#,##0;-#,##0" ) & " EUR m (" & IF ( _r < 0, "negative", "positive" ) & "; not separated - not operating performance)" )
+			displayFolder: 10 Recovery signals
+
+		/// Does value (ASP) compensate for lower volume?
+		measure 'Signal Value over Volume' =
+				VAR _v = [Volume Effect (SQL)]
+				VAR _a = [ASP Effect (SQL)]
+				RETURN
+					SWITCH ( TRUE (),
+						ISBLANK ( _v ), "No prior-year half in window",
+						_v < 0 && _a > 0, "ASP effect " & FORMAT ( _a, "+#,##0" ) & " offsets " & FORMAT ( DIVIDE ( _a, - _v ), "0%" ) & " of the volume effect " & FORMAT ( _v, "#,##0" ) & " EUR m",
+						"Volume effect " & FORMAT ( _v, "+#,##0;-#,##0" ) & ", ASP effect " & FORMAT ( _a, "+#,##0;-#,##0" ) & " EUR m" )
+			displayFolder: 10 Recovery signals
+
+		/// Non-cash support or headwind from the capitalisation rate (illustrative counterfactual).
+		measure 'Signal Capitalisation' =
+				VAR _c = [Cap Rate Effect (SQL)]
+				RETURN
+					IF ( ISBLANK ( _c ), "No prior-year half in window",
+						IF ( _c < 0,
+							"Higher capitalisation rate lowered the R&D P&L charge by " & FORMAT ( - _c, "#,##0" ) & " EUR m vs the prior-year rate (non-cash EBIT support)",
+							"Lower capitalisation rate added " & FORMAT ( _c, "#,##0" ) & " EUR m to the R&D P&L charge vs the prior-year rate (non-cash EBIT headwind)" ) )
+			displayFolder: 10 Recovery signals
+
+		/// Does cash move with profit?
+		measure 'Signal Cash' =
+				VAR _d = [YoY NCF Margin (pp)]
+				RETURN
+					IF ( ISBLANK ( _d ), "No prior-year half in window",
+						"Automotive NCF margin " & FORMAT ( [NCF Margin], "0.0%" ) & " (" & FORMAT ( _d, "+0.0;-0.0" ) & " pp vs same half prior year)" )
+			displayFolder: 10 Recovery signals
+
+		/// Conditional-format colour (red = down, green = up).
+		measure 'Signal Color L1' = IF ( [YoY Margin L1 (pp)] < 0, "#B3261E", IF ( [YoY Margin L1 (pp)] > 0, "#1B6E3C", "#5F6368" ) )
+			displayFolder: 10 Recovery signals
+
+		/// Conditional-format colour.
+		measure 'Signal Color Residual' = IF ( [Bridge Residual] < 0, "#B3261E", IF ( [Bridge Residual] > 0, "#1B6E3C", "#5F6368" ) )
+			displayFolder: 10 Recovery signals
+
+		/// EBIT for the level on the legend. L3 appears only where DimLevel[is_headline] is not filtered to TRUE (sensitivity visuals).
+		measure 'EBIT by Level' =
+				SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+					"L0", [EBIT L0 Reported],
+					"L1", [EBIT L1],
+					"L2", [EBIT L2],
+					"L3", [EBIT L3 Hybrid Sensitivity] )
+			formatString: #,##0
+			displayFolder: 13 Level-driven (legend = DimLevel)
+
+		/// Margin for the level on the legend.
+		measure 'Margin by Level' =
+				SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+					"L0", [Margin L0],
+					"L1", [Margin L1],
+					"L2", [Margin L2],
+					"L3", [Margin L3 Hybrid Sensitivity] )
+			formatString: 0.0%
+			displayFolder: 13 Level-driven (legend = DimLevel)
+
+		/// Latest actual half-year margin for the level on the axis (comparator on the guidance chart).
+		measure 'Latest Margin by Level' =
+				SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+					"L0", [Latest Margin L0],
+					"L1", [Latest Margin L1],
+					"L2", [Latest Margin L2] )
+			formatString: 0.0%
+			displayFolder: 13 Level-driven (legend = DimLevel)
+
+		/// Automotive revenue waterfall: prior-year revenue, volume effect, ASP effect (total = current automotive revenue within SQL 0.1 rounding).
+		measure 'Revenue Bridge Value' =
+				SWITCH ( SELECTEDVALUE ( DimRevenueStep[rstep_id] ),
+					"RS0", [Auto Revenue PY],
+					"RS1", [Volume Effect (SQL)],
+					"RS2", [ASP Effect (SQL)] )
+			formatString: #,##0
+			displayFolder: 06 Commercial
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column grp_revenue
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: grp_revenue
+
+		column grp_ebit
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: grp_ebit
+
+		column adj_realignment_net
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: adj_realignment_net
+
+		column adj_us_tariffs
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: adj_us_tariffs
+
+		column rounding_band_eur_m
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: rounding_band_eur_m
+
+		column ebit_assumptions_used
+			dataType: string
+			sourceColumn: ebit_assumptions_used
+
+		column exc_battery_memo
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: exc_battery_memo
+
+		column auto_revenue
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_revenue
+
+		column auto_ebit
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_ebit
+
+		column auto_ebitda
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_ebitda
+
+		column auto_ebitda_margin_published
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: auto_ebitda_margin_published
+
+		column rd_total
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: rd_total
+
+		column rd_capitalised
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: rd_capitalised
+
+		column rd_expensed
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: rd_expensed
+
+		column amort_capitalised_rd
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: amort_capitalised_rd
+
+		column rd_cap_rate_published
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: rd_cap_rate_published
+
+		column sql_ebit_effect_of_cap_rate_change
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: sql_ebit_effect_of_cap_rate_change
+
+		column sql_rd_pl_at_prior_cap_rate
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: sql_rd_pl_at_prior_cap_rate
+
+		column capex
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: capex
+
+		column dep_on_capex
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: dep_on_capex
+
+		column da_total
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: da_total
+
+		column impairment_used
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: impairment_used
+
+		column impairment_status
+			dataType: string
+			sourceColumn: impairment_status
+
+		column fs_revenue
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fs_revenue
+
+		column fs_ebit
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fs_ebit
+
+		column auto_cfo
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_cfo
+
+		column auto_cfi_operating
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_cfi_operating
+
+		column auto_net_cash_flow
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_net_cash_flow
+
+		column auto_net_liquidity
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_net_liquidity
+
+		column cash_notes
+			dataType: string
+			sourceColumn: cash_notes
+
+		column deliveries
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: deliveries
+
+		column vehicle_sales
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: vehicle_sales
+
+		column asp_published_eur_k
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: asp_published_eur_k
+
+		column bev_share_published
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: bev_share_published
+
+		column sql_volume_effect
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: sql_volume_effect
+
+		column sql_asp_effect
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: sql_asp_effect
+
+		column bridge_gross_margin_ex_rd
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: bridge_gross_margin_ex_rd
+
+		column bridge_rd
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: bridge_rd
+
+		column bridge_sga
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: bridge_sga
+
+		column bridge_other
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: bridge_other
+
+		column bridge_extraordinary_memo
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: bridge_extraordinary_memo
+
+		partition FactHalfYear = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "FactHalfYear.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"period_code", type text}, {"grp_revenue", type number}, {"grp_ebit", type number}, {"adj_realignment_net", type number}, {"adj_us_tariffs", type number}, {"rounding_band_eur_m", type number}, {"ebit_assumptions_used", type text}, {"exc_battery_memo", type number}, {"auto_revenue", type number}, {"auto_ebit", type number}, {"auto_ebitda", type number}, {"auto_ebitda_margin_published", type number}, {"rd_total", type number}, {"rd_capitalised", type number}, {"rd_expensed", type number}, {"amort_capitalised_rd", type number}, {"rd_cap_rate_published", type number}, {"sql_ebit_effect_of_cap_rate_change", type number}, {"sql_rd_pl_at_prior_cap_rate", type number}, {"capex", type number}, {"dep_on_capex", type number}, {"da_total", type number}, {"impairment_used", type number}, {"impairment_status", type text}, {"fs_revenue", type number}, {"fs_ebit", type number}, {"auto_cfo", type number}, {"auto_cfi_operating", type number}, {"auto_net_cash_flow", type number}, {"auto_net_liquidity", type number}, {"cash_notes", type text}, {"deliveries", type number}, {"vehicle_sales", type number}, {"asp_published_eur_k", type number}, {"bev_share_published", type number}, {"sql_volume_effect", type number}, {"sql_asp_effect", type number}, {"bridge_gross_margin_ex_rd", type number}, {"bridge_rd", type number}, {"bridge_sga", type number}, {"bridge_other", type number}, {"bridge_extraordinary_memo", type number}}, "en-US")
+					in
+						Typed
+
+	/// mart.v_ebit_bridge_yoy in long form: EUR m and margin-point effects per bridge step.
+	table FactBridgeYoY
+
+		/// SQL bridge value per step (mart.v_ebit_bridge_yoy). Use with DimBridgeStep[step_name] in a waterfall.
+		measure 'Bridge EUR m' = SUM ( FactBridgeYoY[eur_m] )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL margin-point bridge per step; includes the revenue-denominator step; sums to the change in reported margin.
+		measure 'Bridge pp' = SUM ( FactBridgeYoY[pp] )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL bridge step S0_START.
+		measure 'Bridge Start EBIT' = CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S0_START" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL bridge step S1_EXC.
+		measure 'Bridge Exceptional' = CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S1_EXC" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL bridge step S2_TAR.
+		measure 'Bridge Tariffs' = CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S2_TAR" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL bridge step S3_CAPDEV.
+		measure 'Bridge Cap Dev' = CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S3_CAPDEV" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL bridge step S4_DA.
+		measure 'Bridge Clean DA' = CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S4_DA" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL bridge step S5_FS.
+		measure 'Bridge FS' = CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S5_FS" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// SQL bridge step S6_RES.
+		measure 'Bridge Residual' = CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S6_RES" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// Residual / other EBIT drivers in margin points.
+		measure 'Bridge Residual pp' = CALCULATE ( [Bridge pp], DimBridgeStep[step_id] = "S6_RES" )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// Residual if the H1 2026 impairments are NOT inside D&A (A-04 false). Sensitivity only.
+		measure 'Bridge Residual alt A-04' = CALCULATE ( SUM ( FactSensitivity[value_eur_m] ), FactSensitivity[sensitivity_id] = "SENS_A04_RES" )
+			formatString: +#,##0;-#,##0;0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// Sum of all bridge effects = change in reported EBIT.
+		measure 'Bridge Components Total' = CALCULATE ( [Bridge EUR m], REMOVEFILTERS ( DimBridgeStep ), DimBridgeStep[step_id] <> "S0_START" )
+			formatString: #,##0
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// Lower disclosed one-offs as a share of the reported EBIT change. >100% = the whole reported gain (and more) comes from lower one-offs.
+		measure 'One-offs Share of EBIT Change' = DIVIDE ( [Bridge Exceptional] + [Bridge Tariffs], [YoY EBIT L0] )
+			formatString: 0%
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// QA: SQL bridge components - DAX change in reported EBIT. Must be 0.
+		measure 'Bridge Closure Check' = [Bridge Components Total] - [YoY EBIT L0]
+			formatString: 0.000000
+			displayFolder: 04 EBIT bridge (SQL)
+
+		/// QA: SQL pp bridge - DAX change in reported margin. Within 0.005 (3-dp rounding in SQL).
+		measure 'Bridge pp Closure Check' = ROUND ( CALCULATE ( [Bridge pp], REMOVEFILTERS ( DimBridgeStep ) ) - [YoY Margin L0 (pp)], 4 )
+			formatString: 0.0000
+			displayFolder: 04 EBIT bridge (SQL)
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column prior_period_code
+			dataType: string
+			sourceColumn: prior_period_code
+
+		column step_id
+			dataType: string
+			sourceColumn: step_id
+
+		column eur_m
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: eur_m
+
+		column pp
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: pp
+
+		partition FactBridgeYoY = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "FactBridgeYoY.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"period_code", type text}, {"prior_period_code", type text}, {"step_id", type text}, {"eur_m", type number}, {"pp", type number}}, "en-US")
+					in
+						Typed
+
+	/// Assumption-driven alternatives (A-04). Sensitivity only - never headline.
+	table FactSensitivity
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column sensitivity_id
+			dataType: string
+			sourceColumn: sensitivity_id
+
+		column description
+			dataType: string
+			sourceColumn: description
+
+		column assumption_id
+			dataType: string
+			sourceColumn: assumption_id
+
+		column value_eur_m
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: value_eur_m
+
+		partition FactSensitivity = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "FactSensitivity.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"period_code", type text}, {"sensitivity_id", type text}, {"description", type text}, {"assumption_id", type text}, {"value_eur_m", type number}}, "en-US")
+					in
+						Typed
+
+	/// mart.v_delivery_mix: retail deliveries by model line (Macan total) and by region.
+	table FactDeliveryMix
+
+		/// Retail deliveries by model line / region. Always filter FactDeliveryMix[dimension] to one value.
+		measure 'Mix Deliveries' = SUM ( FactDeliveryMix[deliveries] )
+			formatString: #,##0
+			displayFolder: 06 Commercial
+
+		/// Share of deliveries within the selected dimension and period (removes only the member filters; the period filter from DimPeriod is kept).
+		measure 'Mix Share' = DIVIDE ( [Mix Deliveries], CALCULATE ( [Mix Deliveries], REMOVEFILTERS ( FactDeliveryMix[member_id], FactDeliveryMix[member_name], FactDeliveryMix[member_sort] ) ) )
+			formatString: 0.0%
+			displayFolder: 06 Commercial
+
+		/// Mix share in the same half of the prior year.
+		measure 'Mix Share PY' =
+				VAR _p = [Prior Period Code]
+				RETURN
+					IF ( NOT ISBLANK ( _p ), CALCULATE ( [Mix Share], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+			formatString: 0.0%
+			displayFolder: 06 Commercial
+
+		/// Change in delivery share, pp.
+		measure 'Mix Share Change (pp)' = IF ( NOT ISBLANK ( [Mix Share PY] ), ( [Mix Share] - [Mix Share PY] ) * 100 )
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 06 Commercial
+
+		/// QA: model-line deliveries - total deliveries. Must be 0.
+		measure 'Mix Total Check' = CALCULATE ( [Mix Deliveries], FactDeliveryMix[dimension] = "model" ) - [Retail Deliveries]
+			formatString: #,##0
+			displayFolder: 11 QA recompute
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column dimension
+			dataType: string
+			sourceColumn: dimension
+
+		column member_id
+			dataType: string
+			sourceColumn: member_id
+
+		column member_name
+			dataType: string
+			sortByColumn: member_sort
+			sourceColumn: member_name
+
+		column deliveries
+			dataType: int64
+			summarizeBy: none
+			isHidden
+			sourceColumn: deliveries
+
+		column share_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: share_pct
+
+		column value_label
+			dataType: string
+			sourceColumn: value_label
+
+		column member_sort
+			dataType: int64
+			summarizeBy: none
+			isHidden
+			sourceColumn: member_sort
+
+		partition FactDeliveryMix = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "FactDeliveryMix.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"period_code", type text}, {"dimension", type text}, {"member_id", type text}, {"member_name", type text}, {"deliveries", Int64.Type}, {"share_pct", type number}, {"value_label", type text}, {"member_sort", Int64.Type}}, "en-US")
+					in
+						Typed
+
+	/// mart.v_guidance_2026: 27 SCENARIO COMBINATIONS of FY2026 guidance range ends. NOT forecasts, NO probabilities.
+	table FactGuidance
+
+		/// Fixed disclaimer for every scenario visual.
+		measure 'Scenario Disclaimer' = "SCENARIO COMBINATIONS OF PORSCHE FY2026 GUIDANCE RANGE ENDS - ARITHMETIC ONLY - NOT FORECASTS - NO PROBABILITIES"
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Number of combinations in context (1 = one combination selected).
+		measure 'Scen Rows Selected' = COUNTROWS ( FactGuidance )
+			formatString: 0
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Describes the selected combination.
+		measure 'Scen Selected Label' = IF ( COUNTROWS ( FactGuidance ) = 1, "Selected combination: " & SELECTEDVALUE ( FactGuidance[scenario_id] ) & " (revenue / RoS / extraordinary end)", "Select one end for revenue, RoS and extraordinary expenses" )
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 L0 margin implied by the selected combination (SQL v_guidance_2026). Arithmetic, not a forecast.
+		measure 'Scen H2 Margin L0' = IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_margin_l0_pct] ) / 100 )
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Lowest H2 2026 L0 margin across the 27 combinations.
+		measure 'Scen Min Margin L0' = CALCULATE ( MIN ( FactGuidance[h2_margin_l0_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 L0 margin when ALL guidance midpoints are combined (not a most-likely case).
+		measure 'Scen Mid Margin L0' = CALCULATE ( SUM ( FactGuidance[h2_margin_l0_pct] ), REMOVEFILTERS ( FactGuidance ), FactGuidance[scenario_id] = "mid/mid/mid" ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Highest H2 2026 L0 margin across the 27 combinations.
+		measure 'Scen Max Margin L0' = CALCULATE ( MAX ( FactGuidance[h2_margin_l0_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 L1 margin implied by the selected combination (SQL v_guidance_2026). Arithmetic, not a forecast.
+		measure 'Scen H2 Margin L1' = IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_margin_l1_pct] ) / 100 )
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Lowest H2 2026 L1 margin across the 27 combinations.
+		measure 'Scen Min Margin L1' = CALCULATE ( MIN ( FactGuidance[h2_margin_l1_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 L1 margin when ALL guidance midpoints are combined (not a most-likely case).
+		measure 'Scen Mid Margin L1' = CALCULATE ( SUM ( FactGuidance[h2_margin_l1_pct] ), REMOVEFILTERS ( FactGuidance ), FactGuidance[scenario_id] = "mid/mid/mid" ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Highest H2 2026 L1 margin across the 27 combinations.
+		measure 'Scen Max Margin L1' = CALCULATE ( MAX ( FactGuidance[h2_margin_l1_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 L2 margin implied by the selected combination (SQL v_guidance_2026). Arithmetic, not a forecast.
+		measure 'Scen H2 Margin L2' = IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_margin_l2_pct] ) / 100 )
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Lowest H2 2026 L2 margin across the 27 combinations.
+		measure 'Scen Min Margin L2' = CALCULATE ( MIN ( FactGuidance[h2_margin_l2_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 L2 margin when ALL guidance midpoints are combined (not a most-likely case).
+		measure 'Scen Mid Margin L2' = CALCULATE ( SUM ( FactGuidance[h2_margin_l2_pct] ), REMOVEFILTERS ( FactGuidance ), FactGuidance[scenario_id] = "mid/mid/mid" ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Highest H2 2026 L2 margin across the 27 combinations.
+		measure 'Scen Max Margin L2' = CALCULATE ( MAX ( FactGuidance[h2_margin_l2_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 revenue implied (FY guidance end - H1 2026 actual).
+		measure 'Scen H2 Revenue' = IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_rev] ) )
+			formatString: #,##0
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 reported EBIT implied.
+		measure 'Scen H2 EBIT L0' = IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_ebit_l0] ) )
+			formatString: #,##0
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 L1 EBIT implied (A-06: extraordinary guidance is net).
+		measure 'Scen H2 EBIT L1' = IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_ebit_l1] ) )
+			formatString: #,##0
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Selected combination's H2 L1 margin minus the latest actual H1 L1 margin, pp. Arithmetic gap, not a forecast.
+		measure 'Scen H2 L1 vs Latest H1 (pp)' = ( [Scen H2 Margin L1] - [Latest Margin L1] ) * 100
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// All-midpoints H2 L1 margin minus latest H1 L1 margin, pp.
+		measure 'Scen Mid L1 vs Latest H1 (pp)' = ( [Scen Mid Margin L1] - [Latest Margin L1] ) * 100
+			formatString: +0.00;-0.00;0.00
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// DAX recomputation of the H2 L0 margin from guidance inputs and H1 actuals (QA).
+		measure 'Scen H2 Margin L0 (DAX recompute)' =
+				VAR _r = SELECTEDVALUE ( FactGuidance[fy_rev] )
+				VAR _ros = SELECTEDVALUE ( FactGuidance[fy_ros] )
+				RETURN
+					IF ( COUNTROWS ( FactGuidance ) = 1, DIVIDE ( _r * _ros / 100 - [Latest EBIT L0], _r - [Latest Revenue] ) )
+			formatString: 0.00%
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation (QA).
+		measure 'Scen H2 Margin L1 (DAX recompute)' =
+				VAR _r = SELECTEDVALUE ( FactGuidance[fy_rev] )
+				VAR _ros = SELECTEDVALUE ( FactGuidance[fy_ros] )
+				VAR _exc = SELECTEDVALUE ( FactGuidance[fy_exc] )
+				RETURN
+					IF ( COUNTROWS ( FactGuidance ) = 1, DIVIDE ( _r * _ros / 100 - [Latest EBIT L0] + _exc - [Latest Adj Realignment], _r - [Latest Revenue] ) )
+			formatString: 0.00%
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation (QA; A-07: H2 tariffs = H1).
+		measure 'Scen H2 Margin L2 (DAX recompute)' =
+				VAR _r = SELECTEDVALUE ( FactGuidance[fy_rev] )
+				VAR _ros = SELECTEDVALUE ( FactGuidance[fy_ros] )
+				VAR _exc = SELECTEDVALUE ( FactGuidance[fy_exc] )
+				RETURN
+					IF ( COUNTROWS ( FactGuidance ) = 1, DIVIDE ( _r * _ros / 100 - [Latest EBIT L0] + _exc - [Latest Adj Realignment] + [Latest Adj Tariffs], _r - [Latest Revenue] ) )
+			formatString: 0.00%
+			displayFolder: 11 QA recompute
+
+		/// What the guidance requires from H2 relative to the latest actual half-year.
+		measure 'Signal Guidance Gap' =
+				VAR _mid = [Scen Mid Margin L1]
+				VAR _h1 = [Latest Margin L1]
+				RETURN
+					"All-midpoint guidance combination implies an H2 L1 margin of " & FORMAT ( _mid, "0.0%" ) & " vs " & FORMAT ( _h1, "0.0%" ) & " in " & [Latest Period Label]
+						& " (" & FORMAT ( ( _mid - _h1 ) * 100, "+0.0;-0.0" ) & " pp) - arithmetic, not a forecast" 
+			displayFolder: 10 Recovery signals
+
+		/// Min of the H2 2026 implied margin across the 27 combinations, for the level on the axis (L0-L2 only; no L3 scenario exists).
+		measure 'Scen Min by Level' =
+				SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+					"L0", [Scen Min Margin L0],
+					"L1", [Scen Min Margin L1],
+					"L2", [Scen Min Margin L2] )
+			formatString: 0.00%
+			displayFolder: 13 Level-driven (legend = DimLevel)
+
+		/// Mid of the H2 2026 implied margin across the 27 combinations, for the level on the axis (L0-L2 only; no L3 scenario exists).
+		measure 'Scen Mid by Level' =
+				SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+					"L0", [Scen Mid Margin L0],
+					"L1", [Scen Mid Margin L1],
+					"L2", [Scen Mid Margin L2] )
+			formatString: 0.00%
+			displayFolder: 13 Level-driven (legend = DimLevel)
+
+		/// Max of the H2 2026 implied margin across the 27 combinations, for the level on the axis (L0-L2 only; no L3 scenario exists).
+		measure 'Scen Max by Level' =
+				SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+					"L0", [Scen Max Margin L0],
+					"L1", [Scen Max Margin L1],
+					"L2", [Scen Max Margin L2] )
+			formatString: 0.00%
+			displayFolder: 13 Level-driven (legend = DimLevel)
+
+		column scenario_id
+			dataType: string
+			sourceColumn: scenario_id
+
+		column scenario_type
+			dataType: string
+			sourceColumn: scenario_type
+
+		column case_rev
+			dataType: string
+			sortByColumn: sort_rev
+			sourceColumn: case_rev
+
+		column case_ros
+			dataType: string
+			sortByColumn: sort_ros
+			sourceColumn: case_ros
+
+		column case_ex
+			dataType: string
+			sortByColumn: sort_ex
+			sourceColumn: case_ex
+
+		column sort_rev
+			dataType: int64
+			summarizeBy: none
+			isHidden
+			sourceColumn: sort_rev
+
+		column sort_ros
+			dataType: int64
+			summarizeBy: none
+			isHidden
+			sourceColumn: sort_ros
+
+		column sort_ex
+			dataType: int64
+			summarizeBy: none
+			isHidden
+			sourceColumn: sort_ex
+
+		column fy_rev
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_rev
+
+		column fy_ros
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_ros
+
+		column fy_exc
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_exc
+
+		column fy_ebit
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_ebit
+
+		column h1_rev
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h1_rev
+
+		column h1_ebit
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h1_ebit
+
+		column h2_rev
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h2_rev
+
+		column h2_ebit_l0
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h2_ebit_l0
+
+		column h2_margin_l0_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: h2_margin_l0_pct
+
+		column h2_exceptional_implied
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h2_exceptional_implied
+
+		column h2_ebit_l1
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h2_ebit_l1
+
+		column h2_margin_l1_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: h2_margin_l1_pct
+
+		column h2_tariffs_assumed
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h2_tariffs_assumed
+
+		column h2_margin_l2_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: h2_margin_l2_pct
+
+		column assumptions_used
+			dataType: string
+			sourceColumn: assumptions_used
+
+		partition FactGuidance = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "FactGuidance.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"scenario_id", type text}, {"scenario_type", type text}, {"case_rev", type text}, {"case_ros", type text}, {"case_ex", type text}, {"sort_rev", Int64.Type}, {"sort_ros", Int64.Type}, {"sort_ex", Int64.Type}, {"fy_rev", type number}, {"fy_ros", type number}, {"fy_exc", type number}, {"fy_ebit", type number}, {"h1_rev", type number}, {"h1_ebit", type number}, {"h2_rev", type number}, {"h2_ebit_l0", type number}, {"h2_margin_l0_pct", type number}, {"h2_exceptional_implied", type number}, {"h2_ebit_l1", type number}, {"h2_margin_l1_pct", type number}, {"h2_tariffs_assumed", type number}, {"h2_margin_l2_pct", type number}, {"assumptions_used", type text}}, "en-US")
+					in
+						Typed
+
+	/// mart.v_guidance_2026_auto: 9 automotive SCENARIO COMBINATIONS (revenue end x margin end). NOT forecasts.
+	table FactGuidanceAuto
+
+		/// H2 2026 automotive margin implied by the selected revenue end (group slicer) and margin end (automotive slicer). Uses A-05. Not a forecast.
+		measure 'Scen Auto H2 EBITDA Margin' =
+				VAR _t = CALCULATETABLE ( FactGuidanceAuto, TREATAS ( VALUES ( FactGuidance[case_rev] ), FactGuidanceAuto[case_rev] ) )
+				RETURN
+					IF ( COUNTROWS ( _t ) = 1, SUMX ( _t, FactGuidanceAuto[h2_auto_ebitda_margin_pct] ) / 100 )
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Lowest across the 9 automotive combinations.
+		measure 'Scen Auto Min EBITDA Margin' = CALCULATE ( MIN ( FactGuidanceAuto[h2_auto_ebitda_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// All-midpoints automotive combination.
+		measure 'Scen Auto Mid EBITDA Margin' = CALCULATE ( SUM ( FactGuidanceAuto[h2_auto_ebitda_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ), FactGuidanceAuto[scenario_id] = "mid/mid" ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Highest across the 9 automotive combinations.
+		measure 'Scen Auto Max EBITDA Margin' = CALCULATE ( MAX ( FactGuidanceAuto[h2_auto_ebitda_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// H2 2026 automotive margin implied by the selected revenue end (group slicer) and margin end (automotive slicer). Uses A-05. Not a forecast.
+		measure 'Scen Auto H2 NCF Margin' =
+				VAR _t = CALCULATETABLE ( FactGuidanceAuto, TREATAS ( VALUES ( FactGuidance[case_rev] ), FactGuidanceAuto[case_rev] ) )
+				RETURN
+					IF ( COUNTROWS ( _t ) = 1, SUMX ( _t, FactGuidanceAuto[h2_auto_ncf_margin_pct] ) / 100 )
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Lowest across the 9 automotive combinations.
+		measure 'Scen Auto Min NCF Margin' = CALCULATE ( MIN ( FactGuidanceAuto[h2_auto_ncf_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// All-midpoints automotive combination.
+		measure 'Scen Auto Mid NCF Margin' = CALCULATE ( SUM ( FactGuidanceAuto[h2_auto_ncf_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ), FactGuidanceAuto[scenario_id] = "mid/mid" ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// Highest across the 9 automotive combinations.
+		measure 'Scen Auto Max NCF Margin' = CALCULATE ( MAX ( FactGuidanceAuto[h2_auto_ncf_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+			formatString: 0.00%
+			displayFolder: 09 Guidance scenarios (NOT forecasts)
+
+		/// DAX recomputation with A-05 (automotive share of H1 2026) (QA).
+		measure 'Scen Auto H2 EBITDA Margin (DAX recompute)' =
+				VAR _share = DIVIDE ( [Latest Auto Revenue], [Latest Revenue] )
+				VAR _fyauto = SELECTEDVALUE ( FactGuidanceAuto[fy_grp_rev] ) * _share
+				RETURN
+					IF ( COUNTROWS ( FactGuidanceAuto ) = 1, DIVIDE ( SELECTEDVALUE ( FactGuidanceAuto[fy_ebitda_margin] ) / 100 * _fyauto - [Latest Auto EBITDA], _fyauto - [Latest Auto Revenue] ) )
+			formatString: 0.00%
+			displayFolder: 11 QA recompute
+
+		/// DAX recomputation with A-05 (automotive share of H1 2026) (QA).
+		measure 'Scen Auto H2 NCF Margin (DAX recompute)' =
+				VAR _share = DIVIDE ( [Latest Auto Revenue], [Latest Revenue] )
+				VAR _fyauto = SELECTEDVALUE ( FactGuidanceAuto[fy_grp_rev] ) * _share
+				RETURN
+					IF ( COUNTROWS ( FactGuidanceAuto ) = 1, DIVIDE ( SELECTEDVALUE ( FactGuidanceAuto[fy_ncf_margin] ) / 100 * _fyauto - [Latest Auto NCF], _fyauto - [Latest Auto Revenue] ) )
+			formatString: 0.00%
+			displayFolder: 11 QA recompute
+
+		column scenario_id
+			dataType: string
+			sourceColumn: scenario_id
+
+		column scenario_type
+			dataType: string
+			sourceColumn: scenario_type
+
+		column case_rev
+			dataType: string
+			sourceColumn: case_rev
+
+		column case_m
+			dataType: string
+			sourceColumn: case_m
+
+		column fy_grp_rev
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_grp_rev
+
+		column auto_share_pct_assumed
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: auto_share_pct_assumed
+
+		column fy_auto_rev
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_auto_rev
+
+		column h2_auto_rev
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: h2_auto_rev
+
+		column fy_ebitda_margin
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_ebitda_margin
+
+		column h2_auto_ebitda_margin_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: h2_auto_ebitda_margin_pct
+
+		column fy_ncf_margin
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: #,##0.00
+			sourceColumn: fy_ncf_margin
+
+		column h2_auto_ncf_margin_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: h2_auto_ncf_margin_pct
+
+		column h1_2026_auto_ebitda_margin_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: h1_2026_auto_ebitda_margin_pct
+
+		column h1_2026_auto_ncf_margin_pct
+			dataType: double
+			summarizeBy: none
+			isHidden
+			formatString: 0.00
+			sourceColumn: h1_2026_auto_ncf_margin_pct
+
+		column assumptions_used
+			dataType: string
+			sourceColumn: assumptions_used
+
+		partition FactGuidanceAuto = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "FactGuidanceAuto.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"scenario_id", type text}, {"scenario_type", type text}, {"case_rev", type text}, {"case_m", type text}, {"fy_grp_rev", type number}, {"auto_share_pct_assumed", type number}, {"fy_auto_rev", type number}, {"h2_auto_rev", type number}, {"fy_ebitda_margin", type number}, {"h2_auto_ebitda_margin_pct", type number}, {"fy_ncf_margin", type number}, {"h2_auto_ncf_margin_pct", type number}, {"h1_2026_auto_ebitda_margin_pct", type number}, {"h1_2026_auto_ncf_margin_pct", type number}, {"assumptions_used", type text}}, "en-US")
+					in
+						Typed
+
+	/// core.fact_guidance: Porsche FY2026 guidance ranges as published (low / mid / high).
+	table GuidanceInputs
+
+		column guidance_id
+			dataType: string
+			sourceColumn: guidance_id
+
+		column metric
+			dataType: string
+			sourceColumn: metric
+
+		column fiscal_year
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: fiscal_year
+
+		column low_value
+			dataType: double
+			summarizeBy: none
+			formatString: #,##0.00
+			sourceColumn: low_value
+
+		column mid_value
+			dataType: double
+			summarizeBy: none
+			formatString: #,##0.00
+			sourceColumn: mid_value
+
+		column high_value
+			dataType: double
+			summarizeBy: none
+			formatString: #,##0.00
+			sourceColumn: high_value
+
+		column unit_std
+			dataType: string
+			sourceColumn: unit_std
+
+		column basis
+			dataType: string
+			sourceColumn: basis
+
+		column value_label
+			dataType: string
+			sourceColumn: value_label
+
+		column source_id
+			dataType: string
+			sourceColumn: source_id
+
+		column source_ref
+			dataType: string
+			sourceColumn: source_ref
+
+		partition GuidanceInputs = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "GuidanceInputs.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"guidance_id", type text}, {"metric", type text}, {"fiscal_year", Int64.Type}, {"low_value", type number}, {"mid_value", type number}, {"high_value", type number}, {"unit_std", type text}, {"basis", type text}, {"value_label", type text}, {"source_id", type text}, {"source_ref", type text}}, "en-US")
+					in
+						Typed
+
+	/// core.fact_financial (analysis window): every value with FACT/DERIVED label, source and page.
+	table FactLineage
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column var_id
+			dataType: string
+			sourceColumn: var_id
+
+		column var_name
+			dataType: string
+			sourceColumn: var_name
+
+		column var_group
+			dataType: string
+			sourceColumn: var_group
+
+		column value
+			dataType: double
+			summarizeBy: none
+			formatString: #,##0.00
+			sourceColumn: value
+
+		column unit_std
+			dataType: string
+			sourceColumn: unit_std
+
+		column value_label
+			dataType: string
+			sourceColumn: value_label
+
+		column origin
+			dataType: string
+			sourceColumn: origin
+
+		column source_id
+			dataType: string
+			sourceColumn: source_id
+
+		column source_ref
+			dataType: string
+			sourceColumn: source_ref
+
+		column rounding
+			dataType: string
+			sourceColumn: rounding
+
+		partition FactLineage = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "FactLineage.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"period_code", type text}, {"var_id", type text}, {"var_name", type text}, {"var_group", type text}, {"value", type number}, {"unit_std", type text}, {"value_label", type text}, {"origin", type text}, {"source_id", type text}, {"source_ref", type text}, {"rounding", type text}}, "en-US")
+					in
+						Typed
+
+	/// audit.dim_source: source register S001-S027.
+	table DimSource
+
+		column source_id
+			dataType: string
+			sourceColumn: source_id
+
+		column tier
+			dataType: int64
+			summarizeBy: none
+			sourceColumn: tier
+
+		column publisher
+			dataType: string
+			sourceColumn: publisher
+
+		column document_title
+			dataType: string
+			sourceColumn: document_title
+
+		column doc_type
+			dataType: string
+			sourceColumn: doc_type
+
+		column reporting_period
+			dataType: string
+			sourceColumn: reporting_period
+
+		column publication_date
+			dataType: string
+			sourceColumn: publication_date
+
+		column url
+			dataType: string
+			sourceColumn: url
+
+		partition DimSource = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "DimSource.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"source_id", type text}, {"tier", Int64.Type}, {"publisher", type text}, {"document_title", type text}, {"doc_type", type text}, {"reporting_period", type text}, {"publication_date", type text}, {"url", type text}}, "en-US")
+					in
+						Typed
+
+	/// mart.assumption: A-01..A-09.
+	table Assumption
+
+		column assumption_id
+			dataType: string
+			sourceColumn: assumption_id
+
+		column statement
+			dataType: string
+			sourceColumn: statement
+
+		column applies_to
+			dataType: string
+			sourceColumn: applies_to
+
+		column rationale
+			dataType: string
+			sourceColumn: rationale
+
+		column sensitivity
+			dataType: string
+			sourceColumn: sensitivity
+
+		partition Assumption = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "Assumption.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"assumption_id", type text}, {"statement", type text}, {"applies_to", type text}, {"rationale", type text}, {"sensitivity", type text}}, "en-US")
+					in
+						Typed
+
+	/// mart.annotation: dated context notes per period.
+	table Annotation
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column topic
+			dataType: string
+			sourceColumn: topic
+
+		column note
+			dataType: string
+			sourceColumn: note
+
+		column source_id
+			dataType: string
+			sourceColumn: source_id
+
+		column source_ref
+			dataType: string
+			sourceColumn: source_ref
+
+		partition Annotation = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "Annotation.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"period_code", type text}, {"topic", type text}, {"note", type text}, {"source_id", type text}, {"source_ref", type text}}, "en-US")
+					in
+						Typed
+
+	/// QA reference: values exactly as published by the SQL mart views, with tolerance = view rounding. Disconnected; used by the QA page.
+	table RefSQL
+
+		/// Value published by the SQL mart view for this row.
+		measure 'QA SQL Value' = IF ( HASONEVALUE ( RefSQL[metric_key] ), SUM ( RefSQL[sql_value] ) )
+			formatString: 0.000000
+			displayFolder: 12 QA vs SQL
+
+		/// The same quantity recomputed by the Power BI measures (from base values, not from the SQL result).
+		measure 'QA DAX Value' =
+				VAR _k = SELECTEDVALUE ( RefSQL[metric_key] )
+				VAR _p = SELECTEDVALUE ( RefSQL[period_code] )
+				VAR _s = SELECTEDVALUE ( RefSQL[scenario_id] )
+				RETURN
+					SWITCH ( TRUE (),
+						LEFT ( _k, 3 ) = "gs_",
+							CALCULATE ( SWITCH ( _k,
+							"gs_l0_min", [Scen Min Margin L0] * 100,
+							"gs_l0_mid", [Scen Mid Margin L0] * 100,
+							"gs_l0_max", [Scen Max Margin L0] * 100,
+							"gs_l1_min", [Scen Min Margin L1] * 100,
+							"gs_l1_mid", [Scen Mid Margin L1] * 100,
+							"gs_l1_max", [Scen Max Margin L1] * 100,
+							"gs_l2_min", [Scen Min Margin L2] * 100,
+							"gs_l2_mid", [Scen Mid Margin L2] * 100,
+							"gs_l2_max", [Scen Max Margin L2] * 100 ) ),
+						LEFT ( _k, 2 ) = "g_",
+							CALCULATE ( SWITCH ( _k,
+							"g_h2_margin_l0_pct", [Scen H2 Margin L0 (DAX recompute)] * 100,
+							"g_h2_margin_l1_pct", [Scen H2 Margin L1 (DAX recompute)] * 100,
+							"g_h2_margin_l2_pct", [Scen H2 Margin L2 (DAX recompute)] * 100 ), TREATAS ( { _s }, FactGuidance[scenario_id] ) ),
+						_k = "mix_share_pct",
+							CALCULATE ( [Mix Share] * 100, REMOVEFILTERS ( DimPeriod ), TREATAS ( { _p }, DimPeriod[period_code] ),
+								TREATAS ( { SELECTEDVALUE ( RefSQL[dimension] ) }, FactDeliveryMix[dimension] ),
+								TREATAS ( { SELECTEDVALUE ( RefSQL[member_id] ) }, FactDeliveryMix[member_id] ) ),
+						LEFT ( _k, 3 ) = "ga_",
+							CALCULATE ( SWITCH ( _k,
+							"ga_h2_ebitda_margin_pct", [Scen Auto H2 EBITDA Margin (DAX recompute)] * 100,
+							"ga_h2_ncf_margin_pct", [Scen Auto H2 NCF Margin (DAX recompute)] * 100 ), TREATAS ( { _s }, FactGuidanceAuto[scenario_id] ) ),
+						CALCULATE ( SWITCH ( _k,
+							"ebit_l0_reported", [EBIT L0 Reported],
+							"ebit_l1_ex_realignment", [EBIT L1],
+							"ebit_l2_ex_realignment_tariffs", [EBIT L2],
+							"ebit_l3_hybrid_sensitivity", [EBIT L3 Hybrid Sensitivity],
+							"margin_l0_reported_pct", [Margin L0] * 100,
+							"margin_l1_pct", [Margin L1] * 100,
+							"margin_l2_pct", [Margin L2] * 100,
+							"margin_l3_hybrid_pct", [Margin L3 Hybrid Sensitivity] * 100,
+							"yoy_ebit_l1", [YoY EBIT L1],
+							"yoy_margin_l1_pp", [YoY Margin L1 (pp)],
+							"yoy_margin_l0_pp", [YoY Margin L0 (pp)],
+							"da_clean", [Clean DA],
+							"yoy_da_clean", [YoY Clean DA],
+							"rd_total_costs", [RD Total Costs],
+							"rd_pl_charge", [RD PL Charge],
+							"cap_rate_calc_pct", [Cap Rate Calc] * 100,
+							"net_capitalisation", [Net Capitalisation],
+							"ebit_effect_of_cap_rate_change", [Cap Rate Effect (DAX recompute)],
+							"yoy_rd_pl_charge", [YoY RD PL Charge],
+							"asp_calc_eur_k", [ASP (EUR k)],
+							"yoy_vehicle_sales_pct", [YoY Vehicle Sales %] * 100,
+							"yoy_asp_pct", [YoY ASP %] * 100,
+							"yoy_auto_revenue", [YoY Auto Revenue],
+							"volume_effect", [Volume Effect (DAX recompute)],
+							"asp_effect", [ASP Effect (DAX recompute)],
+							"auto_net_cash_flow", [Auto NCF],
+							"ncf_margin_pct", [NCF Margin] * 100,
+							"ebitda_margin_calc_pct", [EBITDA Margin] * 100,
+							"cfo_to_ebitda", [CFO to EBITDA],
+							"simple_cash_proxy", [Simple Cash Proxy],
+							"d_ebit", [YoY EBIT L0],
+							"eff_residual_other_drivers", [Recompute Residual],
+							"d_margin_pp", [YoY Margin L0 (pp)] ), REMOVEFILTERS ( DimPeriod ), TREATAS ( { _p }, DimPeriod[period_code] ) )
+					)
+			formatString: 0.000000
+			displayFolder: 12 QA vs SQL
+
+		/// |DAX - SQL|.
+		measure 'QA Abs Difference' = ABS ( [QA DAX Value] - [QA SQL Value] )
+			formatString: 0.000000
+			displayFolder: 12 QA vs SQL
+
+		/// PASS within the SQL view's rounding tolerance.
+		measure 'QA Status' = IF ( ISBLANK ( [QA DAX Value] ), "MISSING", IF ( [QA Abs Difference] <= SELECTEDVALUE ( RefSQL[tolerance] ), "PASS", "FAIL" ) )
+			displayFolder: 12 QA vs SQL
+
+		/// Rows not passing.
+		measure 'QA Fail Count' = SUMX ( RefSQL, IF ( [QA Status] = "PASS", 0, 1 ) )
+			formatString: 0
+			displayFolder: 12 QA vs SQL
+
+		/// Model status card.
+		measure 'QA Summary' = VAR _n = COUNTROWS ( RefSQL ) VAR _f = [QA Fail Count] RETURN IF ( _f = 0, "ALL " & _n & " QA CHECKS PASS (Power BI vs SQL mart)", _f & " OF " & _n & " QA CHECKS FAIL - see QA page" )
+			displayFolder: 12 QA vs SQL
+
+		/// Largest EUR/unit identity breach across periods (bridge closure, mix total). Must be 0.
+		measure 'QA Identity Checks Max' =
+				ROUND (
+					MAXX (
+						VALUES ( DimPeriod[period_code] ),
+						MAX ( ABS ( [Bridge Closure Check] ), ABS ( [Mix Total Check] ) )
+					),
+					10
+				)
+			formatString: 0.000000
+			displayFolder: 12 QA vs SQL
+
+		column metric_key
+			dataType: string
+			sourceColumn: metric_key
+
+		column period_code
+			dataType: string
+			sourceColumn: period_code
+
+		column scenario_id
+			dataType: string
+			sourceColumn: scenario_id
+
+		column sql_value
+			dataType: double
+			summarizeBy: none
+			formatString: #,##0.00
+			sourceColumn: sql_value
+
+		column tolerance
+			dataType: double
+			summarizeBy: none
+			formatString: 0.000
+			sourceColumn: tolerance
+
+		column sql_view
+			dataType: string
+			sourceColumn: sql_view
+
+		column dimension
+			dataType: string
+			sourceColumn: dimension
+
+		column member_id
+			dataType: string
+			sourceColumn: member_id
+
+		partition RefSQL = m
+			mode: import
+			source =
+					let
+						Source = Csv.Document(File.Contents(DataFolder & "RefSQL.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+						Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+						Typed = Table.TransformColumnTypes(Promoted, {{"metric_key", type text}, {"period_code", type text}, {"scenario_id", type text}, {"sql_value", type number}, {"tolerance", type number}, {"sql_view", type text}, {"dimension", type text}, {"member_id", type text}}, "en-US")
+					in
+						Typed
+
+	relationship FactHalfYear_period_code_DimPeriod
+		fromColumn: FactHalfYear.period_code
+		toColumn: DimPeriod.period_code
+
+	relationship FactBridgeYoY_period_code_DimPeriod
+		fromColumn: FactBridgeYoY.period_code
+		toColumn: DimPeriod.period_code
+
+	relationship FactBridgeYoY_step_id_DimBridgeStep
+		fromColumn: FactBridgeYoY.step_id
+		toColumn: DimBridgeStep.step_id
+
+	relationship FactSensitivity_period_code_DimPeriod
+		fromColumn: FactSensitivity.period_code
+		toColumn: DimPeriod.period_code
+
+	relationship FactDeliveryMix_period_code_DimPeriod
+		fromColumn: FactDeliveryMix.period_code
+		toColumn: DimPeriod.period_code
+
+	relationship FactLineage_period_code_DimPeriod
+		fromColumn: FactLineage.period_code
+		toColumn: DimPeriod.period_code
+
+	relationship FactLineage_source_id_DimSource
+		fromColumn: FactLineage.source_id
+		toColumn: DimSource.source_id
+
+	relationship Annotation_period_code_DimPeriod
+		fromColumn: Annotation.period_code
+		toColumn: DimPeriod.period_code

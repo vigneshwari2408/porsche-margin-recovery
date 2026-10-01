@@ -1,0 +1,237 @@
+period_code,var_id,var_name,var_group,value,unit_std,value_label,origin,source_id,source_ref,rounding
+2023-H1,A01,Automotive sales revenue,Automotive segment,18892.000000,EUR m,FACT,MANUAL,S002,9 (Automotive EBITDA margin table),EUR 1m
+2023-H1,A02,Automotive operating profit,Automotive segment,3653.000000,EUR m,FACT,MANUAL,S002,9 (Automotive EBITDA margin table),EUR 1m
+2023-H1,A03,Automotive EBITDA,Automotive segment,4829.000000,EUR m,FACT,MANUAL,S002,9 (Automotive EBITDA margin table),EUR 1m
+2023-H1,A04,Automotive EBITDA margin,Automotive segment,25.600000,%,FACT,MANUAL,S002,9 (Automotive EBITDA margin table),0.1pp
+2023-H1,A05,Automotive R&D costs (total),"R&D, capex, D&A",1545.000000,EUR m,FACT,MANUAL,S002,29 (Note 3),EUR 1m
+2023-H1,A06,Automotive capitalised development costs,"R&D, capex, D&A",1201.000000,EUR m,FACT,MANUAL,S002,29 (Note 3),EUR 1m
+2023-H1,A07,Capitalisation rate,"R&D, capex, D&A",77.700000,%,FACT,MANUAL,S002,29 (Note 3),0.1pp
+2023-H1,A08,Expensed automotive R&D,"R&D, capex, D&A",343.000000,EUR m,FACT,MANUAL,S005,28 (prior-year column),EUR 1m
+2023-H1,A09,Amortisation of capitalised R&D,"R&D, capex, D&A",427.000000,EUR m,FACT,MANUAL,S002,29 (Note 3),EUR 1m
+2023-H1,A10,Automotive capex,"R&D, capex, D&A",866.000000,EUR m,FACT,MANUAL,S002,3 (key figures),EUR 1m
+2023-H1,A11,Automotive depreciation on capex,"R&D, capex, D&A",749.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,A12 - A09: S002 9 (Automotive EBITDA margin table) minus S002 29 (Note 3),derived from EUR 1m inputs
+2023-H1,A12,Automotive total D&A,"R&D, capex, D&A",1176.000000,EUR m,FACT,MANUAL,S002,9 (Automotive EBITDA margin table),EUR 1m
+2023-H1,A13,Automotive net cash flow,Automotive cash,2216.980857,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF AA24,"exact (EUR, converted to EUR m)"
+2023-H1,A13a,Automotive cash flows from operating activities,Automotive cash,4391.684901,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF AA22,"exact (EUR, converted to EUR m)"
+2023-H1,A13b,Automotive investing activities of current operations,Automotive cash,-2174.704044,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF AA23,"exact (EUR, converted to EUR m)"
+2023-H1,A14,Automotive net liquidity,Automotive cash,6432.023429,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF AA25,"exact (EUR, converted to EUR m)"
+2023-H1,F01,Financial Services sales revenue,Financial Services,1652.000000,EUR m,FACT,MANUAL,S002,38 (segment reporting),EUR 1m
+2023-H1,F02,Financial Services operating profit,Financial Services,174.000000,EUR m,FACT,MANUAL,S002,38 (segment reporting),EUR 1m
+2023-H1,G01,Group sales revenue,Group P&L,20430.922514,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AM29,"exact (EUR, converted to EUR m)"
+2023-H1,G02,Cost of sales,Group P&L,-14521.514834,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AM30,"exact (EUR, converted to EUR m)"
+2023-H1,G03,Gross profit,Group P&L,5909.407679,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AM31,"exact (EUR, converted to EUR m)"
+2023-H1,G04,Distribution expenses,Group P&L,-1292.930726,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AM32,"exact (EUR, converted to EUR m)"
+2023-H1,G05,Administrative expenses,Group P&L,-875.095622,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AM33,"exact (EUR, converted to EUR m)"
+2023-H1,G06,Net other operating result,Group P&L,110.853882,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AM34,"exact (EUR, converted to EUR m)"
+2023-H1,G07,Operating profit (EBIT),Group P&L,3852.235213,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AM35,"exact (EUR, converted to EUR m)"
+2023-H1,G09,"Basic/diluted EPS, ordinary share",Group P&L,3.030000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT AM37,exact
+2023-H1,G10,"Basic/diluted EPS, preferred share",Group P&L,3.040000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT AM38,exact
+2023-H1,O01,Deliveries (total),Volumes,167354.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region AA28,exact
+2023-H1,O04,Vehicle sales (wholesale),Volumes,170802.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region AA26,exact
+2023-H1,O06,ASP - automotive revenue per vehicle sold,Unit economics,111.000000,EUR k,FACT,MANUAL,S005,20 (prior-year column),EUR 1k
+2023-H1,O07,BEV share,Volumes,10.800000,%,FACT,MANUAL,S006,7 (prior-year value),0.1pp
+2023-H1,X05,Impairment losses included in automotive D&A,Exceptional items,0.000000,EUR m,FACT,MANUAL,S002,38-39 (segment reporting),EUR 1m
+2023-H2,A01,Automotive sales revenue,Automotive segment,18457.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S026) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A02,Automotive operating profit,Automotive segment,3285.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S026) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A03,Automotive EBITDA,Automotive segment,4765.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S026) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A05,Automotive R&D costs (total),"R&D, capex, D&A",1289.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S011) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A06,Automotive capitalised development costs,"R&D, capex, D&A",880.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S011) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A08,Expensed automotive R&D,"R&D, capex, D&A",410.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S011) minus 2023-H1 (S005),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A09,Amortisation of capitalised R&D,"R&D, capex, D&A",533.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S011) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A10,Automotive capex,"R&D, capex, D&A",1098.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S011) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A11,Automotive depreciation on capex,"R&D, capex, D&A",947.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S011) minus 2023-H1 (SQL derived),derived; inputs rounded: FY EUR 1m / H1 derived from EUR 1m inputs
+2023-H2,A12,Automotive total D&A,"R&D, capex, D&A",1480.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S011) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,A13,Automotive net cash flow,Automotive cash,1756.448492,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,A13a,Automotive cash flows from operating activities,Automotive cash,3864.039849,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,A13b,Automotive investing activities of current operations,Automotive cash,-2107.591357,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,A14,Automotive net liquidity,Automotive cash,7215.001118,EUR m,DERIVED,SQL_DERIVED,SQL derived,Period-end value = 2023-FY (S025),"exact (EUR, converted to EUR m)"
+2023-H2,F01,Financial Services sales revenue,Financial Services,1792.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S026) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,F02,Financial Services operating profit,Financial Services,128.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S026) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2023-H2,G01,Group sales revenue,Group P&L,20098.709794,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,G02,Cost of sales,Group P&L,-14402.254530,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,G03,Gross profit,Group P&L,5696.455265,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,G04,Distribution expenses,Group P&L,-1576.460718,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,G05,Administrative expenses,Group P&L,-911.689413,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,G06,Net other operating result,Group P&L,223.767275,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,G07,Operating profit (EBIT),Group P&L,3432.072410,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2023-H2,O01,Deliveries (total),Volumes,152867.000000,units,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2023-H2,O04,Vehicle sales (wholesale),Volumes,162803.000000,units,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2023-FY (S025) minus 2023-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2024-H1,A01,Automotive sales revenue,Automotive segment,17695.000000,EUR m,FACT,MANUAL,S006,10 (Automotive EBITDA margin table),EUR 1m
+2024-H1,A02,Automotive operating profit,Automotive segment,2904.000000,EUR m,FACT,MANUAL,S006,10 (Automotive EBITDA margin table),EUR 1m
+2024-H1,A03,Automotive EBITDA,Automotive segment,4268.000000,EUR m,FACT,MANUAL,S006,10 (Automotive EBITDA margin table),EUR 1m
+2024-H1,A04,Automotive EBITDA margin,Automotive segment,24.100000,%,FACT,MANUAL,S006,10 (Automotive EBITDA margin table),0.1pp
+2024-H1,A05,Automotive R&D costs (total),"R&D, capex, D&A",1665.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2024-H1,A06,Automotive capitalised development costs,"R&D, capex, D&A",1123.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2024-H1,A07,Capitalisation rate,"R&D, capex, D&A",67.500000,%,FACT,MANUAL,S016,25,0.1pp
+2024-H1,A08,Expensed automotive R&D,"R&D, capex, D&A",541.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2024-H1,A09,Amortisation of capitalised R&D,"R&D, capex, D&A",516.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2024-H1,A10,Automotive capex,"R&D, capex, D&A",850.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2024-H1,A11,Automotive depreciation on capex,"R&D, capex, D&A",849.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2024-H1,A12,Automotive total D&A,"R&D, capex, D&A",1364.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2024-H1,A13,Automotive net cash flow,Automotive cash,1117.000000,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF S24,"exact (EUR, converted to EUR m)"
+2024-H1,A13a,Automotive cash flows from operating activities,Automotive cash,3387.040637,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF S22,"exact (EUR, converted to EUR m)"
+2024-H1,A13b,Automotive investing activities of current operations,Automotive cash,-2270.150960,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF S23,"exact (EUR, converted to EUR m)"
+2024-H1,A14,Automotive net liquidity,Automotive cash,6100.788136,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF S25,"exact (EUR, converted to EUR m)"
+2024-H1,B01,Bridge: gross margin without R&D (change),EBIT bridge,-460.000000,EUR m,FACT,MANUAL,S005,16,EUR 0.01bn
+2024-H1,B02,Bridge: R&D (change),EBIT bridge,-240.000000,EUR m,FACT,MANUAL,S005,16,EUR 0.01bn
+2024-H1,B03,Bridge: SG&A (change),EBIT bridge,-160.000000,EUR m,FACT,MANUAL,S005,16,EUR 0.01bn
+2024-H1,B04,Bridge: Other (change),EBIT bridge,80.000000,EUR m,FACT,MANUAL,S005,16,EUR 0.01bn
+2024-H1,F01,Financial Services sales revenue,Financial Services,1894.000000,EUR m,FACT,MANUAL,S006,38 (segment reporting),EUR 1m
+2024-H1,F02,Financial Services operating profit,Financial Services,129.000000,EUR m,FACT,MANUAL,S006,38 (segment reporting),EUR 1m
+2024-H1,G01,Group sales revenue,Group P&L,19457.008656,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AA29,"exact (EUR, converted to EUR m)"
+2024-H1,G02,Cost of sales,Group P&L,-14251.029070,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AA30,"exact (EUR, converted to EUR m)"
+2024-H1,G03,Gross profit,Group P&L,5205.979586,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AA31,"exact (EUR, converted to EUR m)"
+2024-H1,G04,Distribution expenses,Group P&L,-1379.265887,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AA32,"exact (EUR, converted to EUR m)"
+2024-H1,G05,Administrative expenses,Group P&L,-951.828897,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AA33,"exact (EUR, converted to EUR m)"
+2024-H1,G06,Net other operating result,Group P&L,186.570650,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AA34,"exact (EUR, converted to EUR m)"
+2024-H1,G07,Operating profit (EBIT),Group P&L,3061.455452,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT AA35,"exact (EUR, converted to EUR m)"
+2024-H1,G09,"Basic/diluted EPS, ordinary share",Group P&L,2.360000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT AA37,exact
+2024-H1,G10,"Basic/diluted EPS, preferred share",Group P&L,2.370000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT AA38,exact
+2024-H1,O01,Deliveries (total),Volumes,155945.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region S28,exact
+2024-H1,O04,Vehicle sales (wholesale),Volumes,151944.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region S26,exact
+2024-H1,O06,ASP - automotive revenue per vehicle sold,Unit economics,116.000000,EUR k,FACT,MANUAL,S009,32 (prior-year column),EUR 1k
+2024-H1,O07,BEV share,Volumes,5.900000,%,FACT,MANUAL,S006,7,0.1pp
+2024-H1,X05,Impairment losses included in automotive D&A,Exceptional items,0.000000,EUR m,FACT,MANUAL,S006,38 (segment reporting),EUR 1m
+2024-H2,A01,Automotive sales revenue,Automotive segment,18743.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S026) minus 2024-H1 (S006),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A02,Automotive operating profit,Automotive segment,2382.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S013) minus 2024-H1 (S006),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A03,Automotive EBITDA,Automotive segment,4003.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S013) minus 2024-H1 (S006),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A05,Automotive R&D costs (total),"R&D, capex, D&A",863.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S011) minus 2024-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A06,Automotive capitalised development costs,"R&D, capex, D&A",460.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S011) minus 2024-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A08,Expensed automotive R&D,"R&D, capex, D&A",404.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S011) minus 2024-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A09,Amortisation of capitalised R&D,"R&D, capex, D&A",585.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S011) minus 2024-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A10,Automotive capex,"R&D, capex, D&A",1269.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S011) minus 2024-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A11,Automotive depreciation on capex,"R&D, capex, D&A",1035.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S011) minus 2024-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A12,Automotive total D&A,"R&D, capex, D&A",1621.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S011) minus 2024-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,A13,Automotive net cash flow,Automotive cash,2617.625833,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,A13a,Automotive cash flows from operating activities,Automotive cash,4363.286339,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,A13b,Automotive investing activities of current operations,Automotive cash,-1745.550183,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,A14,Automotive net liquidity,Automotive cash,8557.799768,EUR m,DERIVED,SQL_DERIVED,SQL derived,Period-end value = 2024-FY (S025),"exact (EUR, converted to EUR m)"
+2024-H2,B01,Bridge: gross margin without R&D (change),EBIT bridge,-540.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S007) minus 2024-H1 (S005),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.01bn
+2024-H2,B02,Bridge: R&D (change),EBIT bridge,-60.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S007) minus 2024-H1 (S005),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.01bn
+2024-H2,B03,Bridge: SG&A (change),EBIT bridge,-140.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S007) minus 2024-H1 (S005),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.01bn
+2024-H2,B04,Bridge: Other (change),EBIT bridge,-180.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S007) minus 2024-H1 (S005),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.01bn
+2024-H2,F01,Financial Services sales revenue,Financial Services,2016.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S013) minus 2024-H1 (S006),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,F02,Financial Services operating profit,Financial Services,149.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S013) minus 2024-H1 (S006),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2024-H2,G01,Group sales revenue,Group P&L,20626.284337,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,G02,Cost of sales,Group P&L,-15504.836769,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,G03,Gross profit,Group P&L,5121.447568,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,G04,Distribution expenses,Group P&L,-1720.129296,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,G05,Administrative expenses,Group P&L,-907.452390,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,G06,Net other operating result,Group P&L,81.571308,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,G07,Operating profit (EBIT),Group P&L,2575.437190,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2024-H2,O01,Deliveries (total),Volumes,154773.000000,units,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2024-H2,O04,Vehicle sales (wholesale),Volumes,160676.000000,units,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2024-FY (S025) minus 2024-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2025-H1,A01,Automotive sales revenue,Automotive segment,16138.000000,EUR m,FACT,MANUAL,S010,11 (Automotive EBITDA margin table),EUR 1m
+2025-H1,A02,Automotive operating profit,Automotive segment,832.000000,EUR m,FACT,MANUAL,S010,11 (Automotive EBITDA margin table),EUR 1m
+2025-H1,A03,Automotive EBITDA,Automotive segment,2588.000000,EUR m,FACT,MANUAL,S010,11 (Automotive EBITDA margin table),EUR 1m
+2025-H1,A04,Automotive EBITDA margin,Automotive segment,16.000000,%,FACT,MANUAL,S010,11 (Automotive EBITDA margin table),0.1pp
+2025-H1,A05,Automotive R&D costs (total),"R&D, capex, D&A",1264.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2025-H1,A06,Automotive capitalised development costs,"R&D, capex, D&A",575.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2025-H1,A07,Capitalisation rate,"R&D, capex, D&A",45.500000,%,FACT,MANUAL,S016,25,0.1pp
+2025-H1,A08,Expensed automotive R&D,"R&D, capex, D&A",690.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2025-H1,A09,Amortisation of capitalised R&D,"R&D, capex, D&A",600.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2025-H1,A10,Automotive capex,"R&D, capex, D&A",965.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2025-H1,A11,Automotive depreciation on capex,"R&D, capex, D&A",1156.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2025-H1,A12,Automotive total D&A,"R&D, capex, D&A",1756.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2025-H1,A13,Automotive net cash flow,Automotive cash,393.994270,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF K24,"exact (EUR, converted to EUR m)"
+2025-H1,A13a,Automotive cash flows from operating activities,Automotive cash,2017.886965,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF K22,"exact (EUR, converted to EUR m)"
+2025-H1,A13b,Automotive investing activities of current operations,Automotive cash,-1623.892695,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF K23,"exact (EUR, converted to EUR m)"
+2025-H1,A14,Automotive net liquidity,Automotive cash,6167.235104,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF K25,"exact (EUR, converted to EUR m)"
+2025-H1,B01,Bridge: gross margin without R&D (change),EBIT bridge,-1620.000000,EUR m,FACT,MANUAL,S009,28,EUR 0.01bn
+2025-H1,B02,Bridge: R&D (change),EBIT bridge,-220.000000,EUR m,FACT,MANUAL,S009,28,EUR 0.01bn
+2025-H1,B03,Bridge: SG&A (change),EBIT bridge,40.000000,EUR m,FACT,MANUAL,S009,28,EUR 0.01bn
+2025-H1,B04,Bridge: Other (change),EBIT bridge,-260.000000,EUR m,FACT,MANUAL,S009,28,EUR 0.01bn
+2025-H1,B05,Bridge memo: extraordinary items contained in B01-B04,EBIT bridge,-1100.000000,EUR m,FACT,MANUAL,S009,28,EUR 0.01bn
+2025-H1,F01,Financial Services sales revenue,Financial Services,2152.000000,EUR m,FACT,MANUAL,S010,42 (segment reporting),EUR 1m
+2025-H1,F02,Financial Services operating profit,Financial Services,145.000000,EUR m,FACT,MANUAL,S010,42 (segment reporting),EUR 1m
+2025-H1,G01,Group sales revenue,Group P&L,18157.274980,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT O29,"exact (EUR, converted to EUR m)"
+2025-H1,G02,Cost of sales,Group P&L,-14793.386042,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT O30,"exact (EUR, converted to EUR m)"
+2025-H1,G03,Gross profit,Group P&L,3363.888939,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT O31,"exact (EUR, converted to EUR m)"
+2025-H1,G04,Distribution expenses,Group P&L,-1310.313838,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT O32,"exact (EUR, converted to EUR m)"
+2025-H1,G05,Administrative expenses,Group P&L,-977.853272,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT O33,"exact (EUR, converted to EUR m)"
+2025-H1,G06,Net other operating result,Group P&L,-68.930531,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT O34,"exact (EUR, converted to EUR m)"
+2025-H1,G07,Operating profit (EBIT),Group P&L,1006.791297,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT O35,"exact (EUR, converted to EUR m)"
+2025-H1,G09,"Basic/diluted EPS, ordinary share",Group P&L,0.790000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT O37,exact
+2025-H1,G10,"Basic/diluted EPS, preferred share",Group P&L,0.800000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT O38,exact
+2025-H1,O01,Deliveries (total),Volumes,146391.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region K28,exact
+2025-H1,O04,Vehicle sales (wholesale),Volumes,135142.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region K26,exact
+2025-H1,O06,ASP - automotive revenue per vehicle sold,Unit economics,119.000000,EUR k,FACT,MANUAL,S016,10 (prior-year column),EUR 1k
+2025-H1,O07,BEV share,Volumes,23.500000,%,FACT,MANUAL,S010,8,0.1pp
+2025-H1,X01,Strategic realignment incl. battery (net charge),Exceptional items,700.000000,EUR m,FACT,MANUAL,S016,6 (footnote 1),EUR 0.1bn
+2025-H1,X02,of which battery activities (memo),Exceptional items,400.000000,EUR m,FACT,MANUAL,S010,5 and 30,EUR 0.1bn
+2025-H1,X03,US import tariffs (expense),Exceptional items,400.000000,EUR m,FACT,MANUAL,S010,5 and 30,EUR 0.1bn
+2025-H1,X05,Impairment losses included in automotive D&A,Exceptional items,295.000000,EUR m,FACT,MANUAL,S010,32,EUR 1m
+2025-H2,A01,Automotive sales revenue,Automotive segment,16047.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S013) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A02,Automotive operating profit,Automotive segment,-742.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S013) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A03,Automotive EBITDA,Automotive segment,1694.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S013) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A05,Automotive R&D costs (total),"R&D, capex, D&A",1028.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A06,Automotive capitalised development costs,"R&D, capex, D&A",388.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A08,Expensed automotive R&D,"R&D, capex, D&A",639.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A09,Amortisation of capitalised R&D,"R&D, capex, D&A",1230.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A10,Automotive capex,"R&D, capex, D&A",1172.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A11,Automotive depreciation on capex,"R&D, capex, D&A",1206.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A12,Automotive total D&A,"R&D, capex, D&A",2436.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,A13,Automotive net cash flow,Automotive cash,1117.121593,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,A13a,Automotive cash flows from operating activities,Automotive cash,2805.386610,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,A13b,Automotive investing activities of current operations,Automotive cash,-1688.265017,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,A14,Automotive net liquidity,Automotive cash,7346.110286,EUR m,DERIVED,SQL_DERIVED,SQL derived,Period-end value = 2025-FY (S025),"exact (EUR, converted to EUR m)"
+2025-H2,B01,Bridge: gross margin without R&D (change),EBIT bridge,-2550.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S009),derived; inputs rounded: FY EUR 0.01bn / H1 EUR 0.01bn
+2025-H2,B02,Bridge: R&D (change),EBIT bridge,-890.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S009),derived; inputs rounded: FY EUR 0.01bn / H1 EUR 0.01bn
+2025-H2,B03,Bridge: SG&A (change),EBIT bridge,220.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S009),derived; inputs rounded: FY EUR 0.01bn / H1 EUR 0.01bn
+2025-H2,B04,Bridge: Other (change),EBIT bridge,50.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S009),derived; inputs rounded: FY EUR 0.01bn / H1 EUR 0.01bn
+2025-H2,B05,Bridge memo: extraordinary items contained in B01-B04,EBIT bridge,-2800.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S009),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.01bn
+2025-H2,F01,Financial Services sales revenue,Financial Services,2232.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S013) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,F02,Financial Services operating profit,Financial Services,114.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S013) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
+2025-H2,G01,Group sales revenue,Group P&L,18114.352911,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,G02,Cost of sales,Group P&L,-16427.363927,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,G03,Gross profit,Group P&L,1686.988983,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,G04,Distribution expenses,Group P&L,-1485.268479,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,G05,Administrative expenses,Group P&L,-920.810086,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,G06,Net other operating result,Group P&L,125.582254,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,G07,Operating profit (EBIT),Group P&L,-593.507328,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
+2025-H2,O01,Deliveries (total),Volumes,133058.000000,units,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2025-H2,O04,Vehicle sales (wholesale),Volumes,130521.000000,units,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S025) minus 2025-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2025-H2,X01,Strategic realignment incl. battery (net charge),Exceptional items,2400.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.1bn
+2025-H2,X02,of which battery activities (memo),Exceptional items,300.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.1bn
+2025-H2,X03,US import tariffs (expense),Exceptional items,300.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.1bn
+2025-H2,X05,Impairment losses included in automotive D&A,Exceptional items,905.000000,EUR m,DERIVED,SQL_DERIVED,SQL derived,FY - H1: 2025-FY (S011) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 100m (text says 'around') / H1 EUR 1m
+2026-H1,A01,Automotive sales revenue,Automotive segment,15158.000000,EUR m,FACT,MANUAL,S017,12 (Automotive EBITDA margin table),EUR 1m
+2026-H1,A02,Automotive operating profit,Automotive segment,1208.000000,EUR m,FACT,MANUAL,S017,12 (Automotive EBITDA margin table),EUR 1m
+2026-H1,A03,Automotive EBITDA,Automotive segment,2767.000000,EUR m,FACT,MANUAL,S017,12 (Automotive EBITDA margin table),EUR 1m
+2026-H1,A04,Automotive EBITDA margin,Automotive segment,18.300000,%,FACT,MANUAL,S017,12 (Automotive EBITDA margin table),0.1pp
+2026-H1,A05,Automotive R&D costs (total),"R&D, capex, D&A",1116.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2026-H1,A06,Automotive capitalised development costs,"R&D, capex, D&A",487.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2026-H1,A07,Capitalisation rate,"R&D, capex, D&A",43.600000,%,FACT,MANUAL,S016,25,0.1pp
+2026-H1,A08,Expensed automotive R&D,"R&D, capex, D&A",629.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2026-H1,A09,Amortisation of capitalised R&D,"R&D, capex, D&A",705.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2026-H1,A10,Automotive capex,"R&D, capex, D&A",906.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2026-H1,A11,Automotive depreciation on capex,"R&D, capex, D&A",854.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2026-H1,A12,Automotive total D&A,"R&D, capex, D&A",1559.000000,EUR m,FACT,MANUAL,S016,25,EUR 1m
+2026-H1,A13,Automotive net cash flow,Automotive cash,1020.244813,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF C24,"exact (EUR, converted to EUR m)"
+2026-H1,A13a,Automotive cash flows from operating activities,Automotive cash,2431.811796,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF C22,"exact (EUR, converted to EUR m)"
+2026-H1,A13b,Automotive investing activities of current operations,Automotive cash,-1411.566982,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF C23,"exact (EUR, converted to EUR m)"
+2026-H1,A14,Automotive net liquidity,Automotive cash,7301.571233,EUR m,FACT,FACTSHEET,S025,02 - Automotive CF C25,"exact (EUR, converted to EUR m)"
+2026-H1,B01,Bridge: gross margin without R&D (change),EBIT bridge,150.000000,EUR m,FACT,MANUAL,S016,6,EUR 0.01bn
+2026-H1,B02,Bridge: R&D (change),EBIT bridge,-50.000000,EUR m,FACT,MANUAL,S016,6,EUR 0.01bn
+2026-H1,B03,Bridge: SG&A (change),EBIT bridge,10.000000,EUR m,FACT,MANUAL,S016,6,EUR 0.01bn
+2026-H1,B04,Bridge: Other (change),EBIT bridge,230.000000,EUR m,FACT,MANUAL,S016,6,EUR 0.01bn
+2026-H1,B05,Bridge memo: extraordinary items contained in B01-B04,EBIT bridge,-100.000000,EUR m,FACT,MANUAL,S016,6,EUR 0.1bn
+2026-H1,F01,Financial Services sales revenue,Financial Services,2206.000000,EUR m,FACT,MANUAL,S017,39 (segment reporting),EUR 1m
+2026-H1,F02,Financial Services operating profit,Financial Services,151.000000,EUR m,FACT,MANUAL,S017,39 (segment reporting),EUR 1m
+2026-H1,G01,Group sales revenue,Group P&L,17229.455528,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT C29,"exact (EUR, converted to EUR m)"
+2026-H1,G02,Cost of sales,Group P&L,-13763.625045,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT C30,"exact (EUR, converted to EUR m)"
+2026-H1,G03,Gross profit,Group P&L,3465.830483,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT C31,"exact (EUR, converted to EUR m)"
+2026-H1,G04,Distribution expenses,Group P&L,-1278.459427,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT C32,"exact (EUR, converted to EUR m)"
+2026-H1,G05,Administrative expenses,Group P&L,-997.072323,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT C33,"exact (EUR, converted to EUR m)"
+2026-H1,G06,Net other operating result,Group P&L,157.886315,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT C34,"exact (EUR, converted to EUR m)"
+2026-H1,G07,Operating profit (EBIT),Group P&L,1348.185049,EUR m,FACT,FACTSHEET,S025,01 - Group EBIT C35,"exact (EUR, converted to EUR m)"
+2026-H1,G09,"Basic/diluted EPS, ordinary share",Group P&L,1.240000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT C37,exact
+2026-H1,G10,"Basic/diluted EPS, preferred share",Group P&L,1.250000,EUR/share,FACT,FACTSHEET,S025,01 - Group EBIT C38,exact
+2026-H1,O01,Deliveries (total),Volumes,122306.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region C28,exact
+2026-H1,O04,Vehicle sales (wholesale),Volumes,120508.000000,units,FACT,FACTSHEET,S025,03 - Sales_deliveries by Region C26,exact
+2026-H1,O06,ASP - automotive revenue per vehicle sold,Unit economics,126.000000,EUR k,FACT,MANUAL,S016,10,EUR 1k
+2026-H1,O07,BEV share,Volumes,19.400000,%,FACT,MANUAL,S017,8,0.1pp
+2026-H1,X01,Strategic realignment incl. battery (net charge),Exceptional items,100.000000,EUR m,FACT,MANUAL,S016,6 and 11,EUR 0.1bn
+2026-H1,X03,US import tariffs (expense),Exceptional items,400.000000,EUR m,FACT,MANUAL,S016,6 (footnote 2),EUR 0.1bn
+2026-H1,X04,Provision releases related to realignment,Exceptional items,300.000000,EUR m,FACT,MANUAL,S016,6 and 11,EUR 0.1bn
+2026-H1,X05,Impairment losses included in automotive D&A,Exceptional items,61.000000,EUR m,DERIVED,MANUAL,S017,29,EUR 1m

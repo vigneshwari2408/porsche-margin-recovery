@@ -1,0 +1,972 @@
+// PCL Porsche 2026 Margin Recovery - Power BI measures (generated from gen_model.py; identical to the TMDL script)
+
+// [01 Revenue & EBIT levels]  Group sales revenue, EUR m (G01, S025).
+FactHalfYear[Revenue] =
+SUM ( FactHalfYear[grp_revenue] )
+
+// [01 Revenue & EBIT levels]  L0 reported group operating profit, EUR m (G07, S025).
+FactHalfYear[EBIT L0 Reported] =
+SUM ( FactHalfYear[grp_ebit] )
+
+// [01 Revenue & EBIT levels]  Strategic realignment incl. battery activities, net charge added back (X01; A-01 = 0 where not disclosed).
+FactHalfYear[Adj Realignment Battery] =
+SUM ( FactHalfYear[adj_realignment_net] )
+
+// [01 Revenue & EBIT levels]  US import tariff charge added back (X03; A-02 = 0 before April 2025).
+FactHalfYear[Adj US Tariffs] =
+SUM ( FactHalfYear[adj_us_tariffs] )
+
+// [01 Revenue & EBIT levels]  Total disclosed items added back from L0 to L2.
+FactHalfYear[Exceptional Items Added Back] =
+[Adj Realignment Battery] + [Adj US Tariffs]
+
+// [01 Revenue & EBIT levels]  L1 = L0 + X01. Main underlying (headline adjusted) level.
+FactHalfYear[EBIT L1] =
+[EBIT L0 Reported] + [Adj Realignment Battery]
+
+// [01 Revenue & EBIT levels]  L2 = L1 + X03 (also excl. US tariffs). Headline adjusted level.
+FactHalfYear[EBIT L2] =
+[EBIT L1] + [Adj US Tariffs]
+
+// [01 Revenue & EBIT levels]  Reported return on sales.
+FactHalfYear[Margin L0] =
+DIVIDE ( [EBIT L0 Reported], [Revenue] )
+
+// [01 Revenue & EBIT levels]  Margin excl. realignment & battery (headline adjusted).
+FactHalfYear[Margin L1] =
+DIVIDE ( [EBIT L1], [Revenue] )
+
+// [01 Revenue & EBIT levels]  Margin also excl. US tariffs (headline adjusted).
+FactHalfYear[Margin L2] =
+DIVIDE ( [EBIT L2], [Revenue] )
+
+// [01 Revenue & EBIT levels]  How much the disclosed one-offs depress the reported margin, in margin points.
+FactHalfYear[Margin L1 minus L0 (pp)] =
+( [Margin L1] - [Margin L0] ) * 100
+
+// [01 Revenue & EBIT levels]  +/- uncertainty of the added-back items: EUR 50m per item rounded to 0.1bn, doubled for derived H2 (A-09).
+FactHalfYear[Adjustment Rounding Band] =
+SUM ( FactHalfYear[rounding_band_eur_m] )
+
+// [01 Revenue & EBIT levels]  Value per step of the L0 -> L1 -> L2 waterfall (use with DimLevelStep[lstep_name]; waterfall total = L2).
+FactHalfYear[Level Bridge Value] =
+SWITCH (
+    SELECTEDVALUE ( DimLevelStep[lstep_id] ),
+    "LB0", [EBIT L0 Reported],
+    "LB1", [Adj Realignment Battery],
+    "LB2", [Adj US Tariffs]
+)
+
+// [02 L3 supplementary sensitivity]  Automotive D&A excluding disclosed impairments (A12 - X05; A-03, A-04).
+FactHalfYear[Clean DA] =
+SUM ( FactHalfYear[da_total] ) - SUM ( FactHalfYear[impairment_used] )
+
+// [02 L3 supplementary sensitivity]  Automotive capitalised development costs (A06).
+FactHalfYear[Capitalised Dev Costs] =
+SUM ( FactHalfYear[rd_capitalised] )
+
+// [02 L3 supplementary sensitivity]  SUPPLEMENTARY HYBRID SENSITIVITY: L1 + clean automotive D&A - automotive capitalised development costs. Not underlying profitability; never headline.
+FactHalfYear[EBIT L3 Hybrid Sensitivity] =
+[EBIT L1] + [Clean DA] - [Capitalised Dev Costs]
+
+// [02 L3 supplementary sensitivity]  SUPPLEMENTARY HYBRID SENSITIVITY margin. Not a KPI.
+FactHalfYear[Margin L3 Hybrid Sensitivity] =
+DIVIDE ( [EBIT L3 Hybrid Sensitivity], [Revenue] )
+
+// [02 L3 supplementary sensitivity]  L3 if the H1 2026 impairments are NOT inside D&A (assumption A-04 false).
+FactHalfYear[EBIT L3 Hybrid Sensitivity alt A-04] =
+CALCULATE ( SUM ( FactSensitivity[value_eur_m] ), FactSensitivity[sensitivity_id] = "SENS_A04_L3" )
+
+// [02 L3 supplementary sensitivity]  Fixed warning text for every L3 visual.
+FactHalfYear[L3 Warning] =
+"L3 = SUPPLEMENTARY HYBRID SENSITIVITY: group EBIT mixed with automotive-only D&A and R&D. Not underlying profitability - not a KPI."
+
+// [03 Prior year (same half)]  Same half of the prior year; blank when outside the analysis window.
+FactHalfYear[Prior Period Code] =
+SELECTEDVALUE ( DimPeriod[prior_same_half_code] )
+
+// [03 Prior year (same half)]  [Revenue] in the same half of the prior year.
+FactHalfYear[Revenue PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [EBIT L0 Reported] in the same half of the prior year.
+FactHalfYear[EBIT L0 PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [EBIT L0 Reported], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [EBIT L1] in the same half of the prior year.
+FactHalfYear[EBIT L1 PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [EBIT L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [EBIT L2] in the same half of the prior year.
+FactHalfYear[EBIT L2 PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [EBIT L2], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Margin L0] in the same half of the prior year.
+FactHalfYear[Margin L0 PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Margin L0], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Margin L1] in the same half of the prior year.
+FactHalfYear[Margin L1 PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Margin L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Margin L2] in the same half of the prior year.
+FactHalfYear[Margin L2 PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Margin L2], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Adj Realignment Battery] in the same half of the prior year.
+FactHalfYear[Adj Realignment PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Adj Realignment Battery], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Adj US Tariffs] in the same half of the prior year.
+FactHalfYear[Adj Tariffs PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Adj US Tariffs], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Capitalised Dev Costs] in the same half of the prior year.
+FactHalfYear[Capitalised Dev Costs PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Capitalised Dev Costs], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Clean DA] in the same half of the prior year.
+FactHalfYear[Clean DA PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Clean DA], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [FS EBIT] in the same half of the prior year.
+FactHalfYear[FS EBIT PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [FS EBIT], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [RD PL Charge] in the same half of the prior year.
+FactHalfYear[RD PL Charge PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [RD PL Charge], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Cap Rate Calc] in the same half of the prior year.
+FactHalfYear[Cap Rate Calc PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Cap Rate Calc], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Auto Revenue] in the same half of the prior year.
+FactHalfYear[Auto Revenue PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Auto Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Vehicle Sales] in the same half of the prior year.
+FactHalfYear[Vehicle Sales PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Vehicle Sales], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [ASP (EUR k)] in the same half of the prior year.
+FactHalfYear[ASP PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [ASP (EUR k)], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [Auto NCF] in the same half of the prior year.
+FactHalfYear[Auto NCF PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Auto NCF], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  [NCF Margin] in the same half of the prior year.
+FactHalfYear[NCF Margin PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [NCF Margin], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [03 Prior year (same half)]  Group revenue change vs same half prior year.
+FactHalfYear[YoY Revenue %] =
+IF ( NOT ISBLANK ( [Revenue PY] ), DIVIDE ( [Revenue], [Revenue PY] ) - 1 )
+
+// [03 Prior year (same half)]  Change in reported EBIT, EUR m.
+FactHalfYear[YoY EBIT L0] =
+IF ( NOT ISBLANK ( [EBIT L0 PY] ), [EBIT L0 Reported] - [EBIT L0 PY] )
+
+// [03 Prior year (same half)]  Change in L1 EBIT, EUR m.
+FactHalfYear[YoY EBIT L1] =
+IF ( NOT ISBLANK ( [EBIT L1 PY] ), [EBIT L1] - [EBIT L1 PY] )
+
+// [03 Prior year (same half)]  Change in L2 EBIT, EUR m.
+FactHalfYear[YoY EBIT L2] =
+IF ( NOT ISBLANK ( [EBIT L2 PY] ), [EBIT L2] - [EBIT L2 PY] )
+
+// [03 Prior year (same half)]  Change in reported margin, pp.
+FactHalfYear[YoY Margin L0 (pp)] =
+IF ( NOT ISBLANK ( [Margin L0 PY] ), ( [Margin L0] - [Margin L0 PY] ) * 100 )
+
+// [03 Prior year (same half)]  Change in L1 margin, pp.
+FactHalfYear[YoY Margin L1 (pp)] =
+IF ( NOT ISBLANK ( [Margin L1 PY] ), ( [Margin L1] - [Margin L1 PY] ) * 100 )
+
+// [03 Prior year (same half)]  Change in L2 margin, pp.
+FactHalfYear[YoY Margin L2 (pp)] =
+IF ( NOT ISBLANK ( [Margin L2 PY] ), ( [Margin L2] - [Margin L2 PY] ) * 100 )
+
+// [03 Prior year (same half)]  Change in clean automotive D&A, EUR m.
+FactHalfYear[YoY Clean DA] =
+IF ( NOT ISBLANK ( [Clean DA PY] ), [Clean DA] - [Clean DA PY] )
+
+// [03 Prior year (same half)]  Change in R&D P&L charge, EUR m.
+FactHalfYear[YoY RD PL Charge] =
+IF ( NOT ISBLANK ( [RD PL Charge PY] ), [RD PL Charge] - [RD PL Charge PY] )
+
+// [03 Prior year (same half)]  Change in the capitalisation rate, pp.
+FactHalfYear[YoY Cap Rate (pp)] =
+IF ( NOT ISBLANK ( [Cap Rate Calc PY] ), ( [Cap Rate Calc] - [Cap Rate Calc PY] ) * 100 )
+
+// [03 Prior year (same half)]  Change in automotive revenue, EUR m.
+FactHalfYear[YoY Auto Revenue] =
+IF ( NOT ISBLANK ( [Auto Revenue PY] ), [Auto Revenue] - [Auto Revenue PY] )
+
+// [03 Prior year (same half)]  Change in wholesale vehicle sales.
+FactHalfYear[YoY Vehicle Sales %] =
+IF ( NOT ISBLANK ( [Vehicle Sales PY] ), DIVIDE ( [Vehicle Sales], [Vehicle Sales PY] ) - 1 )
+
+// [03 Prior year (same half)]  Change in ASP (automotive revenue per vehicle sold).
+FactHalfYear[YoY ASP %] =
+IF ( NOT ISBLANK ( [ASP PY] ), DIVIDE ( [ASP (EUR k)], [ASP PY] ) - 1 )
+
+// [03 Prior year (same half)]  Change in automotive net cash flow margin, pp.
+FactHalfYear[YoY NCF Margin (pp)] =
+IF ( NOT ISBLANK ( [NCF Margin PY] ), ( [NCF Margin] - [NCF Margin PY] ) * 100 )
+
+// [04 EBIT bridge (SQL)]  SQL bridge value per step (mart.v_ebit_bridge_yoy). Use with DimBridgeStep[step_name] in a waterfall.
+FactBridgeYoY[Bridge EUR m] =
+SUM ( FactBridgeYoY[eur_m] )
+
+// [04 EBIT bridge (SQL)]  SQL margin-point bridge per step; includes the revenue-denominator step; sums to the change in reported margin.
+FactBridgeYoY[Bridge pp] =
+SUM ( FactBridgeYoY[pp] )
+
+// [04 EBIT bridge (SQL)]  SQL bridge step S0_START.
+FactBridgeYoY[Bridge Start EBIT] =
+CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S0_START" )
+
+// [04 EBIT bridge (SQL)]  SQL bridge step S1_EXC.
+FactBridgeYoY[Bridge Exceptional] =
+CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S1_EXC" )
+
+// [04 EBIT bridge (SQL)]  SQL bridge step S2_TAR.
+FactBridgeYoY[Bridge Tariffs] =
+CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S2_TAR" )
+
+// [04 EBIT bridge (SQL)]  SQL bridge step S3_CAPDEV.
+FactBridgeYoY[Bridge Cap Dev] =
+CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S3_CAPDEV" )
+
+// [04 EBIT bridge (SQL)]  SQL bridge step S4_DA.
+FactBridgeYoY[Bridge Clean DA] =
+CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S4_DA" )
+
+// [04 EBIT bridge (SQL)]  SQL bridge step S5_FS.
+FactBridgeYoY[Bridge FS] =
+CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S5_FS" )
+
+// [04 EBIT bridge (SQL)]  SQL bridge step S6_RES.
+FactBridgeYoY[Bridge Residual] =
+CALCULATE ( [Bridge EUR m], DimBridgeStep[step_id] = "S6_RES" )
+
+// [04 EBIT bridge (SQL)]  Residual / other EBIT drivers in margin points.
+FactBridgeYoY[Bridge Residual pp] =
+CALCULATE ( [Bridge pp], DimBridgeStep[step_id] = "S6_RES" )
+
+// [04 EBIT bridge (SQL)]  Residual if the H1 2026 impairments are NOT inside D&A (A-04 false). Sensitivity only.
+FactBridgeYoY[Bridge Residual alt A-04] =
+CALCULATE ( SUM ( FactSensitivity[value_eur_m] ), FactSensitivity[sensitivity_id] = "SENS_A04_RES" )
+
+// [04 EBIT bridge (SQL)]  Sum of all bridge effects = change in reported EBIT.
+FactBridgeYoY[Bridge Components Total] =
+CALCULATE ( [Bridge EUR m], REMOVEFILTERS ( DimBridgeStep ), DimBridgeStep[step_id] <> "S0_START" )
+
+// [04 EBIT bridge (SQL)]  Lower disclosed one-offs as a share of the reported EBIT change. >100% = the whole reported gain (and more) comes from lower one-offs.
+FactBridgeYoY[One-offs Share of EBIT Change] =
+DIVIDE ( [Bridge Exceptional] + [Bridge Tariffs], [YoY EBIT L0] )
+
+// [04 EBIT bridge (SQL)]  QA: SQL bridge components - DAX change in reported EBIT. Must be 0.
+FactBridgeYoY[Bridge Closure Check] =
+[Bridge Components Total] - [YoY EBIT L0]
+
+// [04 EBIT bridge (SQL)]  QA: SQL pp bridge - DAX change in reported margin. Within 0.005 (3-dp rounding in SQL).
+FactBridgeYoY[Bridge pp Closure Check] =
+ROUND ( CALCULATE ( [Bridge pp], REMOVEFILTERS ( DimBridgeStep ) ) - [YoY Margin L0 (pp)], 4 )
+
+// [04 EBIT bridge (SQL)]  Financial Services operating profit (F02).
+FactHalfYear[FS EBIT] =
+SUM ( FactHalfYear[fs_ebit] )
+
+// [11 QA recompute]  DAX recomputation of the SQL bridge step (QA).
+FactHalfYear[Recompute Eff Exceptional] =
+IF ( NOT ISBLANK ( [Prior Period Code] ), - ( [Adj Realignment Battery] - [Adj Realignment PY] ) )
+
+// [11 QA recompute]  DAX recomputation (QA).
+FactHalfYear[Recompute Eff Tariffs] =
+IF ( NOT ISBLANK ( [Prior Period Code] ), - ( [Adj US Tariffs] - [Adj Tariffs PY] ) )
+
+// [11 QA recompute]  DAX recomputation (QA).
+FactHalfYear[Recompute Eff Cap Dev] =
+IF ( NOT ISBLANK ( [Prior Period Code] ), [Capitalised Dev Costs] - [Capitalised Dev Costs PY] )
+
+// [11 QA recompute]  DAX recomputation (QA).
+FactHalfYear[Recompute Eff Clean DA] =
+IF ( NOT ISBLANK ( [Prior Period Code] ), - ( [Clean DA] - [Clean DA PY] ) )
+
+// [11 QA recompute]  DAX recomputation (QA).
+FactHalfYear[Recompute Eff FS] =
+IF ( NOT ISBLANK ( [Prior Period Code] ), [FS EBIT] - [FS EBIT PY] )
+
+// [11 QA recompute]  DAX recomputation of residual / other EBIT drivers (QA).
+FactHalfYear[Recompute Residual] =
+IF ( NOT ISBLANK ( [Prior Period Code] ), [YoY EBIT L0] - [Recompute Eff Exceptional] - [Recompute Eff Tariffs] - [Recompute Eff Cap Dev] - [Recompute Eff Clean DA] - [Recompute Eff FS] )
+
+// [05 R&D & D&A]  Total automotive R&D costs (A05) - Porsche accounting definition, not a cash figure.
+FactHalfYear[RD Total Costs] =
+SUM ( FactHalfYear[rd_total] )
+
+// [05 R&D & D&A]  R&D costs expensed as incurred (A08).
+FactHalfYear[RD Expensed] =
+SUM ( FactHalfYear[rd_expensed] )
+
+// [05 R&D & D&A]  Amortisation of capitalised development costs (A09).
+FactHalfYear[Amortisation Cap RD] =
+SUM ( FactHalfYear[amort_capitalised_rd] )
+
+// [05 R&D & D&A]  R&D charge in the P&L = expensed + amortisation.
+FactHalfYear[RD PL Charge] =
+[RD Expensed] + [Amortisation Cap RD]
+
+// [05 R&D & D&A]  Capitalisation rate = capitalised / total R&D costs.
+FactHalfYear[Cap Rate Calc] =
+DIVIDE ( [Capitalised Dev Costs], [RD Total Costs] )
+
+// [05 R&D & D&A]  Capitalisation rate as published (A07); H1 periods only.
+FactHalfYear[Cap Rate Published] =
+IF ( HASONEVALUE ( DimPeriod[period_code] ), DIVIDE ( SUM ( FactHalfYear[rd_cap_rate_published] ), 100 ) )
+
+// [05 R&D & D&A]  >0: the P&L R&D charge is below total R&D costs (capitalisation supports EBIT).
+FactHalfYear[Net Capitalisation] =
+[Capitalised Dev Costs] - [Amortisation Cap RD]
+
+// [05 R&D & D&A]  R&D cost intensity.
+FactHalfYear[RD Total % Auto Revenue] =
+DIVIDE ( [RD Total Costs], [Auto Revenue] )
+
+// [05 R&D & D&A]  R&D P&L charge intensity.
+FactHalfYear[RD PL % Auto Revenue] =
+DIVIDE ( [RD PL Charge], [Auto Revenue] )
+
+// [05 R&D & D&A]  SQL: actual R&D P&L charge - charge at prior-year same-half capitalisation rate. >0 = extra charge (EBIT headwind); <0 = EBIT support. Illustrative counterfactual (amortisation held fixed).
+FactHalfYear[Cap Rate Effect (SQL)] =
+SUM ( FactHalfYear[sql_ebit_effect_of_cap_rate_change] )
+
+// [11 QA recompute]  DAX recomputation of the capitalisation-rate effect (QA).
+FactHalfYear[Cap Rate Effect (DAX recompute)] =
+IF ( NOT ISBLANK ( [Cap Rate Calc PY] ), [RD PL Charge] - ( [RD Total Costs] * ( 1 - [Cap Rate Calc PY] ) + [Amortisation Cap RD] ) )
+
+// [05 R&D & D&A]  Automotive D&A incl. impairments (A12).
+FactHalfYear[DA Total] =
+SUM ( FactHalfYear[da_total] )
+
+// [05 R&D & D&A]  Disclosed impairments inside automotive D&A as used (X05; A-03 = 0 where undisclosed; A-04 for H1 2026).
+FactHalfYear[Impairments in DA] =
+SUM ( FactHalfYear[impairment_used] )
+
+// [05 R&D & D&A]  FACT / assumption used for impairments in the selected half-year.
+FactHalfYear[Impairment Status] =
+SELECTEDVALUE ( FactHalfYear[impairment_status] )
+
+// [05 R&D & D&A]  Clean D&A intensity.
+FactHalfYear[Clean DA % Auto Revenue] =
+DIVIDE ( [Clean DA], [Auto Revenue] )
+
+// [06 Commercial]  Automotive sales revenue (A01).
+FactHalfYear[Auto Revenue] =
+SUM ( FactHalfYear[auto_revenue] )
+
+// [06 Commercial]  Wholesale vehicle sales (O04) - drives revenue.
+FactHalfYear[Vehicle Sales] =
+SUM ( FactHalfYear[vehicle_sales] )
+
+// [06 Commercial]  Retail deliveries (O01).
+FactHalfYear[Retail Deliveries] =
+SUM ( FactHalfYear[deliveries] )
+
+// [06 Commercial]  Porsche ASP definition: automotive revenue per vehicle sold, EUR k.
+FactHalfYear[ASP (EUR k)] =
+DIVIDE ( [Auto Revenue] * 1000, [Vehicle Sales] )
+
+// [06 Commercial]  ASP as published by Porsche (O06), rounded to EUR 1k.
+FactHalfYear[ASP Published (EUR k)] =
+IF ( HASONEVALUE ( DimPeriod[period_code] ), SUM ( FactHalfYear[asp_published_eur_k] ) )
+
+// [06 Commercial]  SQL: change in vehicle sales x prior ASP / 1000, EUR m.
+FactHalfYear[Volume Effect (SQL)] =
+SUM ( FactHalfYear[sql_volume_effect] )
+
+// [06 Commercial]  SQL: change in ASP x current vehicle sales / 1000, EUR m. A residual of price, model/derivative mix, options, FX and non-vehicle revenue - not 'price'.
+FactHalfYear[ASP Effect (SQL)] =
+SUM ( FactHalfYear[sql_asp_effect] )
+
+// [11 QA recompute]  DAX recomputation (QA).
+FactHalfYear[Volume Effect (DAX recompute)] =
+IF ( NOT ISBLANK ( [Vehicle Sales PY] ), ( [Vehicle Sales] - [Vehicle Sales PY] ) * [ASP PY] / 1000 )
+
+// [11 QA recompute]  DAX recomputation (QA).
+FactHalfYear[ASP Effect (DAX recompute)] =
+IF ( NOT ISBLANK ( [ASP PY] ), ( [ASP (EUR k)] - [ASP PY] ) * [Vehicle Sales] / 1000 )
+
+// [11 QA recompute]  QA: volume + ASP effect - revenue change; within 0.1 (SQL rounds each effect to 0.1).
+FactHalfYear[Volume ASP Closure Check] =
+IF ( NOT ISBLANK ( [Auto Revenue PY] ), [Volume Effect (SQL)] + [ASP Effect (SQL)] - [YoY Auto Revenue] )
+
+// [06 Commercial]  PROXY for channel stock movement (wholesale - retail units).
+FactHalfYear[Wholesale minus Retail] =
+[Vehicle Sales] - [Retail Deliveries]
+
+// [06 Commercial]  BEV share of deliveries as published (O07); H1 periods only.
+FactHalfYear[BEV Share Published] =
+IF ( HASONEVALUE ( DimPeriod[period_code] ), DIVIDE ( SUM ( FactHalfYear[bev_share_published] ), 100 ) )
+
+// [06 Commercial]  Retail deliveries by model line / region. Always filter FactDeliveryMix[dimension] to one value.
+FactDeliveryMix[Mix Deliveries] =
+SUM ( FactDeliveryMix[deliveries] )
+
+// [06 Commercial]  Share of deliveries within the selected dimension and period (removes only the member filters; the period filter from DimPeriod is kept).
+FactDeliveryMix[Mix Share] =
+DIVIDE ( [Mix Deliveries], CALCULATE ( [Mix Deliveries], REMOVEFILTERS ( FactDeliveryMix[member_id], FactDeliveryMix[member_name], FactDeliveryMix[member_sort] ) ) )
+
+// [06 Commercial]  Mix share in the same half of the prior year.
+FactDeliveryMix[Mix Share PY] =
+VAR _p = [Prior Period Code]
+RETURN
+    IF ( NOT ISBLANK ( _p ), CALCULATE ( [Mix Share], REMOVEFILTERS ( DimPeriod ), DimPeriod[period_code] = _p ) )
+
+// [06 Commercial]  Change in delivery share, pp.
+FactDeliveryMix[Mix Share Change (pp)] =
+IF ( NOT ISBLANK ( [Mix Share PY] ), ( [Mix Share] - [Mix Share PY] ) * 100 )
+
+// [11 QA recompute]  QA: model-line deliveries - total deliveries. Must be 0.
+FactDeliveryMix[Mix Total Check] =
+CALCULATE ( [Mix Deliveries], FactDeliveryMix[dimension] = "model" ) - [Retail Deliveries]
+
+// [07 Cash]  Automotive net cash flow (A13).
+FactHalfYear[Auto NCF] =
+SUM ( FactHalfYear[auto_net_cash_flow] )
+
+// [07 Cash]  Automotive cash flow from operating activities (A13a).
+FactHalfYear[Auto CFO] =
+SUM ( FactHalfYear[auto_cfo] )
+
+// [07 Cash]  Automotive investing activities of current operations (A13b).
+FactHalfYear[Auto CFI] =
+SUM ( FactHalfYear[auto_cfi_operating] )
+
+// [07 Cash]  Automotive EBITDA (A03).
+FactHalfYear[Auto EBITDA] =
+SUM ( FactHalfYear[auto_ebitda] )
+
+// [07 Cash]  Automotive operating profit (A02).
+FactHalfYear[Auto EBIT] =
+SUM ( FactHalfYear[auto_ebit] )
+
+// [07 Cash]  Automotive capex (A10).
+FactHalfYear[Auto Capex] =
+SUM ( FactHalfYear[capex] )
+
+// [07 Cash]  Automotive net cash flow / automotive revenue.
+FactHalfYear[NCF Margin] =
+DIVIDE ( [Auto NCF], [Auto Revenue] )
+
+// [07 Cash]  Automotive EBITDA margin (calculated).
+FactHalfYear[EBITDA Margin] =
+DIVIDE ( [Auto EBITDA], [Auto Revenue] )
+
+// [07 Cash]  Automotive EBITDA margin as published (A04); H1 periods only.
+FactHalfYear[EBITDA Margin Published] =
+IF ( HASONEVALUE ( DimPeriod[period_code] ), DIVIDE ( SUM ( FactHalfYear[auto_ebitda_margin_published] ), 100 ) )
+
+// [07 Cash]  Cash conversion of EBITDA.
+FactHalfYear[CFO to EBITDA] =
+DIVIDE ( [Auto CFO], [Auto EBITDA] )
+
+// [07 Cash]  Net cash flow per euro of automotive EBIT (blank if EBIT <= 0).
+FactHalfYear[NCF to EBIT] =
+IF ( [Auto EBIT] > 0, DIVIDE ( [Auto NCF], [Auto EBIT] ) )
+
+// [07 Cash]  EBITDA - capex - capitalised development costs.
+FactHalfYear[Simple Cash Proxy] =
+[Auto EBITDA] - [Auto Capex] - [Capitalised Dev Costs]
+
+// [07 Cash]  Working capital, tax, provisions and other items (not decomposed).
+FactHalfYear[NCF minus Proxy] =
+[Auto NCF] - [Simple Cash Proxy]
+
+// [07 Cash]  Automotive net liquidity at the end of the latest period in context (stock, not summed).
+FactHalfYear[Net Liquidity (period end)] =
+VAR _k = MAX ( DimPeriod[sort_key] )
+RETURN
+    CALCULATE ( SUM ( FactHalfYear[auto_net_liquidity] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[sort_key] = _k )
+
+// [07 Cash]  Qualitative cash timing notes from the SQL mart.
+FactHalfYear[Cash Notes] =
+SELECTEDVALUE ( FactHalfYear[cash_notes] )
+
+// [11 QA recompute]  QA: NCF - (CFO + CFI); within 0.5 (AF-12 rounding).
+FactHalfYear[NCF Identity Check] =
+ROUND ( [Auto NCF] - ( [Auto CFO] + [Auto CFI] ), 3 )
+
+// [08 Latest half-year (fixed)]  Label of the latest published half-year.
+FactHalfYear[Latest Period Label] =
+CALCULATE ( SELECTEDVALUE ( DimPeriod[period_label] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Revenue] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Revenue] =
+CALCULATE ( [Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [EBIT L0 Reported] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest EBIT L0] =
+CALCULATE ( [EBIT L0 Reported], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Adj Realignment Battery] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Adj Realignment] =
+CALCULATE ( [Adj Realignment Battery], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Adj US Tariffs] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Adj Tariffs] =
+CALCULATE ( [Adj US Tariffs], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Margin L0] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Margin L0] =
+CALCULATE ( [Margin L0], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Margin L1] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Margin L1] =
+CALCULATE ( [Margin L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Margin L2] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Margin L2] =
+CALCULATE ( [Margin L2], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Auto Revenue] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Auto Revenue] =
+CALCULATE ( [Auto Revenue], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Auto EBITDA] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Auto EBITDA] =
+CALCULATE ( [Auto EBITDA], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Auto NCF] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest Auto NCF] =
+CALCULATE ( [Auto NCF], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [EBITDA Margin] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest EBITDA Margin] =
+CALCULATE ( [EBITDA Margin], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [NCF Margin] in the latest published half-year, independent of the page slicer.
+FactHalfYear[Latest NCF Margin] =
+CALCULATE ( [NCF Margin], REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+
+// [08 Latest half-year (fixed)]  [Margin L0] in H2 of the prior fiscal year (comparator for guidance).
+FactHalfYear[Prior H2 Margin L0] =
+VAR _fy = CALCULATE ( MAX ( DimPeriod[fiscal_year] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+RETURN
+    CALCULATE ( [Margin L0], REMOVEFILTERS ( DimPeriod ), DimPeriod[fiscal_year] = _fy - 1, DimPeriod[half_no] = 2 )
+
+// [08 Latest half-year (fixed)]  [Margin L1] in H2 of the prior fiscal year (comparator for guidance).
+FactHalfYear[Prior H2 Margin L1] =
+VAR _fy = CALCULATE ( MAX ( DimPeriod[fiscal_year] ), REMOVEFILTERS ( DimPeriod ), DimPeriod[is_latest] = TRUE () )
+RETURN
+    CALCULATE ( [Margin L1], REMOVEFILTERS ( DimPeriod ), DimPeriod[fiscal_year] = _fy - 1, DimPeriod[half_no] = 2 )
+
+// [09 Guidance scenarios (NOT forecasts)]  Fixed disclaimer for every scenario visual.
+FactGuidance[Scenario Disclaimer] =
+"SCENARIO COMBINATIONS OF PORSCHE FY2026 GUIDANCE RANGE ENDS - ARITHMETIC ONLY - NOT FORECASTS - NO PROBABILITIES"
+
+// [09 Guidance scenarios (NOT forecasts)]  Number of combinations in context (1 = one combination selected).
+FactGuidance[Scen Rows Selected] =
+COUNTROWS ( FactGuidance )
+
+// [09 Guidance scenarios (NOT forecasts)]  Describes the selected combination.
+FactGuidance[Scen Selected Label] =
+IF ( COUNTROWS ( FactGuidance ) = 1, "Selected combination: " & SELECTEDVALUE ( FactGuidance[scenario_id] ) & " (revenue / RoS / extraordinary end)", "Select one end for revenue, RoS and extraordinary expenses" )
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 L0 margin implied by the selected combination (SQL v_guidance_2026). Arithmetic, not a forecast.
+FactGuidance[Scen H2 Margin L0] =
+IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_margin_l0_pct] ) / 100 )
+
+// [09 Guidance scenarios (NOT forecasts)]  Lowest H2 2026 L0 margin across the 27 combinations.
+FactGuidance[Scen Min Margin L0] =
+CALCULATE ( MIN ( FactGuidance[h2_margin_l0_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 L0 margin when ALL guidance midpoints are combined (not a most-likely case).
+FactGuidance[Scen Mid Margin L0] =
+CALCULATE ( SUM ( FactGuidance[h2_margin_l0_pct] ), REMOVEFILTERS ( FactGuidance ), FactGuidance[scenario_id] = "mid/mid/mid" ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  Highest H2 2026 L0 margin across the 27 combinations.
+FactGuidance[Scen Max Margin L0] =
+CALCULATE ( MAX ( FactGuidance[h2_margin_l0_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 L1 margin implied by the selected combination (SQL v_guidance_2026). Arithmetic, not a forecast.
+FactGuidance[Scen H2 Margin L1] =
+IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_margin_l1_pct] ) / 100 )
+
+// [09 Guidance scenarios (NOT forecasts)]  Lowest H2 2026 L1 margin across the 27 combinations.
+FactGuidance[Scen Min Margin L1] =
+CALCULATE ( MIN ( FactGuidance[h2_margin_l1_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 L1 margin when ALL guidance midpoints are combined (not a most-likely case).
+FactGuidance[Scen Mid Margin L1] =
+CALCULATE ( SUM ( FactGuidance[h2_margin_l1_pct] ), REMOVEFILTERS ( FactGuidance ), FactGuidance[scenario_id] = "mid/mid/mid" ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  Highest H2 2026 L1 margin across the 27 combinations.
+FactGuidance[Scen Max Margin L1] =
+CALCULATE ( MAX ( FactGuidance[h2_margin_l1_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 L2 margin implied by the selected combination (SQL v_guidance_2026). Arithmetic, not a forecast.
+FactGuidance[Scen H2 Margin L2] =
+IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_margin_l2_pct] ) / 100 )
+
+// [09 Guidance scenarios (NOT forecasts)]  Lowest H2 2026 L2 margin across the 27 combinations.
+FactGuidance[Scen Min Margin L2] =
+CALCULATE ( MIN ( FactGuidance[h2_margin_l2_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 L2 margin when ALL guidance midpoints are combined (not a most-likely case).
+FactGuidance[Scen Mid Margin L2] =
+CALCULATE ( SUM ( FactGuidance[h2_margin_l2_pct] ), REMOVEFILTERS ( FactGuidance ), FactGuidance[scenario_id] = "mid/mid/mid" ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  Highest H2 2026 L2 margin across the 27 combinations.
+FactGuidance[Scen Max Margin L2] =
+CALCULATE ( MAX ( FactGuidance[h2_margin_l2_pct] ), REMOVEFILTERS ( FactGuidance ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 revenue implied (FY guidance end - H1 2026 actual).
+FactGuidance[Scen H2 Revenue] =
+IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_rev] ) )
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 reported EBIT implied.
+FactGuidance[Scen H2 EBIT L0] =
+IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_ebit_l0] ) )
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 L1 EBIT implied (A-06: extraordinary guidance is net).
+FactGuidance[Scen H2 EBIT L1] =
+IF ( COUNTROWS ( FactGuidance ) = 1, SUM ( FactGuidance[h2_ebit_l1] ) )
+
+// [09 Guidance scenarios (NOT forecasts)]  Selected combination's H2 L1 margin minus the latest actual H1 L1 margin, pp. Arithmetic gap, not a forecast.
+FactGuidance[Scen H2 L1 vs Latest H1 (pp)] =
+( [Scen H2 Margin L1] - [Latest Margin L1] ) * 100
+
+// [09 Guidance scenarios (NOT forecasts)]  All-midpoints H2 L1 margin minus latest H1 L1 margin, pp.
+FactGuidance[Scen Mid L1 vs Latest H1 (pp)] =
+( [Scen Mid Margin L1] - [Latest Margin L1] ) * 100
+
+// [11 QA recompute]  DAX recomputation of the H2 L0 margin from guidance inputs and H1 actuals (QA).
+FactGuidance[Scen H2 Margin L0 (DAX recompute)] =
+VAR _r = SELECTEDVALUE ( FactGuidance[fy_rev] )
+VAR _ros = SELECTEDVALUE ( FactGuidance[fy_ros] )
+RETURN
+    IF ( COUNTROWS ( FactGuidance ) = 1, DIVIDE ( _r * _ros / 100 - [Latest EBIT L0], _r - [Latest Revenue] ) )
+
+// [11 QA recompute]  DAX recomputation (QA).
+FactGuidance[Scen H2 Margin L1 (DAX recompute)] =
+VAR _r = SELECTEDVALUE ( FactGuidance[fy_rev] )
+VAR _ros = SELECTEDVALUE ( FactGuidance[fy_ros] )
+VAR _exc = SELECTEDVALUE ( FactGuidance[fy_exc] )
+RETURN
+    IF ( COUNTROWS ( FactGuidance ) = 1, DIVIDE ( _r * _ros / 100 - [Latest EBIT L0] + _exc - [Latest Adj Realignment], _r - [Latest Revenue] ) )
+
+// [11 QA recompute]  DAX recomputation (QA; A-07: H2 tariffs = H1).
+FactGuidance[Scen H2 Margin L2 (DAX recompute)] =
+VAR _r = SELECTEDVALUE ( FactGuidance[fy_rev] )
+VAR _ros = SELECTEDVALUE ( FactGuidance[fy_ros] )
+VAR _exc = SELECTEDVALUE ( FactGuidance[fy_exc] )
+RETURN
+    IF ( COUNTROWS ( FactGuidance ) = 1, DIVIDE ( _r * _ros / 100 - [Latest EBIT L0] + _exc - [Latest Adj Realignment] + [Latest Adj Tariffs], _r - [Latest Revenue] ) )
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 automotive margin implied by the selected revenue end (group slicer) and margin end (automotive slicer). Uses A-05. Not a forecast.
+FactGuidanceAuto[Scen Auto H2 EBITDA Margin] =
+VAR _t = CALCULATETABLE ( FactGuidanceAuto, TREATAS ( VALUES ( FactGuidance[case_rev] ), FactGuidanceAuto[case_rev] ) )
+RETURN
+    IF ( COUNTROWS ( _t ) = 1, SUMX ( _t, FactGuidanceAuto[h2_auto_ebitda_margin_pct] ) / 100 )
+
+// [09 Guidance scenarios (NOT forecasts)]  Lowest across the 9 automotive combinations.
+FactGuidanceAuto[Scen Auto Min EBITDA Margin] =
+CALCULATE ( MIN ( FactGuidanceAuto[h2_auto_ebitda_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  All-midpoints automotive combination.
+FactGuidanceAuto[Scen Auto Mid EBITDA Margin] =
+CALCULATE ( SUM ( FactGuidanceAuto[h2_auto_ebitda_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ), FactGuidanceAuto[scenario_id] = "mid/mid" ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  Highest across the 9 automotive combinations.
+FactGuidanceAuto[Scen Auto Max EBITDA Margin] =
+CALCULATE ( MAX ( FactGuidanceAuto[h2_auto_ebitda_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  H2 2026 automotive margin implied by the selected revenue end (group slicer) and margin end (automotive slicer). Uses A-05. Not a forecast.
+FactGuidanceAuto[Scen Auto H2 NCF Margin] =
+VAR _t = CALCULATETABLE ( FactGuidanceAuto, TREATAS ( VALUES ( FactGuidance[case_rev] ), FactGuidanceAuto[case_rev] ) )
+RETURN
+    IF ( COUNTROWS ( _t ) = 1, SUMX ( _t, FactGuidanceAuto[h2_auto_ncf_margin_pct] ) / 100 )
+
+// [09 Guidance scenarios (NOT forecasts)]  Lowest across the 9 automotive combinations.
+FactGuidanceAuto[Scen Auto Min NCF Margin] =
+CALCULATE ( MIN ( FactGuidanceAuto[h2_auto_ncf_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  All-midpoints automotive combination.
+FactGuidanceAuto[Scen Auto Mid NCF Margin] =
+CALCULATE ( SUM ( FactGuidanceAuto[h2_auto_ncf_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ), FactGuidanceAuto[scenario_id] = "mid/mid" ) / 100
+
+// [09 Guidance scenarios (NOT forecasts)]  Highest across the 9 automotive combinations.
+FactGuidanceAuto[Scen Auto Max NCF Margin] =
+CALCULATE ( MAX ( FactGuidanceAuto[h2_auto_ncf_margin_pct] ), REMOVEFILTERS ( FactGuidanceAuto ) ) / 100
+
+// [11 QA recompute]  DAX recomputation with A-05 (automotive share of H1 2026) (QA).
+FactGuidanceAuto[Scen Auto H2 EBITDA Margin (DAX recompute)] =
+VAR _share = DIVIDE ( [Latest Auto Revenue], [Latest Revenue] )
+VAR _fyauto = SELECTEDVALUE ( FactGuidanceAuto[fy_grp_rev] ) * _share
+RETURN
+    IF ( COUNTROWS ( FactGuidanceAuto ) = 1, DIVIDE ( SELECTEDVALUE ( FactGuidanceAuto[fy_ebitda_margin] ) / 100 * _fyauto - [Latest Auto EBITDA], _fyauto - [Latest Auto Revenue] ) )
+
+// [11 QA recompute]  DAX recomputation with A-05 (automotive share of H1 2026) (QA).
+FactGuidanceAuto[Scen Auto H2 NCF Margin (DAX recompute)] =
+VAR _share = DIVIDE ( [Latest Auto Revenue], [Latest Revenue] )
+VAR _fyauto = SELECTEDVALUE ( FactGuidanceAuto[fy_grp_rev] ) * _share
+RETURN
+    IF ( COUNTROWS ( FactGuidanceAuto ) = 1, DIVIDE ( SELECTEDVALUE ( FactGuidanceAuto[fy_ncf_margin] ) / 100 * _fyauto - [Latest Auto NCF], _fyauto - [Latest Auto Revenue] ) )
+
+// [10 Recovery signals]  Direction of the headline adjusted (L1) margin.
+FactHalfYear[Signal Underlying Margin] =
+VAR _d = [YoY Margin L1 (pp)]
+RETURN
+    IF ( ISBLANK ( _d ), "No prior-year half in window",
+        "L1 margin " & FORMAT ( _d, "+0.0;-0.0" ) & " pp vs same half prior year: " & IF ( _d < 0, "underlying margin DOWN", "underlying margin UP" ) )
+
+// [10 Recovery signals]  Is the reported EBIT gain explained by lower disclosed one-offs?
+FactHalfYear[Signal Recovery Source] =
+VAR _exc = [Bridge Exceptional] + [Bridge Tariffs]
+VAR _d = [YoY EBIT L0]
+RETURN
+    SWITCH ( TRUE (),
+        ISBLANK ( _d ), "No prior-year half in window",
+        _d > 0 && _exc >= _d, "Lower one-offs (" & FORMAT ( _exc, "+#,##0;-#,##0" ) & " EUR m) exceed the whole reported EBIT gain (" & FORMAT ( _d, "+#,##0;-#,##0" ) & " EUR m)",
+        _d > 0, "Lower one-offs explain " & FORMAT ( DIVIDE ( _exc, _d ), "0%" ) & " of the reported EBIT gain",
+        "Reported EBIT " & FORMAT ( _d, "+#,##0;-#,##0" ) & " EUR m vs same half prior year" )
+
+// [10 Recovery signals]  Sign of the unexplained part of the EBIT change.
+FactHalfYear[Signal Other Drivers] =
+VAR _r = [Bridge Residual]
+RETURN
+    IF ( ISBLANK ( _r ), "No prior-year half in window",
+        "Residual / other EBIT drivers " & FORMAT ( _r, "+#,##0;-#,##0" ) & " EUR m (" & IF ( _r < 0, "negative", "positive" ) & "; not separated - not operating performance)" )
+
+// [10 Recovery signals]  Does value (ASP) compensate for lower volume?
+FactHalfYear[Signal Value over Volume] =
+VAR _v = [Volume Effect (SQL)]
+VAR _a = [ASP Effect (SQL)]
+RETURN
+    SWITCH ( TRUE (),
+        ISBLANK ( _v ), "No prior-year half in window",
+        _v < 0 && _a > 0, "ASP effect " & FORMAT ( _a, "+#,##0" ) & " offsets " & FORMAT ( DIVIDE ( _a, - _v ), "0%" ) & " of the volume effect " & FORMAT ( _v, "#,##0" ) & " EUR m",
+        "Volume effect " & FORMAT ( _v, "+#,##0;-#,##0" ) & ", ASP effect " & FORMAT ( _a, "+#,##0;-#,##0" ) & " EUR m" )
+
+// [10 Recovery signals]  Non-cash support or headwind from the capitalisation rate (illustrative counterfactual).
+FactHalfYear[Signal Capitalisation] =
+VAR _c = [Cap Rate Effect (SQL)]
+RETURN
+    IF ( ISBLANK ( _c ), "No prior-year half in window",
+        IF ( _c < 0,
+            "Higher capitalisation rate lowered the R&D P&L charge by " & FORMAT ( - _c, "#,##0" ) & " EUR m vs the prior-year rate (non-cash EBIT support)",
+            "Lower capitalisation rate added " & FORMAT ( _c, "#,##0" ) & " EUR m to the R&D P&L charge vs the prior-year rate (non-cash EBIT headwind)" ) )
+
+// [10 Recovery signals]  Does cash move with profit?
+FactHalfYear[Signal Cash] =
+VAR _d = [YoY NCF Margin (pp)]
+RETURN
+    IF ( ISBLANK ( _d ), "No prior-year half in window",
+        "Automotive NCF margin " & FORMAT ( [NCF Margin], "0.0%" ) & " (" & FORMAT ( _d, "+0.0;-0.0" ) & " pp vs same half prior year)" )
+
+// [10 Recovery signals]  What the guidance requires from H2 relative to the latest actual half-year.
+FactGuidance[Signal Guidance Gap] =
+VAR _mid = [Scen Mid Margin L1]
+VAR _h1 = [Latest Margin L1]
+RETURN
+    "All-midpoint guidance combination implies an H2 L1 margin of " & FORMAT ( _mid, "0.0%" ) & " vs " & FORMAT ( _h1, "0.0%" ) & " in " & [Latest Period Label]
+        & " (" & FORMAT ( ( _mid - _h1 ) * 100, "+0.0;-0.0" ) & " pp) - arithmetic, not a forecast" 
+
+// [10 Recovery signals]  Conditional-format colour (red = down, green = up).
+FactHalfYear[Signal Color L1] =
+IF ( [YoY Margin L1 (pp)] < 0, "#B3261E", IF ( [YoY Margin L1 (pp)] > 0, "#1B6E3C", "#5F6368" ) )
+
+// [10 Recovery signals]  Conditional-format colour.
+FactHalfYear[Signal Color Residual] =
+IF ( [Bridge Residual] < 0, "#B3261E", IF ( [Bridge Residual] > 0, "#1B6E3C", "#5F6368" ) )
+
+// [13 Level-driven (legend = DimLevel)]  EBIT for the level on the legend. L3 appears only where DimLevel[is_headline] is not filtered to TRUE (sensitivity visuals).
+FactHalfYear[EBIT by Level] =
+SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+    "L0", [EBIT L0 Reported],
+    "L1", [EBIT L1],
+    "L2", [EBIT L2],
+    "L3", [EBIT L3 Hybrid Sensitivity] )
+
+// [13 Level-driven (legend = DimLevel)]  Margin for the level on the legend.
+FactHalfYear[Margin by Level] =
+SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+    "L0", [Margin L0],
+    "L1", [Margin L1],
+    "L2", [Margin L2],
+    "L3", [Margin L3 Hybrid Sensitivity] )
+
+// [13 Level-driven (legend = DimLevel)]  Min of the H2 2026 implied margin across the 27 combinations, for the level on the axis (L0-L2 only; no L3 scenario exists).
+FactGuidance[Scen Min by Level] =
+SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+    "L0", [Scen Min Margin L0],
+    "L1", [Scen Min Margin L1],
+    "L2", [Scen Min Margin L2] )
+
+// [13 Level-driven (legend = DimLevel)]  Mid of the H2 2026 implied margin across the 27 combinations, for the level on the axis (L0-L2 only; no L3 scenario exists).
+FactGuidance[Scen Mid by Level] =
+SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+    "L0", [Scen Mid Margin L0],
+    "L1", [Scen Mid Margin L1],
+    "L2", [Scen Mid Margin L2] )
+
+// [13 Level-driven (legend = DimLevel)]  Max of the H2 2026 implied margin across the 27 combinations, for the level on the axis (L0-L2 only; no L3 scenario exists).
+FactGuidance[Scen Max by Level] =
+SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+    "L0", [Scen Max Margin L0],
+    "L1", [Scen Max Margin L1],
+    "L2", [Scen Max Margin L2] )
+
+// [13 Level-driven (legend = DimLevel)]  Latest actual half-year margin for the level on the axis (comparator on the guidance chart).
+FactHalfYear[Latest Margin by Level] =
+SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
+    "L0", [Latest Margin L0],
+    "L1", [Latest Margin L1],
+    "L2", [Latest Margin L2] )
+
+// [06 Commercial]  Automotive revenue waterfall: prior-year revenue, volume effect, ASP effect (total = current automotive revenue within SQL 0.1 rounding).
+FactHalfYear[Revenue Bridge Value] =
+SWITCH ( SELECTEDVALUE ( DimRevenueStep[rstep_id] ),
+    "RS0", [Auto Revenue PY],
+    "RS1", [Volume Effect (SQL)],
+    "RS2", [ASP Effect (SQL)] )
+
+// [12 QA vs SQL]  Value published by the SQL mart view for this row.
+RefSQL[QA SQL Value] =
+IF ( HASONEVALUE ( RefSQL[metric_key] ), SUM ( RefSQL[sql_value] ) )
+
+// [12 QA vs SQL]  The same quantity recomputed by the Power BI measures (from base values, not from the SQL result).
+RefSQL[QA DAX Value] =
+VAR _k = SELECTEDVALUE ( RefSQL[metric_key] )
+VAR _p = SELECTEDVALUE ( RefSQL[period_code] )
+VAR _s = SELECTEDVALUE ( RefSQL[scenario_id] )
+RETURN
+    SWITCH ( TRUE (),
+        LEFT ( _k, 3 ) = "gs_",
+            CALCULATE ( SWITCH ( _k,
+            "gs_l0_min", [Scen Min Margin L0] * 100,
+            "gs_l0_mid", [Scen Mid Margin L0] * 100,
+            "gs_l0_max", [Scen Max Margin L0] * 100,
+            "gs_l1_min", [Scen Min Margin L1] * 100,
+            "gs_l1_mid", [Scen Mid Margin L1] * 100,
+            "gs_l1_max", [Scen Max Margin L1] * 100,
+            "gs_l2_min", [Scen Min Margin L2] * 100,
+            "gs_l2_mid", [Scen Mid Margin L2] * 100,
+            "gs_l2_max", [Scen Max Margin L2] * 100 ) ),
+        LEFT ( _k, 2 ) = "g_",
+            CALCULATE ( SWITCH ( _k,
+            "g_h2_margin_l0_pct", [Scen H2 Margin L0 (DAX recompute)] * 100,
+            "g_h2_margin_l1_pct", [Scen H2 Margin L1 (DAX recompute)] * 100,
+            "g_h2_margin_l2_pct", [Scen H2 Margin L2 (DAX recompute)] * 100 ), TREATAS ( { _s }, FactGuidance[scenario_id] ) ),
+        _k = "mix_share_pct",
+            CALCULATE ( [Mix Share] * 100, REMOVEFILTERS ( DimPeriod ), TREATAS ( { _p }, DimPeriod[period_code] ),
+                TREATAS ( { SELECTEDVALUE ( RefSQL[dimension] ) }, FactDeliveryMix[dimension] ),
+                TREATAS ( { SELECTEDVALUE ( RefSQL[member_id] ) }, FactDeliveryMix[member_id] ) ),
+        LEFT ( _k, 3 ) = "ga_",
+            CALCULATE ( SWITCH ( _k,
+            "ga_h2_ebitda_margin_pct", [Scen Auto H2 EBITDA Margin (DAX recompute)] * 100,
+            "ga_h2_ncf_margin_pct", [Scen Auto H2 NCF Margin (DAX recompute)] * 100 ), TREATAS ( { _s }, FactGuidanceAuto[scenario_id] ) ),
+        CALCULATE ( SWITCH ( _k,
+            "ebit_l0_reported", [EBIT L0 Reported],
+            "ebit_l1_ex_realignment", [EBIT L1],
+            "ebit_l2_ex_realignment_tariffs", [EBIT L2],
+            "ebit_l3_hybrid_sensitivity", [EBIT L3 Hybrid Sensitivity],
+            "margin_l0_reported_pct", [Margin L0] * 100,
+            "margin_l1_pct", [Margin L1] * 100,
+            "margin_l2_pct", [Margin L2] * 100,
+            "margin_l3_hybrid_pct", [Margin L3 Hybrid Sensitivity] * 100,
+            "yoy_ebit_l1", [YoY EBIT L1],
+            "yoy_margin_l1_pp", [YoY Margin L1 (pp)],
+            "yoy_margin_l0_pp", [YoY Margin L0 (pp)],
+            "da_clean", [Clean DA],
+            "yoy_da_clean", [YoY Clean DA],
+            "rd_total_costs", [RD Total Costs],
+            "rd_pl_charge", [RD PL Charge],
+            "cap_rate_calc_pct", [Cap Rate Calc] * 100,
+            "net_capitalisation", [Net Capitalisation],
+            "ebit_effect_of_cap_rate_change", [Cap Rate Effect (DAX recompute)],
+            "yoy_rd_pl_charge", [YoY RD PL Charge],
+            "asp_calc_eur_k", [ASP (EUR k)],
+            "yoy_vehicle_sales_pct", [YoY Vehicle Sales %] * 100,
+            "yoy_asp_pct", [YoY ASP %] * 100,
+            "yoy_auto_revenue", [YoY Auto Revenue],
+            "volume_effect", [Volume Effect (DAX recompute)],
+            "asp_effect", [ASP Effect (DAX recompute)],
+            "auto_net_cash_flow", [Auto NCF],
+            "ncf_margin_pct", [NCF Margin] * 100,
+            "ebitda_margin_calc_pct", [EBITDA Margin] * 100,
+            "cfo_to_ebitda", [CFO to EBITDA],
+            "simple_cash_proxy", [Simple Cash Proxy],
+            "d_ebit", [YoY EBIT L0],
+            "eff_residual_other_drivers", [Recompute Residual],
+            "d_margin_pp", [YoY Margin L0 (pp)] ), REMOVEFILTERS ( DimPeriod ), TREATAS ( { _p }, DimPeriod[period_code] ) )
+    )
+
+// [12 QA vs SQL]  |DAX - SQL|.
+RefSQL[QA Abs Difference] =
+ABS ( [QA DAX Value] - [QA SQL Value] )
+
+// [12 QA vs SQL]  PASS within the SQL view's rounding tolerance.
+RefSQL[QA Status] =
+IF ( ISBLANK ( [QA DAX Value] ), "MISSING", IF ( [QA Abs Difference] <= SELECTEDVALUE ( RefSQL[tolerance] ), "PASS", "FAIL" ) )
+
+// [12 QA vs SQL]  Rows not passing.
+RefSQL[QA Fail Count] =
+SUMX ( RefSQL, IF ( [QA Status] = "PASS", 0, 1 ) )
+
+// [12 QA vs SQL]  Model status card.
+RefSQL[QA Summary] =
+VAR _n = COUNTROWS ( RefSQL ) VAR _f = [QA Fail Count] RETURN IF ( _f = 0, "ALL " & _n & " QA CHECKS PASS (Power BI vs SQL mart)", _f & " OF " & _n & " QA CHECKS FAIL - see QA page" )
+
+// [12 QA vs SQL]  Largest EUR/unit identity breach across periods (bridge closure, mix total). Must be 0.
+RefSQL[QA Identity Checks Max] =
+ROUND (
+    MAXX (
+        VALUES ( DimPeriod[period_code] ),
+        MAX ( ABS ( [Bridge Closure Check] ), ABS ( [Mix Total Check] ) )
+    ),
+    10
+)

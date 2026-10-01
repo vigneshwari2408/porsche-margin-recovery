@@ -1,0 +1,9 @@
+step_id,step_name,step_order,step_group,sign_note
+S0_START,EBIT same half prior year,0,Start,Starting level (EUR view only)
+S1_EXC,"Exceptional items (realignment & battery, net)",1,Disclosed one-offs,+ = lower one-off charge than prior year
+S2_TAR,US import tariffs,2,Disclosed one-offs,+ = lower tariff charge than prior year
+S3_CAPDEV,Capitalised development costs,3,Accounting / non-cash,+ = more development cost capitalised (less in P&L)
+S4_DA,Clean automotive D&A,4,Accounting / non-cash,+ = lower D&A than prior year
+S5_FS,Financial Services EBIT,5,Segment,+ = higher FS EBIT
+S6_RES,Residual / other EBIT drivers (not separated),6,Residual,"Price, mix, volume, total R&D costs, materials, SG&A, other operating result, FX, consolidation, rounding. NOT operating performance."
+S7_DENOM,Revenue-denominator effect,7,Margin arithmetic,pp view only: effect of the revenue change on the margin

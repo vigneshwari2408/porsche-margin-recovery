@@ -1,0 +1,78 @@
+period_code,dimension,member_id,member_name,deliveries,share_pct,value_label,member_sort
+2023-H1,model,911,911,26124,15.61,FACT,1
+2023-H1,model,718,718 Boxster/Cayman,11035,6.59,FACT,2
+2023-H1,model,TAY,Taycan,17991,10.75,FACT,3
+2023-H1,model,PAN,Panamera,17565,10.50,FACT,4
+2023-H1,model,MAC,Macan (total),47755,28.54,FACT,5
+2023-H1,model,CAY,Cayenne,46884,28.01,FACT,8
+2023-H1,region,NA,North America,41937,25.06,FACT,1
+2023-H1,region,EU,Europe excl. Germany,36574,21.85,FACT,2
+2023-H1,region,DE,Germany,17118,10.23,FACT,3
+2023-H1,region,CN,China,43832,26.19,FACT,4
+2023-H1,region,OEM,Overseas & Emerging Markets,27893,16.67,FACT,5
+2023-H2,model,911,911,24022,15.71,DERIVED,1
+2023-H2,model,718,718 Boxster/Cayman,9483,6.20,DERIVED,2
+2023-H2,model,TAY,Taycan,22638,14.81,DERIVED,3
+2023-H2,model,PAN,Panamera,16455,10.76,DERIVED,4
+2023-H2,model,MAC,Macan (total),39600,25.90,DERIVED,5
+2023-H2,model,CAY,Cayenne,40669,26.60,DERIVED,8
+2023-H2,region,NA,North America,44122,28.86,DERIVED,1
+2023-H2,region,EU,Europe excl. Germany,33655,22.02,DERIVED,2
+2023-H2,region,DE,Germany,15312,10.02,DERIVED,3
+2023-H2,region,CN,China,35451,23.19,DERIVED,4
+2023-H2,region,OEM,Overseas & Emerging Markets,24327,15.91,DERIVED,5
+2024-H1,model,911,911,28212,18.09,FACT,1
+2024-H1,model,718,718 Boxster/Cayman,11886,7.62,FACT,2
+2024-H1,model,TAY,Taycan,8838,5.67,FACT,3
+2024-H1,model,PAN,Panamera,13255,8.50,FACT,4
+2024-H1,model,MAC,Macan (total),39167,25.12,FACT,5
+2024-H1,model,CAY,Cayenne,54587,35.00,FACT,8
+2024-H1,region,NA,North America,39558,25.37,FACT,1
+2024-H1,region,EU,Europe excl. Germany,38611,24.76,FACT,2
+2024-H1,region,DE,Germany,20811,13.35,FACT,3
+2024-H1,region,CN,China,29551,18.95,FACT,4
+2024-H1,region,OEM,Overseas & Emerging Markets,27414,17.58,FACT,5
+2024-H2,model,911,911,22729,14.69,DERIVED,1
+2024-H2,model,718,718 Boxster/Cayman,11784,7.61,DERIVED,2
+2024-H2,model,TAY,Taycan,11998,7.75,DERIVED,3
+2024-H2,model,PAN,Panamera,16332,10.55,DERIVED,4
+2024-H2,model,MAC,Macan (total),43628,28.19,DERIVED,5
+2024-H2,model,CAY,Cayenne,48302,31.21,DERIVED,8
+2024-H2,region,NA,North America,46983,30.36,DERIVED,1
+2024-H2,region,EU,Europe excl. Germany,37288,24.09,DERIVED,2
+2024-H2,region,DE,Germany,15047,9.72,DERIVED,3
+2024-H2,region,CN,China,27336,17.66,DERIVED,4
+2024-H2,region,OEM,Overseas & Emerging Markets,28119,18.17,DERIVED,5
+2025-H1,model,911,911,25608,17.49,FACT,1
+2025-H1,model,718,718 Boxster/Cayman,10496,7.17,FACT,2
+2025-H1,model,TAY,Taycan,8302,5.67,FACT,3
+2025-H1,model,PAN,Panamera,14975,10.23,FACT,4
+2025-H1,model,MAC,Macan (total),45137,30.83,FACT,5
+2025-H1,model,CAY,Cayenne,41873,28.60,FACT,8
+2025-H1,region,NA,North America,43577,29.77,FACT,1
+2025-H1,region,EU,Europe excl. Germany,35381,24.17,FACT,2
+2025-H1,region,DE,Germany,15973,10.91,FACT,3
+2025-H1,region,CN,China,21302,14.55,FACT,4
+2025-H1,region,OEM,Overseas & Emerging Markets,30158,20.60,FACT,5
+2025-H2,model,911,911,25975,19.52,DERIVED,1
+2025-H2,model,718,718 Boxster/Cayman,8116,6.10,DERIVED,2
+2025-H2,model,TAY,Taycan,8037,6.04,DERIVED,3
+2025-H2,model,PAN,Panamera,12726,9.56,DERIVED,4
+2025-H2,model,MAC,Macan (total),39191,29.45,DERIVED,5
+2025-H2,model,CAY,Cayenne,39013,29.32,DERIVED,8
+2025-H2,region,NA,North America,42652,32.06,DERIVED,1
+2025-H2,region,EU,Europe excl. Germany,30959,23.27,DERIVED,2
+2025-H2,region,DE,Germany,13995,10.52,DERIVED,3
+2025-H2,region,CN,China,20636,15.51,DERIVED,4
+2025-H2,region,OEM,Overseas & Emerging Markets,24816,18.65,DERIVED,5
+2026-H1,model,911,911,30534,24.97,FACT,1
+2026-H1,model,718,718 Boxster/Cayman,2789,2.28,FACT,2
+2026-H1,model,TAY,Taycan,6219,5.08,FACT,3
+2026-H1,model,PAN,Panamera,9308,7.61,FACT,4
+2026-H1,model,MAC,Macan (total),35315,28.87,FACT,5
+2026-H1,model,CAY,Cayenne,38141,31.18,FACT,8
+2026-H1,region,NA,North America,37712,30.83,FACT,1
+2026-H1,region,EU,Europe excl. Germany,30278,24.76,FACT,2
+2026-H1,region,DE,Germany,14938,12.21,FACT,3
+2026-H1,region,CN,China,14501,11.86,FACT,4
+2026-H1,region,OEM,Overseas & Emerging Markets,24877,20.34,FACT,5

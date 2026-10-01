@@ -1,0 +1,8 @@
+period_code,period_label,sort_key,fiscal_year,half_no,half_label,prior_same_half_code,has_prior_in_window,is_latest,n_fact_values,n_derived_values,derived_var_ids,period_basis
+2023-H1,H1 2023,202325,2023,1,H1,,false,false,29,1,A11,Published half-year
+2023-H2,H2 2023,202345,2023,2,H2,,false,false,0,25,"A01,A02,A03,A05,A06,A08,A09,A10,A11,A12,A13,A13a,A13b,A14,F01,F02,G01,G02,G03,G04,G05,G06,G07,O01,O04",H2 = FY - H1 (DERIVED for flow variables)
+2024-H1,H1 2024,202425,2024,1,H1,2023-H1,true,false,34,0,"",Published half-year
+2024-H2,H2 2024,202445,2024,2,H2,2023-H2,true,false,0,29,"A01,A02,A03,A05,A06,A08,A09,A10,A11,A12,A13,A13a,A13b,A14,B01,B02,B03,B04,F01,F02,G01,G02,G03,G04,G05,G06,G07,O01,O04",H2 = FY - H1 (DERIVED for flow variables)
+2025-H1,H1 2025,202525,2025,1,H1,2024-H1,true,false,38,0,"",Published half-year
+2025-H2,H2 2025,202545,2025,2,H2,2024-H2,true,false,0,34,"A01,A02,A03,A05,A06,A08,A09,A10,A11,A12,A13,A13a,A13b,A14,B01,B02,B03,B04,B05,F01,F02,G01,G02,G03,G04,G05,G06,G07,O01,O04,X01,X02,X03,X05",H2 = FY - H1 (DERIVED for flow variables)
+2026-H1,H1 2026,202625,2026,1,H1,2025-H1,true,true,37,1,X05,Published half-year

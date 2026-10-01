@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Porsche 2026 Margin Recovery — Company Lens case study</title>
+<meta name="description" content="An independent, fully reconciled SQL, Excel and Power BI investigation into whether Porsche's H1 2026 margin recovery is real. Built by Vigneshwari Nalla from public disclosures.">
+<meta name="theme-color" content="#050203">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 fill=%22%23050203%22/%3E%3Crect x=%224%22 y=%2219%22 width=%2224%22 height=%222.5%22 fill=%22%23D5001C%22/%3E%3C/svg%3E">
+<meta property="og:title" content="Porsche 2026 Margin Recovery — Company Lens">
+<meta property="og:description" content="Reported margin up, underlying margin down: a traceable investigation from Porsche's public disclosures.">
+<meta property="og:image" content="assets/img/hero-lightbar.jpg">
+<link rel="preload" href="assets/fonts/archivo-var.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="assets/img/car-rear.webp" as="image" type="image/webp">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<a class="skip" href="#question">Skip to the case study</a>
+
+<!-- ============================================================ NAVIGATION: brand, seven chapters, tachometer -->
+<header class="topbar at-top" id="top">
+  <a class="brand" href="#top" aria-label="Back to top"><span class="brand-main">Porsche 2026</span><span class="brand-sub">Company Lens</span></a>
+  <nav class="nav" aria-label="Chapters">
+    <ol class="nav-chapters" id="nav-list">
+      <li><a href="#question" data-label="The question">01</a></li>
+      <li><a href="#overview" data-label="Executive overview">02</a></li>
+      <li><a href="#ebit" data-label="EBIT recovery">03</a></li>
+      <li><a href="#rd" data-label="R&amp;D and D&amp;A">04</a></li>
+      <li><a href="#commercial" data-label="Commercial drivers">05</a></li>
+      <li><a href="#cash" data-label="Cash and guidance">06</a></li>
+      <li><a href="#qa" data-label="QA and lineage">07</a></li>
+      <li class="nav-sep" aria-hidden="true"></li>
+      <li><a href="#method" data-label="How I built it" class="txt">Build</a></li>
+      <li><a href="#findings" data-label="Key findings" class="txt">Findings</a></li>
+      <li><a href="#work" data-label="Explore the work" class="txt">Work</a></li>
+    </ol>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list"><span class="nav-current" id="nav-current">00</span><span class="nav-toggle-lab">Chapters</span></button>
+  </nav>
+  <svg class="tach" id="nav-tach" viewBox="0 0 64 40" aria-hidden="true">
+    <path class="tach-track" d="M8 34 A24 24 0 0 1 56 34"/>
+    <path class="tach-red" d="M50.6 18.9 A24 24 0 0 1 56 34"/>
+    <g class="tach-ticks"></g>
+    <line class="tach-needle" x1="32" y1="34" x2="12" y2="34"/>
+    <circle class="tach-hub" cx="32" cy="34" r="2.6"/>
+  </svg>
+  <div class="progress" aria-hidden="true"><span></span></div>
+</header>
+
+<main>
+<!-- ============================================================ HERO: background type, car in front, smoke in front of the car -->
+<section class="hero" aria-label="Introduction">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <h1 class="hero-title">
+    <span class="hero-giant" aria-hidden="true">
+      <span class="g-row g-outline g-a">Porsche</span>
+      <span class="g-row g-solid">Porsche</span>
+      <span class="g-row g-outline g-b">Porsche</span>
+    </span>
+    <span class="visually-hidden">Porsche 2026: margin recovery</span>
+  </h1>
+  <div class="hero-car" aria-hidden="true">
+    <div class="car-glow"></div>
+    <div class="car-shadow"></div>
+    <picture class="car-img">
+      <source srcset="assets/img/car-rear.webp" type="image/webp">
+      <img src="assets/img/car-rear.png" alt="" width="795" height="373" fetchpriority="high">
+    </picture>
+    <div class="car-lightbar"></div>
+  </div>
+  <div class="hero-smoke" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>
+  <div class="hero-copy">
+    <p class="hero-lockup" aria-hidden="true"><span class="lk-year">2026</span><span class="lk-name">Margin recovery</span></p>
+    <p class="hero-note">a Company Lens case study by Vigneshwari Nalla</p>
+    <p class="hero-sub">A data-driven investigation into margin, EBIT, R&amp;D capitalisation, commercial drivers, cash and guidance.</p>
+    <p class="hero-spec">H1 2023 to H1 2026 / SQL / Excel / Power BI / <span data-v="qa.reconTotal" data-fmt="int">1,524</span> reconciliations, 0 failures</p>
+  </div>
+  <a class="scroll-cue" href="#question"><span>Scroll to begin</span></a>
+</section>
+
+<!-- ============================================================ 01 THE QUESTION (type-heavy) -->
+<section class="chapter chapter-question" id="question" data-chapter="01">
+  <span class="ghost-no" aria-hidden="true">01</span>
+  <div class="wrap">
+    <p class="chapter-no"><span class="no">01</span>The question</p>
+    <h2 class="display-q">Is Porsche's 2026 margin recovery actually improving underneath the reported numbers?</h2>
+    <div class="tension">
+      <div class="tension-side up">
+        <p class="tension-label">Reported margin (L0)</p>
+        <p class="tension-fig"><span data-count="m0py" data-fmt="pct1">5.5%</span><span class="arrow">to</span><span data-count="m0" data-fmt="pct1">7.8%</span></p>
+        <p class="tension-note">Up <span data-v="kpi.yoy_m0_pp" data-fmt="ppAbs2">2.28</span> points, H1 2025 to H1 2026. The reported headline.</p>
+      </div>
+      <div class="tension-side down">
+        <p class="tension-label">Underlying margin (L1)</p>
+        <p class="tension-fig"><span data-count="m1py" data-fmt="pct1">9.4%</span><span class="arrow">to</span><span data-count="m1" data-fmt="pct1">8.4%</span></p>
+        <p class="tension-note">Down <span data-v="kpi.yoy_m1_pp" data-fmt="ppAbs2">0.99</span> points once Porsche's own disclosed realignment and battery items are removed.</p>
+      </div>
+    </div>
+    <div class="prose">
+      <p>After two difficult half-years, the headline recovered. But a recovering headline can hide three things: smaller one-off charges rather than a better business, accounting effects from R&amp;D capitalisation or depreciation, and a richer price and mix compensating for fewer cars sold.</p>
+      <p>This case study tests each of them, using only numbers Porsche has published, and then asks what Porsche's own FY2026 guidance requires from the second half.</p>
+    </div>
+  </div>
+</section>
+
+<div class="taillight" aria-hidden="true"><i></i><b></b><i></i></div>
+
+<!-- ============================================================ 02 EXECUTIVE OVERVIEW (data-heavy) -->
+<section class="chapter" id="overview" data-chapter="02">
+  <span class="ghost-no" aria-hidden="true">02</span>
+  <div class="wrap">
+    <p class="chapter-no"><span class="no">02</span>Executive overview</p>
+    <h2 class="h2">The headline rose because the one‑offs shrank.</h2>
+    <div class="split">
+      <div class="prose">
+        <p>The Executive Overview page of the Power BI dashboard puts reported and underlying profit side by side. L0 is Porsche's reported EBIT. L1 adds back the disclosed strategic realignment and battery items, and is the headline underlying KPI. L2 also adds back US import tariffs.</p>
+        <p>Until 2025 the three lines are identical, because no one-offs were disclosed. From H1 2025 they separate, and in H1 2026 the reported line rises while both adjusted lines are below the same half a year earlier.</p>
+        <p class="note">point at a margin card to trace its line in the chart</p>
+      </div>
+      <dl class="kpis cards" id="kpis"></dl>
+    </div>
+    <figure class="chart-panel">
+      <figcaption><span class="cap-title">Group margin by half-year: reported vs headline adjusted levels</span><span class="cap-sub">Select a line to isolate it. Values are margin on group revenue.</span></figcaption>
+      <div class="legend" id="margin-legend" role="group" aria-label="Show or hide margin levels"></div>
+      <div class="chart" id="chart-margins" role="img" aria-label="Line chart of L0, L1 and L2 margins from H1 2023 to H1 2026"></div>
+      <details class="data-table"><summary>Show the data</summary><div id="table-margins"></div></details>
+    </figure>
+  </div>
+</section>
+
+<div class="taillight" aria-hidden="true"><i></i><b></b><i></i></div>
+
+<!-- ============================================================ 03 EBIT RECOVERY (interactive) -->
+<section class="chapter" id="ebit" data-chapter="03">
+  <span class="ghost-no" aria-hidden="true">03</span>
+  <div class="wrap">
+    <p class="chapter-no"><span class="no">03</span>EBIT recovery</p>
+    <h2 class="h2">Without the one‑off relief, EBIT would have fallen.</h2>
+    <div class="split">
+      <div class="prose">
+        <p>The year-on-year bridge explains the change in reported EBIT against the same half of the prior year. Each step is either a disclosed adjustment, an accounting effect, the Financial Services segment, or the residual: the part published data cannot split into price, mix, volume, cost and FX.</p>
+        <p>Lower one-offs contributed <strong data-v="bridge.exc" data-fmt="eurS">+600</strong> € million, which is <strong data-v="kpi.one_offs_share" data-fmt="pct0">176%</strong> of the whole reported gain. Everything else, taken together, moved EBIT down.</p>
+      </div>
+      <div class="levels" id="level-bridge" aria-label="L0 to L2 build-up"></div>
+    </div>
+    <figure class="chart-panel bridge-panel">
+      <figcaption><span class="cap-title">Reported EBIT bridge, H1 2025 to H1 2026</span><span class="cap-sub">The bridge is built step by step as you scroll. Switch between € million and margin points.</span></figcaption>
+      <div class="panel-bar">
+        <ol class="stages" id="bridge-stages" aria-label="Bridge stages"></ol>
+        <div class="seg" role="radiogroup" aria-label="Bridge unit" id="bridge-unit">
+          <button role="radio" aria-checked="true" data-unit="eur">€ million</button><button role="radio" aria-checked="false" data-unit="pp">Margin points</button>
+        </div>
+      </div>
+      <div class="chart chart-bridge" id="chart-bridge" role="img" aria-label="Waterfall bridge from H1 2025 EBIT to H1 2026 EBIT"></div>
+      <ul class="bridge-key">
+        <li><i class="k-total"></i>Reported EBIT</li><li><i class="k-adjust"></i>Disclosed one-offs</li><li><i class="k-accounting"></i>Accounting, non-cash</li><li><i class="k-segment"></i>Financial Services</li><li><i class="k-residual"></i>Residual, not separated</li>
+      </ul>
+      <p class="footnote" id="bridge-note"></p>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================================================ INTERLUDE (minimal: one statement, one number) -->
+<section class="interlude" aria-label="One number">
+  <div class="mist-band" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="interlude-fig" data-count="kpi.one_offs_share" data-fmt="pct0">176%</p>
+    <p class="interlude-line">of the reported EBIT gain came from smaller one-offs.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 04 R&D & D&A (interactive scrollytelling with a tachometer) -->
+<section class="chapter chapter-rd" id="rd" data-chapter="04">
+  <span class="ghost-no" aria-hidden="true">04</span>
+  <div class="fog" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <p class="chapter-no"><span class="no">04</span>R&amp;D and D&amp;A</p>
+    <h2 class="h2">Accounting is a headwind, not a hidden tailwind.</h2>
+    <div class="prose">
+      <p>A company can lift EBIT by capitalising more of its development spend, or by booking less depreciation. The test here is whether that happened. It did not: the share of R&amp;D capitalised has fallen in every first half since 2023, and amortisation of what was capitalised earlier now pushes the P&amp;L charge above the R&amp;D costs themselves.</p>
+    </div>
+  </div>
+  <div class="scrolly" id="rd-scrolly">
+    <div class="scrolly-sticky">
+      <div class="rate-dial">
+        <div class="dial-wrap">
+          <svg class="dial" id="rate-dial" viewBox="0 12 240 124" aria-hidden="true"></svg>
+          <div class="dial-read">
+            <p class="rate-period" id="rate-period">H1 2023</p>
+            <p class="rate-value" id="rate-value">77.7%</p>
+          </div>
+        </div>
+        <p class="rate-label">of automotive R&amp;D costs capitalised</p>
+        <div class="chart" id="chart-rd" role="img" aria-label="Total R&D costs versus R&D charged to the P&L by half-year"></div>
+      </div>
+    </div>
+    <div class="scrolly-steps" id="rd-steps"></div>
+  </div>
+  <div class="wrap">
+    <div class="figures cards" id="rd-figures"></div>
+    <figure class="chart-panel">
+      <figcaption><span class="cap-title">Automotive D&amp;A: clean vs impairments (€ million)</span><span class="cap-sub">Impairments already sit inside the exceptional items, so they are removed here to avoid counting them twice.</span></figcaption>
+      <div class="chart" id="chart-da" role="img" aria-label="Stacked columns of clean automotive D&A and impairments by half-year"></div>
+    </figure>
+    <details class="expander">
+      <summary>What about L3, the hybrid sensitivity?</summary>
+      <div class="prose">
+        <p>L3 adds clean automotive D&amp;A back to L1 and deducts capitalised development costs, a figure in which all R&amp;D is expensed as incurred. It mixes group EBIT with automotive-only items, so it is a supplementary sensitivity, never a KPI. In H1 2026 it is <strong data-v="l3" data-fmt="eur">2,459</strong> € million (<strong data-v="margins.l3.6" data-fmt="pct1">14.3%</strong> of revenue), or <strong data-v="l3AltA04" data-fmt="eur">2,520</strong> if the €61 million of impairments are not inside D&amp;A (assumption A-04). It is shown only to size the non-cash wedge, and is never compared with guidance.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<div class="taillight" aria-hidden="true"><i></i><b></b><i></i></div>
+
+<!-- ============================================================ 05 COMMERCIAL (image-heavy opening, then interactive equation) -->
+<section class="chapter chapter-commercial" id="commercial" data-chapter="05">
+  <span class="ghost-no" aria-hidden="true">05</span>
+  <div class="streaks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <div class="poster-split">
+      <figure class="poster-img">
+        <picture><source srcset="assets/img/car-poster.webp" type="image/webp"><img src="assets/img/car-poster.jpg" alt="A black Porsche sports car in a red studio, tyres smoking, with the word Porsche in tall letters behind it" width="720" height="1280" loading="lazy"></picture>
+      </figure>
+      <div class="poster-copy">
+        <p class="chapter-no"><span class="no">05</span>Commercial drivers</p>
+        <h2 class="h2">Value over volume works, but only partly.</h2>
+        <div class="poster-stats">
+          <div><span class="ps-val" data-count="kpi.vs.1" data-fmt="int">120,508</span><span class="ps-lab">vehicles sold, <span data-v="commercial.vsYoY" data-fmt="pctSigned1">−10.8%</span></span></div>
+          <div><span class="ps-val">€<span data-count="kpi.asp.1" data-fmt="k1">125.8</span>k</span><span class="ps-lab">average selling price, <span data-v="commercial.aspYoY" data-fmt="pctSigned1">+5.3%</span></span></div>
+        </div>
+        <div class="prose">
+          <p>Porsche sold <span data-v="commercial.vsYoY" data-fmt="pctAbs1">10.8%</span> fewer vehicles, while the average selling price rose <span data-v="commercial.aspYoY" data-fmt="pctAbs1">5.3%</span> to €<span data-v="kpi.asp.1" data-fmt="k1">125.8</span>k. The higher price recovered <strong id="asp-cover">44%</strong> of the revenue lost to volume. The ASP effect is price plus model mix, options and FX, not pure pricing.</p>
+        </div>
+      </div>
+    </div>
+    <div class="equation" id="equation" aria-label="Volume effect plus ASP effect equals automotive revenue change"></div>
+    <p class="note eq-note">point at a term of the equation to find it in the charts</p>
+    <figure class="chart-panel">
+      <figcaption><span class="cap-title">Automotive revenue bridge, € million</span><span class="cap-sub">The two effects sum exactly to the change in automotive revenue.</span></figcaption>
+      <div class="chart" id="chart-revbridge" role="img" aria-label="Automotive revenue bridge from H1 2025 to H1 2026: volume effect and ASP effect"></div>
+    </figure>
+    <div class="duo">
+      <figure class="chart-panel"><figcaption><span class="cap-title">Vehicle sales, wholesale units</span></figcaption><div class="chart" id="chart-vs" role="img" aria-label="Wholesale vehicle sales by half-year"></div></figure>
+      <figure class="chart-panel"><figcaption><span class="cap-title">ASP, € thousand per vehicle sold</span></figcaption><div class="chart" id="chart-asp" role="img" aria-label="Average selling price by half-year"></div></figure>
+    </div>
+    <figure class="chart-panel">
+      <figcaption><span class="cap-title">Delivery mix, H1 2026 vs H1 2025</span><span class="cap-sub">Share of retail deliveries. Retail deliveries are not the wholesale units that drive revenue. Point at a model or region to isolate it.</span></figcaption>
+      <div class="seg" role="radiogroup" aria-label="Mix dimension" id="mix-dim">
+        <button role="radio" aria-checked="true" data-dim="model">By model</button><button role="radio" aria-checked="false" data-dim="region">By region</button>
+      </div>
+      <div class="chart" id="chart-mix" role="img" aria-label="Delivery mix shares, current versus prior year"></div>
+    </figure>
+  </div>
+</section>
+
+<div class="taillight" aria-hidden="true"><i></i><b></b><i></i></div>
+
+<!-- ============================================================ 06 CASH & GUIDANCE (interactive console) -->
+<section class="chapter" id="cash" data-chapter="06">
+  <span class="ghost-no" aria-hidden="true">06</span>
+  <div class="wrap">
+    <p class="chapter-no"><span class="no">06</span>Cash and guidance</p>
+    <h2 class="h2">Cash improved. The guidance asks more of H2.</h2>
+    <div class="ledger">
+      <div class="ledger-col actuals">
+        <p class="ledger-tag">Actuals, published by Porsche</p>
+        <div class="figures compact cards" id="cash-figures"></div>
+        <figure class="chart-panel flat"><figcaption><span class="cap-title">Automotive EBITDA margin and net cash flow margin</span></figcaption><div class="chart" id="chart-cash" role="img" aria-label="Automotive EBITDA margin and NCF margin by half-year"></div></figure>
+        <p class="footnote" id="cash-note"></p>
+      </div>
+      <div class="ledger-col scenario" id="scenario">
+        <p class="ledger-tag">Scenario analysis</p>
+        <p class="scenario-banner">Arithmetic only — not forecasts — no probabilities</p>
+        <div class="prose small">
+          <p>Porsche guides FY2026 as ranges. Each range is taken at its low, mid or high end and the ends are combined, 27 ways for the group and 9 for the automotive segment. For each combination, the H2 result is what the full year implies once H1 2026 actuals are deducted. "All midpoints" is not a most-likely case.</p>
+        </div>
+        <div class="console" id="explorer"></div>
+      </div>
+    </div>
+    <figure class="chart-panel scenario-panel">
+      <figcaption><span class="cap-title">H2 2026 margin implied by FY2026 guidance, all 27 combinations</span><span class="cap-sub">Hatched band: min to max across combinations. Diamond: all midpoints. Ring: your selected combination. Line: H1 2026 actual.</span></figcaption>
+      <div class="chart" id="chart-range" role="img" aria-label="Range of implied H2 2026 margins for L0, L1 and L2"></div>
+    </figure>
+    <div class="duo">
+      <figure class="chart-panel scenario-panel"><figcaption><span class="cap-title">Automotive H2 2026 implied, 9 combinations</span><span class="cap-sub">Uses A-05: automotive share of group revenue held at its H1 2026 level (88.0%).</span></figcaption><div class="chart" id="chart-auto" role="img" aria-label="Range of implied H2 2026 automotive EBITDA and NCF margins"></div></figure>
+      <figure class="chart-panel"><figcaption><span class="cap-title">FY2026 guidance as published</span><span class="cap-sub">Mid = (low + high) / 2.</span></figcaption><div class="table-wrap"><table class="gtable" id="guidance-table"></table></div></figure>
+    </div>
+    <details class="expander">
+      <summary>Assumptions behind the scenarios</summary>
+      <ul class="assumptions" id="assumptions-scenario"></ul>
+    </details>
+  </div>
+</section>
+
+<div class="taillight" aria-hidden="true"><i></i><b></b><i></i></div>
+
+<!-- ============================================================ 07 QA & LINEAGE (technical) -->
+<section class="chapter chapter-qa" id="qa" data-chapter="07">
+  <span class="ghost-no" aria-hidden="true">07</span>
+  <div class="wrap">
+    <p class="chapter-no"><span class="no">07</span>QA and lineage</p>
+    <h2 class="h2">Not just a dashboard. Every number is tested.</h2>
+    <div class="qa-hero" id="qa-hero">
+      <div class="qa-disc">
+        <svg class="disc" id="qa-ring" viewBox="0 0 220 220" aria-hidden="true"></svg>
+        <p class="qa-count"><span data-v="qa.pbiQA" data-fmt="int" id="qa-num">388</span><span class="qa-of">of <span data-v="qa.pbiQATotal" data-fmt="int">388</span></span></p>
+      </div>
+      <div class="qa-text">
+        <p class="qa-pass" id="qa-pass">All <span data-v="qa.pbiQA" data-fmt="int">388</span> QA checks pass</p>
+        <p class="qa-caption">They run inside the Power BI report. Each measure is recomputed from base values and compared with the SQL mart.</p>
+      </div>
+    </div>
+    <ol class="ladder" id="ladder"></ol>
+    <div class="split">
+      <figure class="chart-panel flat"><figcaption><span class="cap-title">Cross-tool reconciliation: 1,524 comparisons, 0 failures</span></figcaption><div class="chart" id="chart-recon" role="img" aria-label="Reconciliation comparisons by group"></div></figure>
+      <div class="prose small">
+        <p>The review process found real defects before sign-off, and each fix made the checks stronger:</p>
+        <ul class="plain">
+          <li>An Excel lookup that behaved differently in another spreadsheet engine. It was replaced with two-key lookups and scalar audit formulas.</li>
+          <li>A DAX filter-context error that divided each delivery-mix share by all periods instead of one. It was fixed, and 77 mix-share checks were added so the same class of error is now caught automatically.</li>
+          <li>26 Excel cells in the 2023 columns, which have no prior-year period, were blanked so they no longer show misleading comparisons.</li>
+        </ul>
+      </div>
+    </div>
+    <figure class="shot" data-shot="assets/screenshots/06_qa_lineage.png" data-page="6" data-caption="QA and Lineage" data-qa="pass"></figure>
+  </div>
+</section>
+
+<!-- ============================================================ HOW I BUILT IT (technical) -->
+<section class="chapter chapter-method" id="method">
+  <div class="plate" aria-hidden="true"><picture><source srcset="assets/img/plate-texture.webp" type="image/webp"><img src="assets/img/plate-texture.jpg" alt="" loading="lazy" width="736" height="349"></picture></div>
+  <div class="wrap">
+    <p class="note note-lead">from source document to executive story</p>
+    <h2 class="h2">How I built it</h2>
+    <p class="lede">Six stages. Select a stage to see what it involved.</p>
+    <div class="road">
+      <svg class="road-car" id="road-car" viewBox="0 0 120 34" aria-hidden="true">
+        <path d="M6 25 L10 18 Q14 14 24 13 L40 12 Q52 4 70 4 Q86 4 96 12 L108 15 Q114 17 114 22 L114 25 Z"/>
+        <circle cx="30" cy="26" r="6"/><circle cx="94" cy="26" r="6"/>
+        <rect class="rl" x="106" y="16" width="7" height="2.2" rx="1"/>
+      </svg>
+      <ol class="timeline" id="timeline"></ol>
+    </div>
+    <div class="arch">
+      <h3 class="h3">Technical architecture</h3>
+      <div class="arch-grid">
+        <ol class="arch-nodes" id="arch-nodes"></ol>
+        <div class="arch-detail card" id="arch-detail" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FINDINGS (type-heavy) -->
+<section class="chapter chapter-findings" id="findings">
+  <div class="wrap">
+    <p class="note note-lead">what the data shows</p>
+    <h2 class="h2">Key findings</h2>
+    <div class="findings" id="findings-list"></div>
+  </div>
+</section>
+
+<!-- ============================================================ ROLE (image-heavy) -->
+<section class="chapter chapter-role" id="role">
+  <div class="wrap role-layout">
+    <figure class="role-image">
+      <picture><source srcset="assets/img/crest-wet.webp" type="image/webp"><img src="assets/img/crest-wet.jpg" alt="The Porsche crest on red paint, covered in water droplets" loading="lazy" width="736" height="935"></picture>
+    </figure>
+    <div class="role-copy">
+      <p class="note note-lead">what I did</p>
+      <h2 class="h2">My role</h2>
+      <p class="role-lens">Business analytics, operations thinking, financial analysis and data storytelling, applied to one question.</p>
+      <div class="role-grid cards">
+        <div class="card"><h3 class="h4">Framed the question</h3><p>Chose the company and the business question, set the scope and defined the L0 to L3 margin framework and the labelling rules (fact, derived, assumption, proxy).</p></div>
+        <div class="card"><h3 class="h4">Validated the data</h3><p>Built the source register of 27 documents and checked every input against its source. Four missing values were documented, not estimated.</p></div>
+        <div class="card"><h3 class="h4">Reviewed every phase</h3><p>Reviewed and approved each stage in turn: sources, inputs, SQL model, Excel model and Power BI semantic model, before moving on.</p></div>
+        <div class="card"><h3 class="h4">Built the dashboard</h3><p>Built and formatted the six-page Power BI report, including scenario slicers, edit interactions and the in-report QA page.</p></div>
+        <div class="card"><h3 class="h4">Ran the audit</h3><p>Ran the QA and audit cycle until SQL, Excel and Power BI reconciled with zero failures, fixing defects the reviews exposed.</p></div>
+        <div class="card"><h3 class="h4">Told the story</h3><p>Turned the analysis into findings management can act on, and a monitoring plan for the FY2026 results.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ EXPLORE THE WORK -->
+<section class="chapter chapter-work" id="work">
+  <div class="wrap">
+    <p class="note note-lead">the files behind every number</p>
+    <h2 class="h2">Explore the work</h2>
+    <p class="lede">The full repository, reports and files behind this case study.</p>
+    <div class="work-grid" id="work-grid"></div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="closing" aria-hidden="true"><div class="closing-smoke"><i></i><i></i></div><p class="closing-word">Margin recovery</p></div>
+  <div class="wrap">
+    <p class="foot-lead">Independent portfolio project by Vigneshwari Nalla, MSc Data Analytics for Business, KEDGE Business School.</p>
+    <p>All figures are taken from, or derived as documented from, Porsche AG's public investor-relations publications (27 registered sources, H1 2023 to H1 2026). This site is not affiliated with, reviewed or endorsed by Porsche AG, and it is not investment advice. Porsche and the Porsche crest are trademarks of Dr. Ing. h.c. F. Porsche AG, shown here only to identify the company analysed. Scenario figures are arithmetic combinations of published guidance ranges, not forecasts.</p>
+    <p class="foot-small">Typefaces: Archivo, Newsreader and La Belle Aurore, SIL Open Font License.</p>
+    <p class="foot-small">Photographs are third-party images used for non-commercial illustration; their creators have not been identified and no ownership is claimed. Rights holders can request a credit or removal through the project repository.</p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Dashboard screenshot" hidden>
+  <div class="lb-bar">
+    <p class="lightbox-cap"></p>
+    <div class="lb-tools">
+      <button type="button" class="lb-btn" data-act="prev" aria-label="Previous screenshot">Previous</button>
+      <button type="button" class="lb-btn" data-act="next" aria-label="Next screenshot">Next</button>
+      <button type="button" class="lb-btn" data-act="out" aria-label="Zoom out">−</button>
+      <span class="lb-zoom" aria-live="polite">100%</span>
+      <button type="button" class="lb-btn" data-act="in" aria-label="Zoom in">+</button>
+      <button type="button" class="lb-btn lightbox-close" data-act="close" aria-label="Close">Close</button>
+    </div>
+  </div>
+  <div class="lb-stage"><img alt="" draggable="false"></div>
+</div>
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/links.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

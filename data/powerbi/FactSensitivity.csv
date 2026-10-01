@@ -1,0 +1,3 @@
+period_code,sensitivity_id,description,assumption_id,value_eur_m
+2026-H1,SENS_A04_L3,L3 hybrid sensitivity if the H1 2026 impairments are NOT inside D&A,A-04,2520.185049
+2026-H1,SENS_A04_RES,Residual / other EBIT drivers if the H1 2026 impairments (EUR 61m) are NOT inside D&A,A-04,-78.606248

@@ -1,0 +1,7 @@
+guidance_id,metric,fiscal_year,low_value,mid_value,high_value,unit_std,basis,value_label,source_id,source_ref
+GD_BEV,Automotive BEV share,2026,24.0000,25.0000000000000000,26.0000,%,Share of deliveries,FACT,S016,slide 14
+GD_EBITDA,Automotive EBITDA margin,2026,15.0000,16.0000000000000000,17.0000,%,Automotive EBITDA / automotive revenue,FACT,S016,slide 14
+GD_EXTRA,Extraordinary expenses (net),2026,800.0000,850.0000000000000000,900.0000,EUR m,"Net, same basis as H1 2026 net EUR ~0.1bn (CFO compared the two directly)",FACT,S027,CFO answer on H2 visibility
+GD_NCF,Automotive net cash flow margin,2026,3.0000,4.0000000000000000,5.0000,%,Automotive net cash flow / automotive revenue,FACT,S016,slide 14
+GD_REV,Group sales revenue,2026,35000.0000,35500.000000000000,36000.0000,EUR m,"Group, full year",FACT,S016,"slide 14 (2026 outlook, confirmed at H1 2026)"
+GD_ROS,Group return on sales,2026,5.5000,6.5000000000000000,7.5000,%,"Group EBIT / group revenue, full year",FACT,S016,slide 14

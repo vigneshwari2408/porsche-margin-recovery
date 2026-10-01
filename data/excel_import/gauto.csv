@@ -1,0 +1,10 @@
+scenario_id,h2_auto_ebitda_margin_pct,h2_auto_ncf_margin_pct
+high/high,15.85,3.41
+high/low,12.01,-0.42
+high/mid,13.93,1.49
+low/high,15.78,3.32
+low/low,11.84,-0.62
+low/mid,13.81,1.35
+mid/high,15.82,3.37
+mid/low,11.93,-0.52
+mid/mid,13.87,1.42

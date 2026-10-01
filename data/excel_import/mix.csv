@@ -1,0 +1,84 @@
+period_code,?column?,model_id,model_name,top_level,deliveries,value_label,coalesce,coalesce
+2023-H1,model,718,718 Boxster/Cayman,t,11035,FACT,S025,04 - Sales_deliveries by Model AA33
+2023-H1,model,911,911,t,26124,FACT,S025,04 - Sales_deliveries by Model AA32
+2023-H1,model,CAY,Cayenne,t,46884,FACT,S025,04 - Sales_deliveries by Model AA34
+2023-H1,model,MAC,Macan (total),t,47755,FACT,S025,04 - Sales_deliveries by Model AA36
+2023-H1,model,PAN,Panamera,t,17565,FACT,S025,04 - Sales_deliveries by Model AA35
+2023-H1,model,TAY,Taycan,t,17991,FACT,S025,04 - Sales_deliveries by Model AA39
+2023-H1,region,CN,China,t,43832,FACT,S025,03 - Sales_deliveries by Region AA31
+2023-H1,region,DE,Germany,t,17118,FACT,S025,03 - Sales_deliveries by Region AA29
+2023-H1,region,EU,Europe excl. Germany,t,36574,FACT,S025,03 - Sales_deliveries by Region AA32
+2023-H1,region,NA,North America,t,41937,FACT,S025,03 - Sales_deliveries by Region AA30
+2023-H1,region,OEM,Overseas & Emerging Markets,t,27893,FACT,S025,03 - Sales_deliveries by Region AA33
+2023-H2,model,718,718 Boxster/Cayman,t,9483,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,model,911,911,t,24022,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,model,CAY,Cayenne,t,40669,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,model,MAC,Macan (total),t,39600,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,model,PAN,Panamera,t,16455,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,model,TAY,Taycan,t,22638,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,region,CN,China,t,35451,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,region,DE,Germany,t,15312,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,region,EU,Europe excl. Germany,t,33655,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,region,NA,North America,t,44122,DERIVED,"",FY - H1 (fact sheet S025)
+2023-H2,region,OEM,Overseas & Emerging Markets,t,24327,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H1,model,718,718 Boxster/Cayman,t,11886,FACT,S025,04 - Sales_deliveries by Model S33
+2024-H1,model,911,911,t,28212,FACT,S025,04 - Sales_deliveries by Model S32
+2024-H1,model,CAY,Cayenne,t,54587,FACT,S025,04 - Sales_deliveries by Model S34
+2024-H1,model,MAC,Macan (total),t,39167,FACT,S025,04 - Sales_deliveries by Model S36
+2024-H1,model,PAN,Panamera,t,13255,FACT,S025,04 - Sales_deliveries by Model S35
+2024-H1,model,TAY,Taycan,t,8838,FACT,S025,04 - Sales_deliveries by Model S39
+2024-H1,region,CN,China,t,29551,FACT,S025,03 - Sales_deliveries by Region S31
+2024-H1,region,DE,Germany,t,20811,FACT,S025,03 - Sales_deliveries by Region S29
+2024-H1,region,EU,Europe excl. Germany,t,38611,FACT,S025,03 - Sales_deliveries by Region S32
+2024-H1,region,NA,North America,t,39558,FACT,S025,03 - Sales_deliveries by Region S30
+2024-H1,region,OEM,Overseas & Emerging Markets,t,27414,FACT,S025,03 - Sales_deliveries by Region S33
+2024-H2,model,718,718 Boxster/Cayman,t,11784,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,model,911,911,t,22729,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,model,CAY,Cayenne,t,48302,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,model,MAC,Macan (total),t,43628,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,model,PAN,Panamera,t,16332,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,model,TAY,Taycan,t,11998,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,region,CN,China,t,27336,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,region,DE,Germany,t,15047,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,region,EU,Europe excl. Germany,t,37288,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,region,NA,North America,t,46983,DERIVED,"",FY - H1 (fact sheet S025)
+2024-H2,region,OEM,Overseas & Emerging Markets,t,28119,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H1,model,718,718 Boxster/Cayman,t,10496,FACT,S025,04 - Sales_deliveries by Model K33
+2025-H1,model,911,911,t,25608,FACT,S025,04 - Sales_deliveries by Model K32
+2025-H1,model,CAY,Cayenne,t,41873,FACT,S025,04 - Sales_deliveries by Model K34
+2025-H1,model,MAC,Macan (total),t,45137,FACT,S025,04 - Sales_deliveries by Model K36
+2025-H1,model,MAC_BEV,Macan BEV,f,25884,FACT,S025,04 - Sales_deliveries by Model K38
+2025-H1,model,MAC_ICE,Macan ICE,f,19253,FACT,S025,04 - Sales_deliveries by Model K37
+2025-H1,model,PAN,Panamera,t,14975,FACT,S025,04 - Sales_deliveries by Model K35
+2025-H1,model,TAY,Taycan,t,8302,FACT,S025,04 - Sales_deliveries by Model K39
+2025-H1,region,CN,China,t,21302,FACT,S025,03 - Sales_deliveries by Region K31
+2025-H1,region,DE,Germany,t,15973,FACT,S025,03 - Sales_deliveries by Region K29
+2025-H1,region,EU,Europe excl. Germany,t,35381,FACT,S025,03 - Sales_deliveries by Region K32
+2025-H1,region,NA,North America,t,43577,FACT,S025,03 - Sales_deliveries by Region K30
+2025-H1,region,OEM,Overseas & Emerging Markets,t,30158,FACT,S025,03 - Sales_deliveries by Region K33
+2025-H2,model,718,718 Boxster/Cayman,t,8116,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,model,911,911,t,25975,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,model,CAY,Cayenne,t,39013,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,model,MAC,Macan (total),t,39191,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,model,MAC_BEV,Macan BEV,f,19483,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,model,MAC_ICE,Macan ICE,f,19708,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,model,PAN,Panamera,t,12726,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,model,TAY,Taycan,t,8037,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,region,CN,China,t,20636,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,region,DE,Germany,t,13995,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,region,EU,Europe excl. Germany,t,30959,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,region,NA,North America,t,42652,DERIVED,"",FY - H1 (fact sheet S025)
+2025-H2,region,OEM,Overseas & Emerging Markets,t,24816,DERIVED,"",FY - H1 (fact sheet S025)
+2026-H1,model,718,718 Boxster/Cayman,t,2789,FACT,S025,04 - Sales_deliveries by Model C33
+2026-H1,model,911,911,t,30534,FACT,S025,04 - Sales_deliveries by Model C32
+2026-H1,model,CAY,Cayenne,t,38141,FACT,S025,04 - Sales_deliveries by Model C34
+2026-H1,model,MAC,Macan (total),t,35315,FACT,S025,04 - Sales_deliveries by Model C36
+2026-H1,model,MAC_BEV,Macan BEV,f,15620,FACT,S025,04 - Sales_deliveries by Model C38
+2026-H1,model,MAC_ICE,Macan ICE,f,19695,FACT,S025,04 - Sales_deliveries by Model C37
+2026-H1,model,PAN,Panamera,t,9308,FACT,S025,04 - Sales_deliveries by Model C35
+2026-H1,model,TAY,Taycan,t,6219,FACT,S025,04 - Sales_deliveries by Model C39
+2026-H1,region,CN,China,t,14501,FACT,S025,03 - Sales_deliveries by Region C31
+2026-H1,region,DE,Germany,t,14938,FACT,S025,03 - Sales_deliveries by Region C29
+2026-H1,region,EU,Europe excl. Germany,t,30278,FACT,S025,03 - Sales_deliveries by Region C32
+2026-H1,region,NA,North America,t,37712,FACT,S025,03 - Sales_deliveries by Region C30
+2026-H1,region,OEM,Overseas & Emerging Markets,t,24877,FACT,S025,03 - Sales_deliveries by Region C33

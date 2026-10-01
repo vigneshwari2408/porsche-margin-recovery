@@ -1,0 +1,5 @@
+var_id,period_code,source_id,source_ref,reason
+O06,2023-FY,S007,66,BLANK: Porsche did not publish revenue per vehicle SOLD for FY2023 in the documents reviewed; S003 slide 56 and S007 slide 66 show revenue per DELIVERY (117). DERIVED ASP will be computed in the model (A01 / O04).
+X04,2025-FY,S012,TBD,BLANK: no FY2025 provision-release amount found in S011/S013/S015; S012 notes could not be parsed remotely. Not estimated.
+X05,2023-FY,S004,TBD,BLANK: automotive impairment amount for FY2023 not located; annual report S004 could not be parsed remotely. Not estimated.
+X05,2024-FY,S008,TBD,BLANK: FY2024 automotive impairment amount not located; S008 could not be parsed remotely. Not estimated.

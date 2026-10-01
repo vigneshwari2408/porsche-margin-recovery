@@ -1,0 +1,10 @@
+scenario_id,scenario_type,case_rev,case_m,fy_grp_rev,auto_share_pct_assumed,fy_auto_rev,h2_auto_rev,fy_ebitda_margin,h2_auto_ebitda_margin_pct,fy_ncf_margin,h2_auto_ncf_margin_pct,h1_2026_auto_ebitda_margin_pct,h1_2026_auto_ncf_margin_pct,assumptions_used
+high/high,"Scenario combination of guidance range ends - not a forecast, no probability attached",high,high,36000.0000,87.98,31671.8,16513.8,17.0000,15.85,5.0000,3.41,18.25,6.73,A-05; A-08
+high/low,"Scenario combination of guidance range ends - not a forecast, no probability attached",high,low,36000.0000,87.98,31671.8,16513.8,15.0000,12.01,3.0000,-0.42,18.25,6.73,A-05; A-08
+high/mid,"Scenario combination of guidance range ends - not a forecast, no probability attached",high,mid,36000.0000,87.98,31671.8,16513.8,16.0000000000000000,13.93,4.0000000000000000,1.49,18.25,6.73,A-05; A-08
+low/high,"Scenario combination of guidance range ends - not a forecast, no probability attached",low,high,35000.0000,87.98,30792.0,15634.0,17.0000,15.78,5.0000,3.32,18.25,6.73,A-05; A-08
+low/low,"Scenario combination of guidance range ends - not a forecast, no probability attached",low,low,35000.0000,87.98,30792.0,15634.0,15.0000,11.84,3.0000,-0.62,18.25,6.73,A-05; A-08
+low/mid,"Scenario combination of guidance range ends - not a forecast, no probability attached",low,mid,35000.0000,87.98,30792.0,15634.0,16.0000000000000000,13.81,4.0000000000000000,1.35,18.25,6.73,A-05; A-08
+mid/high,"Scenario combination of guidance range ends - not a forecast, no probability attached",mid,high,35500.000000000000,87.98,31231.9,16073.9,17.0000,15.82,5.0000,3.37,18.25,6.73,A-05; A-08
+mid/low,"Scenario combination of guidance range ends - not a forecast, no probability attached",mid,low,35500.000000000000,87.98,31231.9,16073.9,15.0000,11.93,3.0000,-0.52,18.25,6.73,A-05; A-08
+mid/mid,"Scenario combination of guidance range ends - not a forecast, no probability attached",mid,mid,35500.000000000000,87.98,31231.9,16073.9,16.0000000000000000,13.87,4.0000000000000000,1.42,18.25,6.73,A-05; A-08

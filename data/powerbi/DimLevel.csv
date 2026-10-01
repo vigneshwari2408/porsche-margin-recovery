@@ -1,0 +1,5 @@
+level_id,level_name,level_class,is_headline,sort_order,definition
+L0,L0 Reported EBIT,Reported,true,1,Group operating profit as reported (G07).
+L1,L1 excl. realignment & battery,Adjusted headline,true,2,"L0 + strategic realignment incl. battery activities, net (X01). Main underlying KPI."
+L2,L2 also excl. US tariffs,Adjusted headline,true,3,L1 + US import tariffs (X03).
+L3,L3 hybrid sensitivity,Supplementary sensitivity - not a KPI,false,4,L1 + clean automotive D&A - automotive capitalised development costs. Mixes group EBIT with automotive-only D&A and R&D; not underlying group profitability; never headline.

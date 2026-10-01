@@ -1,0 +1,42 @@
+check_id,check_name,pass,fail,info
+DQ01,Quarters sum to reported YTD (fact sheet),120,0,0
+DQ02,Derived H2 = Q3 + Q4,36,0,0
+DQ03,Deliveries by model = total deliveries (O01),35,0,0
+DQ04,Deliveries by region = total deliveries (O01),35,0,0
+DQ05,Macan ICE + BEV = Macan total,12,0,0
+DQ06,G07 = G03 + G04 + G05 + G06,27,0,0
+DQ07,A03 = A02 + A12,10,0,0
+DQ08,A05 = A06 + A08,20,0,0
+DQ09,Prior-year EBIT + bridge buckets = EBIT,8,0,0
+DQ10,Unit of fact rows matches dim_variable.unit_std,1,0,0
+DQ11,Ratios never derived by FY - H1,1,0,0
+DQ12,Missing half-year value in analysis window: not published / not applicable for this period,0,0,18
+DQ13,Automotive + Financial Services revenue vs group revenue (difference = consolidation),0,0,10
+MQ01,v_panel_hy: 7 unique half-year rows (2023-H1..2026-H1),1,0,0
+MQ02,v_panel_hy: panel holds every core value of the analysis window (pivot completeness),1,0,0
+MQ03,v_panel_hy: H2 rows are flagged as containing DERIVED values,3,0,0
+MQ04,v_ebit_adjusted: L0 = core G07,7,0,0
+MQ05,v_ebit_adjusted: L2 - L0 = realignment (X01) + tariffs (X03) only,7,0,0
+MQ06,v_ebit_adjusted: L0 margin = published group RoS (S009 slide 27),3,0,0
+MQ07,v_ebit_adjusted: L3 (supplementary hybrid) = L1 + clean D&A - capitalised R&D,7,0,0
+MQ08,v_ebit_adjusted / guidance views: every cited assumption exists in mart.assumption,1,0,0
+MQ09,v_da_clean: da_clean = da_total - impairment_used and 0 < da_clean <= da_total,7,0,0
+MQ10,v_da_clean: clean depreciation + clean amortisation = clean D&A (Porsche rounds components to EUR 1m),5,0,0
+MQ11,v_rd_capitalisation: calculated cap rate = published cap rate,4,0,0
+MQ12,v_rd_capitalisation: P&L charge = total R&D costs - net capitalisation,7,0,0
+MQ13,v_asp_volume: calculated ASP = published ASP,4,0,0
+MQ14,v_asp_volume: volume effect + ASP effect = revenue change,5,0,0
+MQ15,v_delivery_mix: units by model = total deliveries; shares = 100%,14,0,0
+MQ16,v_cash_crosscheck: NCF = CFO + investing of current operations (AF-12: H1 2024 NCF stored rounded in S025),7,0,0
+MQ17,v_cash_crosscheck: NCF margin = published (S009 slide 35),3,0,0
+MQ18,v_cash_crosscheck: EBITDA margin = published automotive EBITDA margin,4,0,0
+MQ19,v_ebit_bridge_yoy: effects + residual = change in EBIT,5,0,0
+MQ20,v_ebit_bridge_yoy: margin-point components = change in margin,5,0,0
+MQ21,v_ebit_bridge_yoy: change in L1 EBIT = non-exceptional effects (cross-view),5,0,0
+MQ22,v_ebit_bridge_yoy: change in EBIT = sum of Porsche bridge buckets B01-B04,5,0,0
+MQ23,v_guidance_2026: 27 cases; FY EBIT = H1 2026 + H2 implied; H2 revenue > 0,1,0,0
+MQ24,"v_guidance_2026: mid case FY EBIT = 35,500 x 6.5%",1,0,0
+MQ25,"v_guidance_2026_summary: min <= mid <= max for L0, L1, L2",1,0,0
+MQ26,"v_guidance_2026_auto: 9 cases, H2 automotive revenue > 0",1,0,0
+MQ27,mart.view_catalog: every mart view documented and every entry exists,1,0,0
+MQ28,Labelling: every L3 row flagged as supplementary hybrid sensitivity,3,0,0

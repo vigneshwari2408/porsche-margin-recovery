@@ -1,0 +1,4 @@
+lstep_id,lstep_name,lstep_order
+LB0,L0 Reported EBIT,1
+LB1,+ Realignment & battery (net) added back,2
+LB2,+ US tariffs added back,3

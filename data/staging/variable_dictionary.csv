@@ -1,0 +1,48 @@
+var_id,var_name,var_group,segment,measure_type,aggregation,unit_std,is_memo,definition,comparability_note
+G01,Group sales revenue,Group P&L,Group,flow,SUM,EUR m,False,Consolidated sales revenue (IFRS).,
+G02,Cost of sales,Group P&L,Group,flow,SUM,EUR m,False,Consolidated cost of sales (IFRS).,
+G03,Gross profit,Group P&L,Group,flow,SUM,EUR m,False,Sales revenue less cost of sales.,
+G04,Distribution expenses,Group P&L,Group,flow,SUM,EUR m,False,Consolidated distribution expenses.,
+G05,Administrative expenses,Group P&L,Group,flow,SUM,EUR m,False,Consolidated administrative expenses.,
+G06,Net other operating result,Group P&L,Group,flow,SUM,EUR m,False,Other operating income less other operating expenses.,
+G07,Operating profit (EBIT),Group P&L,Group,flow,SUM,EUR m,False,Operating profit before financial result and taxes.,
+G08,Return on sales (RoS),Group P&L,Group,ratio,NONE,%,False,Porsche: operating profit (EBIT) divided by sales revenue.,Group level (includes Financial Services). Guidance is set on this metric.
+B01,Bridge: gross margin without R&D (change),EBIT bridge,Group,flow,SUM,EUR m,False,"Porsche bridge bucket, change vs prior-year period. Management-defined.",
+B02,Bridge: R&D (change),EBIT bridge,Group,flow,SUM,EUR m,False,"Porsche bridge bucket, change in R&D charged to income statement.",
+B03,Bridge: SG&A (change),EBIT bridge,Group,flow,SUM,EUR m,False,"Porsche bridge bucket, change in selling/general/admin expenses.",
+B04,Bridge: Other (change),EBIT bridge,Group,flow,SUM,EUR m,False,Porsche bridge residual bucket. Content not itemised.,'Other' is a residual; cannot be decomposed with public data.
+B05,Bridge memo: extraordinary items contained in B01-B04,EBIT bridge,Group,flow,SUM,EUR m,True,MEMO ONLY: Porsche shows the one-off total as an 'of which' bracket; it is already inside B01-B04 and must NOT be added again.,
+X01,Strategic realignment incl. battery (net charge),Exceptional items,Group,flow,SUM,EUR m,False,Management-labelled one-off charges net of related provision releases. Rounded to EUR 0.1bn.,Porsche combines realignment and battery in 2026 comparatives; 2025 split is inconsistent across documents (AF-01). Use combined line as primary.
+X02,of which battery activities (memo),Exceptional items,Group,flow,SUM,EUR m,True,Management-labelled; mostly write-downs of Cellforce production facilities.,
+X03,US import tariffs (expense),Exceptional items,Group,flow,SUM,EUR m,False,"Management-disclosed tariff expense. Classified inside 'extraordinary' in 2025, separately guided in 2026.",2025: inside 'extraordinary'. 2026: guided separately (~EUR 0.7bn FY). Model shows EBIT both incl. and excl. tariffs.
+X04,Provision releases related to realignment,Exceptional items,Group,flow,SUM,EUR m,False,Reversal of realignment provisions (e.g. supplier settlements).,
+X05,Impairment losses included in automotive D&A,Exceptional items,Auto,flow,SUM,EUR m,True,Impairments booked inside depreciation/amortisation (overlap with X01/X02).,
+A01,Automotive sales revenue,Automotive segment,Auto,flow,SUM,EUR m,False,Sales revenue of the Automotive segment.,
+A02,Automotive operating profit,Automotive segment,Auto,flow,SUM,EUR m,False,"Segment operating profit, Automotive.",
+A03,Automotive EBITDA,Automotive segment,Auto,flow,SUM,EUR m,False,"Auto operating profit plus D&A and changes in value (impairments) of PP&E, capitalised development costs and other intangibles.","Because EBITDA adds back impairments, EBITDA margin is NOT distorted by write-downs, but EBIT is."
+A04,Automotive EBITDA margin,Automotive segment,Auto,ratio,NONE,%,False,Automotive EBITDA divided by automotive sales revenue.,
+A05,Automotive R&D costs (total),"R&D, capex, D&A",Auto,flow,SUM,EUR m,False,"Research costs, non-capitalisable development costs and investments in capitalisable development costs.",
+A06,Automotive capitalised development costs,"R&D, capex, D&A",Auto,flow,SUM,EUR m,False,Portion of R&D costs capitalised as intangible assets.,
+A07,Capitalisation rate,"R&D, capex, D&A",Auto,ratio,NONE,%,False,Capitalised development costs divided by total automotive R&D costs.,
+A08,Expensed automotive R&D,"R&D, capex, D&A",Auto,flow,SUM,EUR m,False,R&D costs expensed directly in the period.,
+A09,Amortisation of capitalised R&D,"R&D, capex, D&A",Auto,flow,SUM,EUR m,False,Amortisation of previously capitalised development costs. May include impairments (see AF-02).,May include impairments of capitalised development costs (FY2025 annual report cites such impairments). Split needed in Phase 2.
+A10,Automotive capex,"R&D, capex, D&A",Auto,flow,SUM,EUR m,False,"Additions to intangibles (excl. capitalised dev. costs, goodwill) and PP&E (excl. right-of-use assets).",
+A11,Automotive depreciation on capex,"R&D, capex, D&A",Auto,flow,SUM,EUR m,False,Depreciation of capex asset base. INCLUDES impairment losses (see AF-02).,"Includes impairments: H1 2025 contains EUR 295m Cellforce impairment; FY2025 contains ~EUR 1,200m. Must be cleaned before use (AF-02)."
+A12,Automotive total D&A,"R&D, capex, D&A",Auto,flow,SUM,EUR m,False,A09 + A11. Includes impairments.,Same issue as A11.
+A13,Automotive net cash flow,Automotive cash,Auto,flow,SUM,EUR m,False,"Auto operating cash flow less investing cash flow from operating activities (excl. securities, loans, time deposits).",
+A14,Automotive net liquidity,Automotive cash,Auto,stock,LAST,EUR m,False,"Cash, securities, loans and time deposits net of third-party borrowings, Automotive.",
+F01,Financial Services sales revenue,Financial Services,FS,flow,SUM,EUR m,False,Sales revenue of the Financial Services segment.,
+F02,Financial Services operating profit,Financial Services,FS,flow,SUM,EUR m,False,"Segment operating profit, Financial Services.",
+O01,Deliveries (total),Volumes,Auto,flow,SUM,units,False,"Vehicles handed over to end customers, via group companies or independent importers/dealers.",
+O02,Deliveries by model line,Volumes,Auto,flow,SUM,units,False,"Deliveries split by 911, 718, Macan (ICE/BEV), Cayenne, Panamera, Taycan.",
+O03,Deliveries by region,Volumes,Auto,flow,SUM,units,False,"Deliveries by North America, Germany, Europe excl. DE, China incl. HK, Overseas & Emerging.",Presentations give % only (from H1 2025); half-year reports give units. Prefer units.
+O04,Vehicle sales (wholesale),Volumes,Auto,flow,SUM,units,False,"New and group-used Porsche vehicles leaving the Automotive segment for the first time, no repurchase obligation.",
+O05,Vehicle sales by region,Volumes,Auto,flow,SUM,units,False,Vehicle sales split by region.,
+O06,ASP - automotive revenue per vehicle sold,Unit economics,Auto,ratio,NONE,EUR k,False,Porsche: automotive sales revenue per vehicle sold (rounded EUR k).,H1 2023 deck shows per-DELIVERY metric; use per-vehicle-SOLD comparative from later deck.
+O07,BEV share,Volumes,Auto,ratio,NONE,%,False,Automotive BEV share as reported; basis (deliveries vs revenue) to be confirmed per period.,Confirm whether BEV share is measured on deliveries in all periods.
+O08,Production (units),Volumes,Auto,flow,SUM,units,False,"Vehicles produced, by plant/model. Annual only.",
+O09,Revenue per delivery (reference only),Unit economics,Auto,ratio,NONE,EUR k,False,Porsche-shown in some decks: automotive revenue per delivery. NOT used as time series (definition mismatch).,Different denominator from O06 (deliveries vs vehicle sales). Reference only.
+G09,"Basic/diluted EPS, ordinary share",Group P&L,Group,per_share,NONE,EUR/share,False,Earnings per ordinary share (fact sheet).,
+G10,"Basic/diluted EPS, preferred share",Group P&L,Group,per_share,NONE,EUR/share,False,Earnings per preferred share (fact sheet).,
+A13a,Automotive cash flows from operating activities,Automotive cash,Auto,flow,SUM,EUR m,False,Operating cash flow of the Automotive segment (fact sheet).,
+A13b,Automotive investing activities of current operations,Automotive cash,Auto,flow,SUM,EUR m,False,"Investing cash flow attributable to operating activities, Automotive (fact sheet).",

@@ -1,0 +1,4 @@
+rstep_id,rstep_name,rstep_order
+RS0,Automotive revenue same half prior year,1
+RS1,Volume effect,2
+RS2,ASP effect,3
