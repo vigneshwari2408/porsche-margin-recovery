@@ -89,11 +89,11 @@ window.PCL = {
   ],
   "l3": [
    0.18732561930952657,
-   0.2006134946634078,
+   0.20051398578843527,
    0.16973089288222187,
-   0.18114931070243592,
+   0.18100386521400064,
    0.1427962786186763,
-   0.1628262785036561,
+   0.16310230271631035,
    0.1427314429642608
   ]
  },
@@ -254,20 +254,20 @@ window.PCL = {
   ],
   "cleanDA": [
    1176.0,
-   1480.0,
+   1478.0,
    1364.0,
-   1621.0,
+   1618.0,
    1461.0,
-   1531.0,
+   1536.0,
    1498.0
   ],
   "imp": [
    0.0,
+   2.0,
    0.0,
-   0.0,
-   0.0,
+   3.0,
    295.0,
-   905.0,
+   900.0,
    61.0
   ],
   "latest": {
@@ -428,7 +428,7 @@ window.PCL = {
     "high": 900.0,
     "unit": "EUR m",
     "source": "S027",
-    "ref": "CFO answer on H2 visibility"
+    "ref": "CFO outlook remarks and answer on H2 visibility"
    },
    {
     "id": "GD_NCF",
@@ -868,8 +868,8 @@ window.PCL = {
  },
  "qa": {
   "sqlDQ": 305,
-  "sqlInfo": 28,
-  "sqlMQ": 118,
+  "sqlInfo": 26,
+  "sqlMQ": 116,
   "excelChecks": 50,
   "excelValues": 553,
   "pbiQA": 388,
@@ -902,15 +902,15 @@ window.PCL = {
   "relationships": 8,
   "measures": 194,
   "sqlViews": 11,
-  "sqlScripts": 14,
+  "sqlScripts": 15,
   "sources": 27,
   "sourcesPorsche": 26,
   "manualInputs": 155,
-  "manualValues": 151,
-  "gaps": 4,
+  "manualValues": 154,
+  "gaps": 1,
   "sourceRefs": 481,
   "auditFindings": 13,
-  "excelFormulas": 2997
+  "excelFormulas": 3003
  },
  "assumptions": [
   {
@@ -923,7 +923,7 @@ window.PCL = {
   },
   {
    "id": "A-03",
-   "statement": "Impairments inside automotive D&A are 0 where not disclosed (2023-H2, 2024-H2)."
+   "statement": "Impairments inside automotive D&A are 0 where not disclosed. Not applied to any period since the Oct 2026 source re-check: FY2023 (EUR 2m) and FY2024 (EUR 3m) automotive impairments were found in the segment reporting tables of S004 and S008, so H2 2023 and H2 2024 are DERIVED as FY - H1."
   },
   {
    "id": "A-04",
@@ -935,11 +935,11 @@ window.PCL = {
   },
   {
    "id": "A-06",
-   "statement": "FY2026 extraordinary-expense guidance (EUR 0.8-0.9bn) is on the same net basis as the H1 2026 figure (EUR ~0.1bn)."
+   "statement": "The FY2026 extraordinary-expense figure of EUR 0.8-0.9bn (stated by the CFO on the H1 2026 earnings call, S027 transcript; not an amount in Porsche written guidance) is on the same net basis as the H1 2026 figure (EUR ~0.1bn)."
   },
   {
    "id": "A-07",
-   "statement": "H2 2026 tariff expense = H1 2026 tariff expense (EUR 0.4bn)."
+   "statement": "H2 2026 tariff expense = H1 2026 tariff expense (EUR 0.4bn). Analyst assumption; the CFO's call remark of ~EUR 0.7bn for FY2026 (S027) would imply ~EUR 0.3bn."
   },
   {
    "id": "A-08",

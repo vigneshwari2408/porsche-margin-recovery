@@ -184,7 +184,7 @@
     labels: P.periods, stack: true, yfmt: v => F.int(v), tfmt: v => "€" + F.int(v) + "m", derived: isH2,
     series: [{ name: "Clean automotive D&A", cls: "b-da", values: R.cleanDA }, { name: "Impairments", cls: "b-imp", values: R.imp }],
     topLabel: i => F.int(R.cleanDA[i] + R.imp[i]),
-    tipExtra: i => (i === 1 || i === 3) ? '<span class="tip-sub">Impairments taken as 0 where not disclosed (A-03)</span>' : i === 6 ? '<span class="tip-sub">€61m impairments assumed inside D&A (A-04)</span>' : "",
+    tipExtra: i => (i === 1 || i === 3) ? '<span class="tip-sub">Impairments = FY − H1 (FY2023 €2m, FY2024 €3m, segment reporting)</span>' : i === 6 ? '<span class="tip-sub">€61m impairments assumed inside D&A (A-04)</span>' : "",
   });
   daChart();
 
@@ -287,7 +287,7 @@
   const order = ["GD_REV", "GD_ROS", "GD_EXTRA", "GD_EBITDA", "GD_NCF", "GD_BEV"];
   const gv = (x, v) => x.unit === "%" ? v.toFixed(1) + "%" : "€" + F.int(v) + "m";
   $("#guidance-table").innerHTML = `<thead><tr><th>Metric</th><th>Low</th><th>Mid</th><th>High</th></tr></thead><tbody>` +
-    order.map(id => gin(id)).filter(Boolean).map(x => `<tr><td>${x.metric}<br><span class="src">${x.source}, ${x.ref}</span></td><td>${gv(x, x.low)}</td><td>${gv(x, x.mid)}</td><td>${gv(x, x.high)}</td></tr>`).join("") + `</tbody>`;
+    order.map(id => gin(id)).filter(Boolean).map(x => `<tr><td>${x.metric}<br><span class="src">${x.source === "S027" ? "S027, CFO on the earnings call (transcript); not in the written guidance" : x.source + ", " + x.ref}</span></td><td>${gv(x, x.low)}</td><td>${gv(x, x.mid)}</td><td>${gv(x, x.high)}</td></tr>`).join("") + `</tbody>`;
   $("#assumptions-scenario").innerHTML = P.assumptions.filter(a => +a.id.slice(2) >= 5).map(a => `<li><b>${a.id}</b><span>${niceEur(a.statement)}</span></li>`).join("");
 
   /* ------------------------------------------------ 07 QA */
@@ -304,7 +304,7 @@
   /* ------------------------------------------------ method: timeline + architecture */
   const stages = [
     { n: "Source documents", tools: "Source register, Python extraction", p: `Every number starts in a registered public source. ${Q.sources} sources are registered with URL, type and period: ${Q.sourcesPorsche} from Porsche AG and one public earnings-call transcript, used only for the CFO's statement on extraordinary expenses.`,
-      li: [`Fact-sheet Excel files extracted by script, checked against the file layout`, `${Q.manualInputs} manual input rows from PDFs: ${Q.manualValues} values and ${Q.gaps} gaps left blank, not estimated`, `${Q.sourceRefs} source-reference rows record where each variable was found`, "Every value labelled fact, derived, assumption or proxy"] },
+      li: [`Fact-sheet Excel files extracted by script, checked against the file layout`, `${Q.manualInputs} manual input rows from PDFs: ${Q.manualValues} values and ${Q.gaps} gap${Q.gaps === 1 ? "" : "s"} left blank, not estimated`, `${Q.sourceRefs} source-reference rows record where each variable was found`, "Every value labelled fact, derived, assumption or proxy"] },
     { n: "SQL data model", tools: "PostgreSQL 16, SQL, data modelling", p: `${Q.sqlScripts} scripts build staging, core, mart and audit schemas. H2 is derived as full year minus H1, for flow variables only; ratios are never derived that way.`,
       li: [`${Q.sqlViews} mart views: adjusted EBIT, clean D&A, R&D capitalisation, ASP and volume, delivery mix, cash, bridge, guidance`, `${Q.sqlDQ} data-quality and ${Q.sqlMQ} model-quality checks pass`, `${Q.auditFindings} audit findings documented`] },
     { n: "Excel reconciliation", tools: "Excel, financial analysis", p: `An audited business model imported from SQL, with ${F.int(Q.excelFormulas)} formulas across the analysis sheets for EBIT, R&D and D&A, commercial, cash and guidance.`,
@@ -374,7 +374,7 @@
       c: "Actuals as published. The H2 range is scenario arithmetic using assumption A-05, not a forecast." },
     { cls: "scn", fig: F.pct1(G1.mid), lab: `implied H2 underlying margin with every guidance range at its midpoint, against ${F.pct1(K.m1[1])} in H1`, h: "Guidance at its midpoints requires the underlying margin to improve in H2.",
       e: `Holding the H1 level is not enough to meet the guidance midpoints. Across all ${G.grid.length} combinations the implied H2 L1 margin runs from ${F.pct1(G1.min)} to ${F.pct1(G1.max)}.`,
-      c: "Arithmetic only — not forecasts — no probabilities. Based on FY2026 guidance (S016, slide 14) and the CFO's statement on extraordinary expenses (S027).", tag: "Scenario arithmetic" },
+      c: "Arithmetic only — not forecasts — no probabilities. Based on Porsche's FY2026 guidance (S016, slide 14) and the CFO's earnings-call statement on extraordinary expenses (S027, transcript; not in the written guidance).", tag: "Scenario arithmetic" },
   ];
   $("#findings-list").innerHTML = findings.map(f => `<article class="finding ${f.cls || ""}"><div><p class="fd-fig">${f.fig}</p><p class="fd-figlab">${f.lab}</p></div><div class="fd-body">${f.tag ? `<span class="fd-tag">${f.tag}</span>` : ""}<h3 class="fd-insight">${f.h}</h3><p class="fd-expl">${f.e}</p><p class="fd-ctx">${f.c}</p></div></article>`).join("");
 

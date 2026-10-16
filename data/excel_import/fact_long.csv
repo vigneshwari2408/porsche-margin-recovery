@@ -56,6 +56,7 @@ period_code,var_id,var_name,value,unit_std,value_label,origin,coalesce,coalesce,
 2023-H2,G07,Operating profit (EBIT),3432.072410,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2023-FY (S025) minus 2023-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
 2023-H2,O01,Deliveries (total),152867.000000,units,DERIVED,SQL_DERIVED,"",FY - H1: 2023-FY (S025) minus 2023-H1 (S025),derived; inputs rounded: FY exact / H1 exact
 2023-H2,O04,Vehicle sales (wholesale),162803.000000,units,DERIVED,SQL_DERIVED,"",FY - H1: 2023-FY (S025) minus 2023-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2023-H2,X05,Impairment losses included in automotive D&A,2.000000,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2023-FY (S004) minus 2023-H1 (S002),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
 2024-H1,A01,Automotive sales revenue,17695.000000,EUR m,FACT,MANUAL,S006,10 (Automotive EBITDA margin table),EUR 1m
 2024-H1,A02,Automotive operating profit,2904.000000,EUR m,FACT,MANUAL,S006,10 (Automotive EBITDA margin table),EUR 1m
 2024-H1,A03,Automotive EBITDA,4268.000000,EUR m,FACT,MANUAL,S006,10 (Automotive EBITDA margin table),EUR 1m
@@ -121,6 +122,7 @@ period_code,var_id,var_name,value,unit_std,value_label,origin,coalesce,coalesce,
 2024-H2,G07,Operating profit (EBIT),2575.437190,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2024-FY (S025) minus 2024-H1 (S025),"derived; inputs rounded: FY exact (EUR, converted to EUR m) / H1 exact (EUR, converted to EUR m)"
 2024-H2,O01,Deliveries (total),154773.000000,units,DERIVED,SQL_DERIVED,"",FY - H1: 2024-FY (S025) minus 2024-H1 (S025),derived; inputs rounded: FY exact / H1 exact
 2024-H2,O04,Vehicle sales (wholesale),160676.000000,units,DERIVED,SQL_DERIVED,"",FY - H1: 2024-FY (S025) minus 2024-H1 (S025),derived; inputs rounded: FY exact / H1 exact
+2024-H2,X05,Impairment losses included in automotive D&A,3.000000,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2024-FY (S008) minus 2024-H1 (S006),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
 2025-H1,A01,Automotive sales revenue,16138.000000,EUR m,FACT,MANUAL,S010,11 (Automotive EBITDA margin table),EUR 1m
 2025-H1,A02,Automotive operating profit,832.000000,EUR m,FACT,MANUAL,S010,11 (Automotive EBITDA margin table),EUR 1m
 2025-H1,A03,Automotive EBITDA,2588.000000,EUR m,FACT,MANUAL,S010,11 (Automotive EBITDA margin table),EUR 1m
@@ -194,7 +196,7 @@ period_code,var_id,var_name,value,unit_std,value_label,origin,coalesce,coalesce,
 2025-H2,X01,Strategic realignment incl. battery (net charge),2400.000000,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2025-FY (S011) minus 2025-H1 (S016),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.1bn
 2025-H2,X02,of which battery activities (memo),300.000000,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2025-FY (S011) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.1bn
 2025-H2,X03,US import tariffs (expense),300.000000,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2025-FY (S011) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 0.1bn / H1 EUR 0.1bn
-2025-H2,X05,Impairment losses included in automotive D&A,905.000000,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2025-FY (S011) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 100m (text says 'around') / H1 EUR 1m
+2025-H2,X05,Impairment losses included in automotive D&A,900.000000,EUR m,DERIVED,SQL_DERIVED,"",FY - H1: 2025-FY (S012) minus 2025-H1 (S010),derived; inputs rounded: FY EUR 1m / H1 EUR 1m
 2026-H1,A01,Automotive sales revenue,15158.000000,EUR m,FACT,MANUAL,S017,12 (Automotive EBITDA margin table),EUR 1m
 2026-H1,A02,Automotive operating profit,1208.000000,EUR m,FACT,MANUAL,S017,12 (Automotive EBITDA margin table),EUR 1m
 2026-H1,A03,Automotive EBITDA,2767.000000,EUR m,FACT,MANUAL,S017,12 (Automotive EBITDA margin table),EUR 1m

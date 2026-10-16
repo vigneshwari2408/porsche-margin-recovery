@@ -10,7 +10,7 @@ DQ08,A05 = A06 + A08,20,0,0
 DQ09,Prior-year EBIT + bridge buckets = EBIT,8,0,0
 DQ10,Unit of fact rows matches dim_variable.unit_std,1,0,0
 DQ11,Ratios never derived by FY - H1,1,0,0
-DQ12,Missing half-year value in analysis window: not published / not applicable for this period,0,0,18
+DQ12,Missing half-year value in analysis window: not published / not applicable for this period,0,0,16
 DQ13,Automotive + Financial Services revenue vs group revenue (difference = consolidation),0,0,10
 MQ01,v_panel_hy: 7 unique half-year rows (2023-H1..2026-H1),1,0,0
 MQ02,v_panel_hy: panel holds every core value of the analysis window (pivot completeness),1,0,0
@@ -21,7 +21,7 @@ MQ06,v_ebit_adjusted: L0 margin = published group RoS (S009 slide 27),3,0,0
 MQ07,v_ebit_adjusted: L3 (supplementary hybrid) = L1 + clean D&A - capitalised R&D,7,0,0
 MQ08,v_ebit_adjusted / guidance views: every cited assumption exists in mart.assumption,1,0,0
 MQ09,v_da_clean: da_clean = da_total - impairment_used and 0 < da_clean <= da_total,7,0,0
-MQ10,v_da_clean: clean depreciation + clean amortisation = clean D&A (Porsche rounds components to EUR 1m),5,0,0
+MQ10,v_da_clean: clean depreciation + clean amortisation = clean D&A (Porsche rounds components to EUR 1m),3,0,0
 MQ11,v_rd_capitalisation: calculated cap rate = published cap rate,4,0,0
 MQ12,v_rd_capitalisation: P&L charge = total R&D costs - net capitalisation,7,0,0
 MQ13,v_asp_volume: calculated ASP = published ASP,4,0,0
