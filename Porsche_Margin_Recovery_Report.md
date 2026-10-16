@@ -45,12 +45,12 @@ All results are reconciled across SQL, Excel and Power BI: **1,524 comparisons w
   - press and analyst call presentations;
   - press releases;
   - official fact-sheet XLSX files (H1 2023–H1 2026).
-- **One tier-3 source:** a public H1 2026 earnings-call transcript, used only for the CFO's statement on net extraordinary expenses (assumption A-06).
+- **One tier-3 source:** a public H1 2026 earnings-call transcript (Investing.com, AI-assisted and editor-reviewed), used only for the CFO's statement on net extraordinary expenses (€0.8–0.9bn, assumption A-06). This amount is not in Porsche's written guidance.
 - **Register:** every source is logged in the source register (S001–S027) with URL, document type and period.
 
 ### 4.2 Data capture
 - **Fact sheets:** Porsche's fact-sheet Excel files were extracted with a script, with QC against the file layout.
-- **Manual inputs:** values available only in PDFs (segment tables, R&D, D&A, one-offs, ASP) were recorded manually. There are 155 input rows: 151 values and 4 documented gaps, which were left blank rather than estimated.
+- **Manual inputs:** values available only in PDFs (segment tables, R&D, D&A, one-offs, ASP) were recorded manually. There are 155 input rows: 154 values and 1 documented gap (the FY2025 realignment provision release, not disclosed), left blank rather than estimated. A full re-read of the official documents in October 2026 filled three earlier gaps from the annual reports (automotive impairments FY2023 €2m and FY2024 €3m, segment reporting; ASP per vehicle sold FY2023 €112k, S007 slide 69) and replaced the rounded FY2025 impairment ("around €1,200m") with the exact €1,195m (S012 segment reporting).
 - **Metadata:** each value carries source ID, page, period, unit, rounding and its FACT/DERIVED label, plus a double-check status.
 - **Traceability:** 481 source-reference rows document where each variable was found.
 
@@ -62,11 +62,11 @@ Porsche publishes H1 and FY figures. **H2 = FY − H1** is derived only for addi
 |---|---|---|---|
 | A-01 | No realignment/battery items for 2023-H1 … 2024-H2 (treated as 0) | FY2023/24 EBIT bridges show no extraordinary bracket | If undisclosed one-offs existed, the 2023/24 baseline would be higher and the recovery weaker |
 | A-02 | No additional US tariffs before April 2025 | Section 232 auto tariffs effective 3 April 2025; first reported by Porsche in H1 2025 | Low |
-| A-03 | Undisclosed impairments inside automotive D&A = 0 (2023-H2, 2024-H2) | H1 notes show nil; FY amounts not verifiable | Would lower clean D&A for those periods |
+| A-03 | Undisclosed impairments inside automotive D&A = 0 (fallback rule) | Not applied since the October 2026 re-check: FY2023 (€2m) and FY2024 (€3m) were found in segment reporting, so H2 values are FY − H1 | None at present |
 | A-04 | H1 2026 impairments of €61m (eBike 43 + Cellforce 18) are inside automotive D&A | Published impairments of automotive subsidiaries; line item not confirmed | Alternative shown: residual −€79m instead of −€140m; L3 +€61m |
 | A-05 | FY2026 automotive revenue = group revenue guidance × H1 2026 automotive share (88.0%) | Porsche guides automotive margins, not automotive revenue | ±1 pp share moves the implied H2 automotive margins |
-| A-06 | FY2026 extraordinary-expense guidance (€0.8–0.9bn) is net, like H1 (~€0.1bn) | CFO statement (S027), consistent with Porsche press release | If gross, implied H2 charges would be lower |
-| A-07 | H2 2026 tariffs = H1 2026 (€0.4bn) | No verified primary FY2026 tariff figure | L2 only; €300m instead of €400m lowers the implied H2 L2 margin by ~0.55 pp |
+| A-06 | The €0.8–0.9bn FY2026 extraordinary-expense figure is net, like H1 (~€0.1bn) | CFO statement on the earnings call (S027, transcript); not an amount in Porsche's written guidance, which says higher realignment expenses are expected to be offset by reversing provisions | If gross, implied H2 charges would be lower |
+| A-07 | H2 2026 tariffs = H1 2026 (€0.4bn) | Analyst assumption; no tariff amount in Porsche's written guidance. The CFO said on the call (S027) that guidance includes ~€0.7bn of tariffs for FY2026, implying ~€0.3bn in H2 | L2 only; with €300m the implied H2 L2 margin is 11.00% instead of 11.54% at all midpoints (range 8.69%–13.38% instead of 9.23%–13.94%) |
 | A-08 | Guidance range ends are combined as independent low/mid/high values | Porsche does not say which ends go together | The range is deliberately wide |
 | A-09 | Derived H2 values inherit input rounding (±€100m on H2 one-offs) | H2 = FY − H1, both rounded to €0.1bn | Shown as a rounding band |
 
@@ -74,8 +74,8 @@ Porsche publishes H1 and FY figures. **H2 = FY − H1** is derived only for addi
 | Layer | Content |
 |---|---|
 | **Input workbooks** | `PCL_01_Sources.xlsx` (register, definitions, availability, source references, audit findings); `PCL_02_Manual_Inputs.xlsx` (155 inputs, 10 input checks) |
-| **SQL (PostgreSQL 16)** | Schemas `stg` → `core` → `mart`, plus `audit`. Core fact table with 701 values across all period types, 236 of them in the half-year window. 11 mart views: panel, adjusted EBIT, clean D&A, R&D capitalisation, ASP/volume, delivery mix, cash cross-check, YoY bridge, guidance grid / summary / automotive. 13 audit findings, 4 documented data gaps. |
-| **Excel (PCL_05 FINAL)** | 13 sheets, 2,997 formulas. Data layer (imported from SQL), analysis sheets (EBIT, R&D & D&A, Commercial, Cash, Guidance), `Audit_Checks` (50 checks), `Audit_Register` |
+| **SQL (PostgreSQL 16)** | Schemas `stg` → `core` → `mart`, plus `audit`. Core fact table with 706 values across all period types, 238 of them in the half-year window. 11 mart views: panel, adjusted EBIT, clean D&A, R&D capitalisation, ASP/volume, delivery mix, cash cross-check, YoY bridge, guidance grid / summary / automotive. 13 audit findings, 1 documented data gap. |
+| **Excel (PCL_05 FINAL)** | 13 sheets, 3,003 formulas. Data layer (imported from SQL), analysis sheets (EBIT, R&D & D&A, Commercial, Cash, Guidance), `Audit_Checks` (50 checks), `Audit_Register` |
 | **Power BI** | 17 tables (star schema on a half-year DimPeriod), 8 many-to-one relationships, 194 DAX measures in 13 folders. Guidance, level and step tables are disconnected so that period filters cannot alter scenarios. RefSQL (388 rows) drives the in-report QA. |
 
 ## 6. KPI definitions
@@ -87,7 +87,7 @@ Porsche publishes H1 and FY figures. **H2 = FY − H1** is derived only for addi
 | **L2 EBIT** | L1 + US import tariffs (X03) | DERIVED: headline adjusted |
 | **L3 hybrid sensitivity** | L1 + clean automotive D&A − automotive capitalised development costs | DERIVED: **sensitivity only, not a KPI** |
 | Margin L0 / L1 / L2 | Level ÷ group revenue | DERIVED |
-| Clean automotive D&A | Automotive D&A − disclosed impairments (A-03, A-04) | DERIVED |
+| Clean automotive D&A | Automotive D&A − disclosed impairments (A-04 for H1 2026) | DERIVED |
 | R&D P&L charge | Expensed R&D + amortisation of capitalised R&D | DERIVED |
 | Capitalisation rate | Capitalised development costs ÷ total automotive R&D costs | DERIVED |
 | Net capitalisation | Capitalised − amortised; <0 means the P&L charge exceeds R&D costs | DERIVED |
@@ -188,18 +188,18 @@ Porsche publishes H1 and FY figures. **H2 = FY − H1** is derived only for addi
 6. **Guidance at its midpoints requires H2 underlying improvement** (L1 about 9.4% vs 8.4% in H1).
 
 ## 9. Scenario methodology
-- **Inputs:** Porsche's FY2026 guidance (S016 slide 14):
+- **Inputs:** Porsche's published FY2026 guidance (S016 slide 14), plus one transcript figure:
   - revenue €35–36bn;
   - return on sales 5.5–7.5%;
   - automotive EBITDA margin 15–17%;
   - automotive NCF margin 3–5%;
   - BEV share 24–26%;
-  - extraordinary expenses (net) €0.8–0.9bn (S027, A-06).
+  - extraordinary expenses (net) €0.8–0.9bn: stated by the CFO on the H1 2026 earnings call (S027, transcript), not in Porsche's written guidance (A-06).
 - **Grid:** each range is taken at its low, mid and high end, and the ends are combined independently (A-08). That gives 27 group combinations (revenue × RoS × extraordinary expenses) and 9 automotive combinations (revenue × margin).
 - **Arithmetic:**
   - H2 implied = FY implied − H1 2026 actual, with FY EBIT = revenue × RoS.
   - L1 adds back the implied H2 extraordinary expenses (FY guidance − H1 actual).
-  - L2 also adds back H2 tariffs (A-07).
+  - L2 also adds back H2 tariffs (A-07, analyst assumption €0.4bn; with the transcript-implied €0.3bn the L2 midpoint is 11.00% instead of 11.54%).
   - The automotive combinations use A-05.
 
 | Implied H2 2026 | Min | All midpoints | Max | H1 2026 | H2 2025 |
@@ -217,9 +217,9 @@ With all midpoints, H2 2026 implies revenue of €18,271m and reported EBIT of �
 ## 10. QA and reconciliation
 | Control | Scope | Result |
 |---|---|---|
-| Source verification | Values checked against documents or fact sheets; 4 gaps documented | 151 values verified |
-| SQL data-quality checks | Completeness, identities, H2 derivation, source coverage | 305 PASS, 28 INFO, 0 FAIL |
-| SQL model-quality checks | View logic, bridge closure, scenario grid | 118 PASS, 0 FAIL |
+| Source verification | Values checked against documents or fact sheets; full re-read of the official documents in October 2026; 1 gap documented | 154 values verified |
+| SQL data-quality checks | Completeness, identities, H2 derivation, source coverage | 305 PASS, 26 INFO, 0 FAIL |
+| SQL model-quality checks | View logic, bridge closure, scenario grid | 116 PASS, 0 FAIL |
 | Excel `Audit_Checks` | 50 formula checks: imports, Excel vs SQL, identities, Porsche reconciliations, labelling, 8 anchor values | 50/50 PASS |
 | Excel value verification | 553 displayed values vs the SQL exports | 0 failures |
 | Power BI QA page | 388 checks: each measure recomputed from base values vs the SQL reference, incl. 77 delivery-mix shares | 388/388 PASS |
@@ -238,7 +238,8 @@ With all midpoints, H2 2026 implies revenue of €18,271m and reported EBIT of �
 - **L3** mixes group and automotive-only items. It is a sensitivity, not underlying profitability.
 - **Delivery mix** uses retail deliveries, while revenue follows wholesale units.
 - **Scenarios** assume independent range ends (A-08), a constant automotive share (A-05), net extraordinary guidance (A-06) and H2 tariffs = H1 (A-07).
-- **One input comes from a tier-3 source:** the CFO statement in an earnings-call transcript.
+- **One input comes from a tier-3 source:** the CFO statement in an earnings-call transcript (€0.8–0.9bn net extraordinary expenses), not from Porsche's written guidance.
+- **Battery memo:** the H1 2025 battery item is €0.4bn in the half-year report and €0.5bn on the H1 2025 presentation slide (whose components sum to €1.1bn either way). It is a memo inside the realignment total (€0.7bn) and feeds no KPI.
 
 ## 12. Conclusion
 On the published data, Porsche's H1 2026 margin recovery is a **reported** recovery. It is explained by smaller one-off charges, while the **underlying** margin (L1: 9.4% → 8.4%) and the other EBIT drivers (−€140m) are still weakening. Higher prices and a richer mix help, but not enough to offset lower volume. Accounting is a headwind rather than a support.

@@ -9,7 +9,7 @@
 ## The analysis model (PCL_05)
 
 - **Imports** (blue): the SQL fact table, delivery mix, guidance inputs and the SQL mart results (used for reconciliation only).
-- **Calculations** (black formulas, green cross-sheet links): every analytical number is a formula built from the imports. 2,997 formulas in total, no hard-coded results.
+- **Calculations** (black formulas, green cross-sheet links): every analytical number is a formula built from the imports. 3,003 formulas in total, no hard-coded results.
 - **`Audit_Checks`**: 50 checks that recompute identities and reconcile each key result to SQL. Status cell: **ALL 50 CHECKS PASS**.
 - The workbook is set to recalculate fully when opened.
 
@@ -20,14 +20,17 @@ Start at `KPI_Overview`, then `EBIT_Analysis`, then `Audit_Checks`.
     python3 qa/verify_against_sql.py data/excel_import excel/PCL_05_Porsche_Margin_Model_FINAL.xlsx
     python3 qa/lint_portability.py excel/PCL_05_Porsche_Margin_Model_FINAL.xlsx
 
-Results: [`../qa/PCL_05_verification_report.txt`](../qa/PCL_05_verification_report.txt) (553 values, 0 failures; 2,997 formulas, 0 portability issues).
+Results: [`../qa/PCL_05_verification_report.txt`](../qa/PCL_05_verification_report.txt) (553 values, 0 failures; 3,003 formulas, 0 portability issues).
 
 ## Rebuilding the model
 
 The workbook is generated from the CSVs in [`../data/excel_import/`](../data/excel_import/):
 
-    python3 tools/build_workbook.py data/excel_import PCL_05_Porsche_Margin_Model.xlsx
-    python3 tools/blank_no_prior_year.py PCL_05_Porsche_Margin_Model.xlsx
-    python3 tools/finalize_calc_flag.py PCL_05_Porsche_Margin_Model.xlsx
+    python3 tools/build_workbook.py data/excel_import PCL_05_Porsche_Margin_Model_FINAL.xlsx
+    python3 tools/blank_no_prior_year.py PCL_05_Porsche_Margin_Model_FINAL.xlsx
+    soffice --headless --convert-to xlsx:"Calc MS Excel 2007 XML" --outdir recalc PCL_05_Porsche_Margin_Model_FINAL.xlsx
+    python3 tools/finalize_calc_flag.py recalc/PCL_05_Porsche_Margin_Model_FINAL.xlsx
 
-The rebuilt file matches the committed FINAL workbook cell for cell (values and formulas).
+The LibreOffice step stores the calculated results in the file. The rebuilt file matches the committed FINAL workbook cell for cell (formulas and cached values).
+
+The import CSVs come from the database: run [`../sql/14_excel_import_export.sql`](../sql/14_excel_import_export.sql) after the SQL build.

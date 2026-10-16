@@ -92,6 +92,7 @@ title(ws, "Data_Long - controlled import of core.fact_financial (analysis window
       "Blue = imported value (do not edit). K = rows with the same period_code + var_id (must be 1); L = value read back from Data_Panel; M = |L - D| (must be 0).",
       {"A": 10, "B": 8, "C": 44, "D": 16, "E": 9, "F": 9, "G": 12, "H": 9, "I": 70, "J": 36, "K": 12, "L": 16, "M": 12})
 rows = rd("fact_long.csv")[1:]
+N_FACT_LONG = len(rows)   # rows exported from SQL (sql/14_excel_import_export.sql); used by audit check C01
 hdr(ws, 5, ["period_code", "var_id", "var_name", "value", "unit_std", "value_label", "origin", "source_id",
             "source_ref", "rounding", "dup_count", "panel_readback", "readback_diff"])
 DL_FIRST, DL_LAST = 6, 5 + len(rows)
@@ -394,7 +395,7 @@ RDS = [
  {"key": "dep", "id": "R20", "label": "  Depreciation on capex (incl. impairments)", "unit": "EUR m", "f": "<A11>", "src": "H1 2023 = A12 - A09 (DERIVED)"},
  {"key": "am2", "id": "R21", "label": "  Amortisation of capitalised R&D", "unit": "EUR m", "f": "[am]"},
  {"key": "impdisc", "id": "R22", "label": "Impairments disclosed inside D&A", "unit": "EUR m", "f": 'IF(<X05>="","",<X05>)',
-  "src": "X05: S002 p.38, S006 p.38, S010 p.32 (Cellforce 295), S011 slide 34 fn (~1,200 FY2025), S017 p.29 (43 + 18)"},
+  "src": "X05: S002 p.38, S004 segment reporting (FY2023 = 2), S006 p.38, S008 segment reporting (FY2024 = 3), S010 p.32 (Cellforce 295), S012 segment reporting (FY2025 = 1,195; S011 slide 34 fn: around 1,200), S017 p.29 (43 + 18)"},
  {"key": "impused", "id": "R23", "label": "Impairments removed (used)", "unit": "EUR m", "f": 'IF(<X05>="",0,<X05>)', "bold": True},
  {"key": "impst", "id": "R24", "label": "   treatment", "unit": "", "fmt": "txt",
   "f": 'IF(<X05>="","A-03: not disclosed -> 0",IF({c}$5="2026-H1","A-04: 61 assumed inside D&A (upper bound)",IF(AND(RIGHT({c}$5,2)="H2",<X05>>0),"H2 = FY - H1; split not disclosed","FACT")))'},
@@ -615,7 +616,7 @@ ACT = [
  ("h1ancf", "Automotive net cash flow H1 2026", "=Cash_Crosscheck!J{cncf}", "eur", "Cash_Crosscheck K06"),
  ("share", "A-05: automotive share of group revenue (H1 2026)", "=C{h1arev}/C{h1rev}", "pct2", "Assumption A-05"),
  ("h2tar", "A-07: H2 2026 tariffs = H1 2026 tariffs", "=C{h1tar}", "eur", "Assumption A-07 (base)"),
- ("h2tar_alt", "A-07 sensitivity: H2 2026 tariffs (secondary FY ~700m -> H2 ~300m)", 300, "eur", "Input: Quartr summary of Q1 2026 call (secondary)"),
+ ("h2tar_alt", "A-07 sensitivity: H2 2026 tariffs (CFO call remark FY ~700m -> H2 ~300m)", 300, "eur", "Input: S027 H1 2026 earnings-call transcript (tier 3, not written guidance)"),
 ]
 AROW = {}
 for i, (k, lab, f, fm, lin) in enumerate(ACT):
@@ -890,7 +891,7 @@ def S_NOT_EQ(r, text):            # number of cells whose text differs from the 
     return "+".join(f'IF({x}="{text}",0,1)' for x in _cells(r))
 def chk(cid, text, cat_, expected, actual, tol, proves):
     CH.append((cid, text, cat_, expected, actual, tol, proves))
-chk("C01", "Data_Long rows imported = rows exported from SQL (236)", "Import", "236", f"COUNTA(Data_Long!B{DL_FIRST}:B{DL_LAST})", 0, "Complete import")
+chk("C01", f"Data_Long rows imported = rows exported from SQL ({N_FACT_LONG})", "Import", f"{N_FACT_LONG}", f"COUNTA(Data_Long!B{DL_FIRST}:B{DL_LAST})", 0, "Complete import")
 chk("C02", "Data_Panel holds every imported value of the panel variables", "Import",
     f'COUNTA(Data_Long!B{DL_FIRST}:B{DL_LAST})-COUNTIF(Data_Long!B{DL_FIRST}:B{DL_LAST},"G09")-COUNTIF(Data_Long!B{DL_FIRST}:B{DL_LAST},"G10")',
     f'COUNT(Data_Panel!D{FIRST}:J{PANEL_LAST})', 0, "Pivot loses nothing")

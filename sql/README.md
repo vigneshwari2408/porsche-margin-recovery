@@ -4,9 +4,9 @@
 > 1. Create a PostgreSQL 16 database named `porsche_lens`.
 > 2. In this `sql/` folder, create `data/` and `output/`. Copy `../data/staging/*.csv` into `data/`.
 > 3. Download Porsche's fact-sheet workbooks S024 and S025 (URLs in the source register). Run `python3 pcl_extract_factsheets.py <folder>` and put the resulting `fact_sheet_long.csv` in `data/`. This file is not committed because it copies Porsche's workbooks cell by cell.
-> 4. From this folder, run `psql -d porsche_lens -f 00_run_all.sql`. Then run `12_export_mart.sql` (writes `output/`) and `13_powerbi_export.sql` (writes the Power BI tables to `data/`).
+> 4. From this folder, run `psql -d porsche_lens -f 00_run_all.sql`. Then run `12_export_mart.sql` (writes `output/`), `13_powerbi_export.sql` (writes the Power BI tables to `data/`) and `14_excel_import_export.sql` (writes the Excel model's import files to `excel_import/`; create that folder first).
 >
-> Expected result: 27 sources, 13 audit findings, 423 PASS / 0 FAIL / 28 INFO in `audit.dq_result`. The exports should match [`../data/sql_outputs/`](../data/sql_outputs/) and [`../data/powerbi/`](../data/powerbi/); only the run timestamp in `dq_results.csv` changes.
+> Expected result: 27 sources, 13 audit findings, 421 PASS / 0 FAIL / 26 INFO in `audit.dq_result`. The exports should match [`../data/sql_outputs/`](../data/sql_outputs/) and [`../data/powerbi/`](../data/powerbi/); only the run timestamp in `dq_results.csv` changes.
 >
 > The phase notes below were written when the staging layer was built (S001–S026, AF-01–AF-11). The mart setup (`08_mart_setup.sql`) later adds source S027 and findings AF-12 and AF-13.
 
@@ -134,16 +134,16 @@ To rebuild after changing the workbooks: run `python export_to_csv.py` (regenera
 
 | Step | Expected |
 |---|---|
-| staging | 1902 / 151 / 26 / 47 / 11 / 4 rows |
-| core | fact_financial: 448 FACTSHEET + 151 MANUAL + 102 SQL_DERIVED = 701 rows; deliveries: 234 model + 175 region rows (incl. derived H2) |
-| checks | DQ01–DQ11: all PASS, 0 FAIL · DQ12: 18 INFO (known gaps) · DQ13: 10 INFO (consolidation, EUR 113–297m) |
+| staging | 1902 / 154 / 26 / 47 / 11 / 1 rows |
+| core | fact_financial: 448 FACTSHEET + 154 MANUAL + 104 SQL_DERIVED = 706 rows; deliveries: 234 model + 175 region rows (incl. derived H2) |
+| checks | DQ01–DQ11: all PASS, 0 FAIL · DQ12: 16 INFO (known gaps) · DQ13: 10 INFO (consolidation, EUR 113–297m) |
 
 Quick checks you can run yourself:
 ```sql
 SELECT * FROM audit.dq_result WHERE status = 'FAIL';                 -- must return nothing
 SELECT period_code, value FROM core.fact_financial
 WHERE var_id = 'G07' AND period_code LIKE '%-H_' ORDER BY period_code; -- group EBIT by half-year
-SELECT * FROM audit.data_gap;                                          -- the 4 documented blanks
+SELECT * FROM audit.data_gap;                                          -- the documented blank (1 row)
 ```
 
 ---
@@ -190,7 +190,7 @@ Impairments (X05) are **not** added in L1/L2: they are already inside X01 → no
 performance**: it mixes price, model/derivative mix and volume, changes in total R&D costs, material and supplier costs (incl. BEV
 compensation payments), SG&A, other operating result, FX, consolidation, and the rounding of disclosed one-offs (±EUR 100–200m).
 
-## Quality checks on the views (MQ01–MQ28, 118 results, 0 FAIL)
+## Quality checks on the views (MQ01–MQ28, 116 results, 0 FAIL)
 
 Pivot completeness; L0 = core EBIT and = published RoS; adjustment ladder; L3 identity; assumption IDs exist;
 clean D&A arithmetic; capitalisation rate and ASP reconcile to Porsche; volume + ASP effect = revenue change;

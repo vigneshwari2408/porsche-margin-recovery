@@ -35,7 +35,7 @@ The **Company Lens** series takes one public company and one live business quest
 | Layer | What it does | Output |
 |---|---|---|
 | **Sources** | 27 registered documents: 26 Porsche IR publications plus 1 earnings-call transcript. Every value is recorded with its source, page and definition. | Source register, availability matrix |
-| **SQL (PostgreSQL)** | Staging → core → mart model. Half-year derivation, adjusted EBIT levels, bridges, scenario grid, 423 data-quality checks. | 11 analytical views |
+| **SQL (PostgreSQL)** | Staging → core → mart model. Half-year derivation, adjusted EBIT levels, bridges, scenario grid, 421 data-quality and model-quality checks passed. | 11 analytical views |
 | **Excel** | A business model built on formulas, reproducing every SQL result independently, with a 50-check audit sheet | `PCL_05_Porsche_Margin_Model_FINAL.xlsx` |
 | **Power BI** | 6-page management dashboard: 17 tables, 8 relationships, 194 DAX measures, and an in-report QA page | `Porsche_Company_Lens_2026_Margin_Recovery.pbix` |
 
@@ -66,7 +66,7 @@ After two difficult half-years, Porsche's H1 2026 reported margin recovered. For
 - **Value labels:** every number is tagged **FACT** (published), **DERIVED** (calculated from published values), **ASSUMPTION** or **PROXY**.
 - **Traceability:**
   - 481 source-reference rows record document, page, period and definition.
-  - 155 manually recorded inputs (151 values, plus 4 documented gaps that were left blank rather than estimated).
+  - 155 manually recorded inputs (154 values, plus 1 documented gap that was left blank rather than estimated).
   - 13 audit findings and 9 named assumptions (A-01 to A-09).
 
 ## 5. Analytical methodology
@@ -74,7 +74,7 @@ After two difficult half-years, Porsche's H1 2026 reported margin recovered. For
 1. **Source validation:** every value was checked against the source document or the official fact sheet before entering the model.
 2. **SQL model:**
    - Staging, core (facts and dimensions) and mart (analytical views) layers.
-   - 305 data-quality checks and 118 model-quality checks, with 0 failures.
+   - 305 data-quality checks and 116 model-quality checks, with 0 failures.
 3. **Adjusted EBIT levels:** the disclosed one-offs are removed step by step (section 6).
 4. **Year-on-year bridge:** the change in reported EBIT versus the same half of the prior year is split into:
    - lower or higher one-offs;
@@ -158,7 +158,9 @@ Porsche guides FY2026 as ranges:
 | Return on sales | 5.5–7.5% |
 | Automotive EBITDA margin | 15–17% |
 | Automotive net cash flow margin | 3–5% |
-| Extraordinary expenses (net) | ~€0.8–0.9bn |
+| Extraordinary expenses (net)* | ~€0.8–0.9bn |
+
+\*Not in Porsche's written guidance: stated by the CFO on the H1 2026 earnings call (S027, transcript). The other rows are Porsche's published FY2026 guidance (S016, slide 14).
 
 I combined the low / mid / high ends of the ranges (27 group combinations and 9 automotive combinations), and for each one calculated what H2 2026 must deliver, given the H1 2026 actuals.
 
@@ -172,8 +174,8 @@ I combined the low / mid / high ends of the ranges (27 group combinations and 9 
 
 > These are **arithmetic scenario combinations** of Porsche's published ranges. They are **not forecasts**, carry **no probabilities**, and "all midpoints" is **not** a most-likely case. The assumptions behind them are:
 > - **A-05:** automotive share of revenue = its H1 2026 share (88.0%).
-> - **A-06:** extraordinary-expense guidance is net.
-> - **A-07:** H2 tariffs = H1 tariffs.
+> - **A-06:** the transcript's €0.8–0.9bn of extraordinary expenses is net, like H1.
+> - **A-07:** H2 tariffs = H1 tariffs (€0.4bn), an analyst assumption. The CFO's call remark of ~€0.7bn of tariffs for FY2026 would imply ~€0.3bn in H2; the L2 midpoint would then be 11.00% instead of 11.54%.
 > - **A-08:** range ends are combined independently.
 
 **Reading:** meeting guidance at its midpoints requires the underlying margin to rise in H2, to about 1 point above H1. The same guidance implies a clearly weaker H2 cash margin.
@@ -182,8 +184,8 @@ I combined the low / mid / high ends of the ranges (27 group combinations and 9 
 
 | Layer | Checks | Result |
 |---|---|---|
-| Sources | Every value verified against its document or the official fact sheet; 4 gaps documented, not estimated | 151 values + 4 gaps |
-| SQL | 305 data-quality + 118 model-quality checks | 0 FAIL |
+| Sources | Every value verified against its document or the official fact sheet (re-checked in full in October 2026); 1 gap documented, not estimated | 154 values + 1 gap |
+| SQL | 305 data-quality + 116 model-quality checks | 0 FAIL |
 | Excel | 50 formula-based audit checks (identities, Porsche reconciliations, labelling, 8 anchor values) | 50/50 PASS |
 | Power BI | 388 in-report QA checks: every measure recomputed from base values and compared with SQL | 388/388 PASS |
 

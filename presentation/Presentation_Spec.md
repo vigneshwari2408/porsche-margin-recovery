@@ -332,14 +332,14 @@
 - €35.0–36.0bn
 - Return on sales
 - 5.5–7.5%
-- Extraordinary expenses (net)
+- Extraordinary exp. (net)*
 - €0.8–0.9bn
 - Automotive EBITDA margin
 - 15–17%
 - Automotive NCF margin
 - 3–5%
-- A-05 Automotive revenue = group guidance × H1 2026 automotive share (88.0%). / A-06 Extraordinary-expense guidance is net, like H1 (~€0.1bn). / A-07 H2 2026 tariffs = H1 2026 (€0.4bn). / A-08 Range ends are combined independently.
-- Sources: FY2026 guidance (S016, slide 14); CFO statement on extraordinary expenses (S027). H2 = implied FY − H1 actual.
+- A-05 Automotive revenue = group guidance × H1 2026 automotive share (88.0%). / A-06 CFO’s €0.8–0.9bn (call transcript) is net, like H1. / A-07 H2 tariffs = H1 (€0.4bn); €0.3bn → L2 mid 11.00%. / A-08 Range ends are combined independently.
+- Sources: FY2026 guidance (S016, slide 14). *CFO on the H1 2026 call (S027, transcript), not in written guidance. H2 = FY − H1.
 
 **Speaker notes:** I don't forecast. I translate Porsche's published guidance ranges into what they require from H2. Each range is taken at its low, mid and high end, and the ends are combined: 27 combinations for the group, 9 for the automotive segment. With every range at its midpoint, the implied H2 underlying margin is 9.36%, against 8.41% in H1 — about one point of improvement. Across all combinations it runs from 7.10% to 11.69%, so the low end is compatible with H2 not improving. All midpoints is not a most-likely case, and no probabilities are attached. The implied H2 automotive cash margin is much weaker than H1's 6.73%. Assumptions: A-05 for the automotive share, A-06 that the extraordinary-expense guidance is net, A-07 that H2 tariffs equal H1.
 
@@ -349,7 +349,7 @@
 
 **Visual:** Five-node pipeline (Sources → SQL → Excel → Power BI → QA); gold pass statement; framed Power BI page 6 crop.
 
-**Key numbers:** 27 sources · 155 inputs, 4 gaps · 305 + 118 SQL checks · 2,997 formulas · 50/50 · 553 · 17 tables · 194 measures · 388/388 · 1,524 comparisons, 0 failures
+**Key numbers:** 27 sources · 155 inputs, 1 gap · 305 + 116 SQL checks · 3,003 formulas · 50/50 · 553 · 17 tables · 194 measures · 388/388 · 1,524 comparisons, 0 failures
 
 **Exact slide copy:**
 
@@ -357,12 +357,12 @@
 - NOT JUST A DASHBOARD. EVERY NUMBER IS TESTED.
 - SOURCES
 - 27 registered sources
-- 155 input rows, 4 gaps documented, none estimated
+- 155 input rows, 1 gap documented, none estimated
 - SQL
 - PostgreSQL 16, 11 mart views
-- 305 data-quality + 118 model-quality checks pass
+- 305 data-quality + 116 model-quality checks pass
 - EXCEL
-- 2,997 formulas
+- 3,003 formulas
 - 50/50 audit checks, 553 values verified
 - POWER BI
 - 17 tables, 194 DAX measures
@@ -375,7 +375,7 @@
 - Found and fixed in review / A spreadsheet lookup that behaved differently in another engine / A DAX filter-context error in delivery-mix shares; 77 checks added / 26 Excel cells with no prior-year period, blanked
 - POWER BI, PAGE 6: QA AND LINEAGE
 
-**Speaker notes:** This is what makes it more than a dashboard. Every value starts in a registered source, labelled fact, derived, assumption or proxy. SQL runs 305 data-quality and 118 model-quality checks; Excel has 50 audit checks; Power BI recomputes 388 measures against the SQL reference — all 388 pass. Across the tools, 1,524 comparisons, zero failures. The review caught real errors, including one that only showed up in a different calculation engine, and a DAX filter-context error in the mix shares. That is why the checks are automated rather than eyeballed.
+**Speaker notes:** This is what makes it more than a dashboard. Every value starts in a registered source, labelled fact, derived, assumption or proxy. SQL runs 305 data-quality and 116 model-quality checks; Excel has 50 audit checks; Power BI recomputes 388 measures against the SQL reference — all 388 pass. Across the tools, 1,524 comparisons, zero failures. The review caught real errors, including one that only showed up in a different calculation engine, and a DAX filter-context error in the mix shares. That is why the checks are automated rather than eyeballed.
 
 ## Slide 12: What the data shows, and what I did.
 
@@ -410,7 +410,7 @@
 - MY ROLE
 - Business analytics, operations thinking, financial analysis and data storytelling, applied to one question.
 - Framed the question / chose the company and question; defined L0 to L3 and the labelling rules
-- Validated the data / built the 27-source register and checked inputs; 4 gaps documented, not estimated
+- Validated the data / built the 27-source register and checked inputs; gaps documented, not estimated
 - Reviewed every phase / approved sources, inputs, SQL, Excel and Power BI models in turn
 - Built the dashboard / built and formatted the six-page Power BI report
 - Ran the audit / ran the QA cycle until SQL, Excel and Power BI reconciled with zero failures

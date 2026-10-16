@@ -4,7 +4,7 @@
 
 ![Porsche 2026 Margin Recovery](assets/cover.jpg)
 
-[Key findings](#4-key-findings) | [Dashboard](#7-power-bi-dashboard) | [Interactive website](#8-interactive-portfolio) | [Presentation (PDF)](presentation/Porsche_Margin_Recovery_Deck.pdf) | [Full report](Porsche_Margin_Recovery_Report.md) | [Case study](Case_Study.md) | [SQL](sql/) | [QA](qa/)
+[Key findings](#4-key-findings) | [Dashboard](#7-power-bi-dashboard) | [Interactive website](https://vigneshwari2408.github.io/porsche-margin-recovery/) | [Presentation (PDF)](presentation/Porsche_Margin_Recovery_Deck.pdf) | [Full report](Porsche_Margin_Recovery_Report.md) | [Case study](Case_Study.md) | [SQL](sql/) | [QA](qa/)
 
 > Independent portfolio project by Vigneshwari Nalla. Built only on Porsche AG's public investor-relations documents. Not affiliated with, reviewed or endorsed by Porsche AG. Not investment advice.
 
@@ -76,9 +76,11 @@ Figures are H1 2026 vs H1 2025 (same half of the prior year), € million unless
 
 The residual (−€140m) bundles price, mix, volume, cost and FX that published data cannot separate. It is not "operating performance". It stays negative (−€79m) under the alternative impairment assumption A-04.
 
-**Guidance (as published by Porsche, FY2026)**
+**Guidance (as published by Porsche, FY2026; H1 2026 presentation, slide 14)**
 
-Group revenue €35–36bn | return on sales 5.5–7.5% | automotive EBITDA margin 15–17% | automotive net cash flow margin 3–5% | extraordinary expenses (net) €0.8–0.9bn.
+Group revenue €35–36bn | return on sales 5.5–7.5% | automotive EBITDA margin 15–17% | automotive net cash flow margin 3–5% | BEV share 24–26%.
+
+**From the earnings-call transcript (not written guidance):** net extraordinary expenses of €0.8–0.9bn for FY2026, as stated by the CFO on the H1 2026 call (S027, Investing.com transcript). Porsche's written outlook gives no amount; it says higher realignment expenses are expected to be offset by reversing provisions.
 
 **Scenario analysis: arithmetic only, not forecasts, no probabilities**
 
@@ -91,7 +93,9 @@ Each guidance range is taken at its low, mid and high end and the ends are combi
 | L2 margin | 9.23% – 13.94% | 11.54% | 10.73% |
 | Automotive NCF margin | −0.62% – 3.41% | 1.42% | 6.73% |
 
-\*"All midpoints" is not a most-likely case. Assumptions: A-05 (automotive share of revenue held at its H1 2026 level, 88.0%), A-06 (extraordinary-expense guidance is net, like H1), A-07 (H2 tariffs = H1, €0.4bn), A-08 (range ends combined independently).
+\*"All midpoints" is not a most-likely case. Analyst assumptions: A-05 (automotive share of revenue held at its H1 2026 level, 88.0%), A-06 (the transcript's €0.8–0.9bn is net, like H1), A-07 (H2 tariffs = H1, €0.4bn), A-08 (range ends combined independently).
+
+Tariff sensitivity (A-07): the CFO said on the call that guidance includes around €0.7bn of tariff impacts for FY2026, which implies about €0.3bn in H2. With €0.3bn the implied H2 L2 margin is 8.69% – 13.38% (all midpoints 11.00%) instead of 9.23% – 13.94% (11.54%). L0 and L1 do not depend on it.
 
 ## 5. Analytical Approach
 
@@ -111,7 +115,7 @@ Each guidance range is taken at its low, mid and high end and the ends are combi
 | Item | Detail |
 |---|---|
 | Sources | 27 registered sources: 26 Porsche AG documents (half-year and annual reports, presentations, press releases, fact-sheet files) and 1 public earnings-call transcript used only for one CFO statement |
-| Capture | Fact sheets extracted by script; 155 manual input rows from PDFs (151 values, 4 gaps documented and left blank, none estimated); 481 source-reference rows |
+| Capture | Fact sheets extracted by script; 155 manual input rows from PDFs (154 values and 1 documented gap, left blank, not estimated); 481 source-reference rows |
 | Register | [`data/staging/source_register.csv`](data/staging/source_register.csv), with titles and public download links |
 
 Porsche's documents are **not redistributed** in this repository. They are cited by title and public URL in the source register. See [data/README.md](data/README.md) for what is included and why.
@@ -140,7 +144,7 @@ Six pages. The `.pbix` file, the screenshots and refresh instructions are in [`p
 
 [`docs/`](docs/) is a static, interactive case-study site: a scroll-built EBIT bridge, a capitalisation-rate dial, linked volume/ASP charts, a guidance scenario console, and a QA sequence ending in the real 388/388 result. Its final section, "Explore the work", is where visitors open the dashboard pages, report, presentation, Excel, SQL and repository. Every number on it is generated from the reconciled outputs ([`tools/build_site_data.py`](tools/build_site_data.py)).
 
-- **Live site:** *link to be added once GitHub Pages is enabled* (see [docs/README.md](docs/README.md)).
+- **Live site:** [vigneshwari2408.github.io/porsche-margin-recovery](https://vigneshwari2408.github.io/porsche-margin-recovery/)
 - **Run locally:** `cd docs && python3 -m http.server 8000`, then open http://localhost:8000.
 
 ## 9. Presentation
@@ -151,7 +155,7 @@ Six pages. The `.pbix` file, the screenshots and refresh instructions are in [`p
 
 | Layer | Check | Result |
 |---|---|---|
-| SQL | 305 data-quality + 118 model-quality checks | **423 PASS, 0 FAIL** (28 INFO) |
+| SQL | 305 data-quality + 116 model-quality checks | **421 PASS, 0 FAIL** (26 INFO) |
 | Excel | `Audit_Checks` sheet; 553 displayed values vs SQL | **ALL 50 CHECKS PASS**; 553 values, 0 failures |
 | Power BI | In-report QA page: each measure recomputed and compared with the SQL reference | **ALL 388 QA CHECKS PASS** |
 | Cross-tool | Python reconciliation: QA reference, live SQL, Excel, identities, export integrity | **1,524 comparisons, 0 failures** |
@@ -169,9 +173,9 @@ Reports: [`qa/PCL_06_reconciliation_report.txt`](qa/PCL_06_reconciliation_report
 flowchart LR
     A["Porsche IR documents<br/>27 registered sources"] --> B["Input workbooks<br/>source register, 155 manual inputs"]
     A --> C["Fact-sheet extraction<br/>Python"]
-    B --> D["PostgreSQL 16<br/>stg → core → mart<br/>11 views, 423 checks"]
+    B --> D["PostgreSQL 16<br/>stg → core → mart<br/>11 views, 421 checks pass"]
     C --> D
-    D --> E["Excel model<br/>2,997 formulas, 50 checks"]
+    D --> E["Excel model<br/>3,003 formulas, 50 checks"]
     D --> F["Power BI<br/>17 tables, 194 measures, 6 pages"]
     E --> G["Reconciliation<br/>1,524 comparisons, 0 failures"]
     F --> G
@@ -185,7 +189,7 @@ flowchart LR
 | Stage | Look at | Runs from this repository? |
 |---|---|---|
 | Sources | [`data/staging/source_register.csv`](data/staging/source_register.csv), [`manual_inputs.csv`](data/staging/manual_inputs.csv) | Source documents must be downloaded from Porsche's IR site |
-| SQL | [`sql/`](sql/): 14 scripts, model documentation | Yes, after regenerating the fact-sheet extract (see [sql/README.md](sql/README.md)) |
+| SQL | [`sql/`](sql/): 15 scripts, model documentation | Yes, after regenerating the fact-sheet extract (see [sql/README.md](sql/README.md)) |
 | Excel | [`excel/PCL_05_Porsche_Margin_Model_FINAL.xlsx`](excel/), sheet `Audit_Checks` | Opens directly; rebuilds cell for cell with [`tools/`](tools/) |
 | Power BI | [`powerbi/`](powerbi/), [`model/`](model/), [`powerbi/PowerBI_Specification.md`](powerbi/PowerBI_Specification.md) | Opens in Power BI Desktop; refreshes from [`data/powerbi/`](data/powerbi/) |
 | Reconciliation and QA | [`qa/`](qa/) | Yes. The Excel checks need only Python; the full reconciliation also needs the database built from `sql/` |
@@ -197,7 +201,7 @@ flowchart LR
 | Power BI dashboard (6 pages) and screenshots | [`powerbi/`](powerbi/) |
 | Semantic model (TMDL) and DAX listing | [`model/`](model/) |
 | Audited Excel model and input workbooks | [`excel/`](excel/) |
-| PostgreSQL data model (14 scripts) | [`sql/`](sql/) |
+| PostgreSQL data model (15 scripts) | [`sql/`](sql/) |
 | Derived datasets (staging, SQL outputs, Power BI tables) | [`data/`](data/) |
 | QA scripts and reports | [`qa/`](qa/) |
 | Interactive case-study website | [`docs/`](docs/) |
@@ -212,7 +216,7 @@ Independent project. Business analytics, operations thinking, financial analysis
 | | What I did |
 |---|---|
 | Framed the question | Chose the company and the business question, set the scope, and defined the L0 to L3 margin framework and the labelling rules (fact, derived, assumption, proxy) |
-| Validated the data | Built the source register of 27 documents and checked every input against its source; four missing values were documented, not estimated |
+| Validated the data | Built the source register of 27 documents and checked every input against its source; values that were not published were documented as gaps, not estimated |
 | Reviewed every phase | Reviewed and approved each stage in turn: sources, inputs, SQL model, Excel model and Power BI semantic model |
 | Built the dashboard | Built and formatted the six-page Power BI report, including scenario slicers, edit interactions and the in-report QA page |
 | Ran the audit | Ran the QA and audit cycle until SQL, Excel and Power BI reconciled with zero failures, fixing defects the reviews exposed |
@@ -228,10 +232,11 @@ Independent project. Business analytics, operations thinking, financial analysis
 - **Delivery mix** uses retail deliveries, not the wholesale units that drive revenue.
 - **L3** mixes group and automotive items and is a sensitivity only.
 - **Scenarios** combine range ends independently (A-08). They are not a probability distribution and never a forecast.
-- **One input** (the CFO's statement on net extraordinary expenses) comes from a public earnings-call transcript, a lower-tier source.
+- **One input** (the CFO's statement on net extraordinary expenses, €0.8–0.9bn) comes from a public earnings-call transcript (AI-assisted, editor-reviewed), not from Porsche's written guidance.
+- **Source re-check (October 2026):** every hand-entered value was re-read in the official documents. Three earlier gaps were filled from the annual reports (automotive impairments FY2023 €2m and FY2024 €3m; ASP per vehicle sold FY2023 €112k), and FY2025 impairments now use the exact €1,195m instead of the rounded "around €1,200m". This changed only H2 2023–2025 detail (clean D&A by €2–5m, the H2 residual by €1–8m); no H1 2026 or headline figure changed. One gap remains (FY2025 realignment provision release, not disclosed). The H1 2025 battery item is €0.4bn in the half-year report and €0.5bn on the H1 2025 slide; it is a memo item and feeds no KPI.
 
 All figures are taken from, or derived as documented from, Porsche AG's public investor-relations publications. Porsche® and the Porsche crest are trademarks of Dr. Ing. h.c. F. Porsche AG, shown only to identify the company analysed. The Porsche photographs (on the website, in the presentation and in the cover image above) are third-party images found on Pinterest. Their original creators have not been identified and no licence has been obtained, so they are not my work, are not covered by this repository's [licence](LICENSE), and are used only as non-commercial illustration. Rights holders can open an issue to request a credit or removal ([image list](docs/README.md#image-rights)). This is an educational portfolio project and not investment advice.
 
 ---
 
-**Vigneshwari Nalla** | MSc Data Analytics for Business, KEDGE Business School | LinkedIn: *www.linkedin.com/in/vigna24*
+**Vigneshwari Nalla** | MSc Data Analytics for Business, KEDGE Business School | [LinkedIn](https://www.linkedin.com/in/vigna24)

@@ -13,6 +13,19 @@ K = json.load(open(os.path.join(ROOT, "model", "key_values.json")))
 rd = lambda t: list(csv.DictReader(open(os.path.join(ROOT, "data", "powerbi", t + ".csv"), encoding="utf-8")))
 f = lambda x: None if x in ("", None) else float(x)
 
+# counts that the site quotes, read from the outputs rather than typed by hand
+_dq = list(csv.DictReader(open(os.path.join(ROOT, "data", "sql_outputs", "dq_results.csv"), encoding="utf-8")))
+DQ_PASS = sum(1 for r in _dq if r["check_id"].startswith("DQ") and r["status"] == "PASS")
+DQ_INFO = sum(1 for r in _dq if r["status"] == "INFO")
+MQ_PASS = sum(1 for r in _dq if r["check_id"].startswith("MQ") and r["status"] == "PASS")
+assert not any(r["status"] == "FAIL" for r in _dq), "SQL data-quality FAIL rows present"
+N_MANUAL = len(list(csv.DictReader(open(os.path.join(ROOT, "data", "staging", "manual_inputs.csv"), encoding="utf-8"))))
+N_GAPS = len(list(csv.DictReader(open(os.path.join(ROOT, "data", "staging", "data_gaps.csv"), encoding="utf-8"))))
+N_SQL = len([n for n in os.listdir(os.path.join(ROOT, "sql")) if n.endswith(".sql")])
+import openpyxl
+_wb = openpyxl.load_workbook(os.path.join(ROOT, "excel", "PCL_05_Porsche_Margin_Model_FINAL.xlsx"))
+N_FORMULAS = sum(1 for ws in _wb.worksheets for row in ws.iter_rows() for c in row if isinstance(c.value, str) and c.value.startswith("="))
+
 periods = list(K["trend"].keys())
 label = {p: f"{p[5:]} {p[:4]}" for p in periods}           # 'H1 2026'
 T = K["trend"]
@@ -74,11 +87,11 @@ D = {
                "autoRange": {w: {"min": K["ga"][w][0], "mid": K["ga"][w][1], "max": K["ga"][w][2]} for w in ("ebitda", "ncf")},
                "h1": {"l0": K["M0"], "l1": K["M1"], "l2": K["M2"], "ebitda": K["ebitda_m"], "ncf": K["ncf_m"]},
                "h2prior": {"l0": K["prior_h2_M0"], "l1": K["prior_h2_M1"]}},
-  "qa": {"sqlDQ": 305, "sqlInfo": 28, "sqlMQ": 118, "excelChecks": 50, "excelValues": 553, "pbiQA": K["n_ref_pass"], "pbiQATotal": K["n_ref"],
+  "qa": {"sqlDQ": DQ_PASS, "sqlInfo": DQ_INFO, "sqlMQ": MQ_PASS, "excelChecks": 50, "excelValues": 553, "pbiQA": K["n_ref_pass"], "pbiQATotal": K["n_ref"],
          "recon": [["Power BI QA reference", 388], ["Live SQL views", 351], ["Excel model", 566], ["Identities", 51], ["Export integrity", 168]],
-         "reconTotal": 1524, "pbixCells": 8111, "tables": 17, "relationships": 8, "measures": 194, "sqlViews": 11, "sqlScripts": 14,
-         "sources": len(src), "sourcesPorsche": sum(1 for s in src if s["publisher"] == "Porsche AG"), "manualInputs": 155, "manualValues": 151,
-         "gaps": 4, "sourceRefs": 481, "auditFindings": 13, "excelFormulas": 2997},
+         "reconTotal": 1524, "pbixCells": 8111, "tables": 17, "relationships": 8, "measures": 194, "sqlViews": 11, "sqlScripts": N_SQL,
+         "sources": len(src), "sourcesPorsche": sum(1 for s in src if s["publisher"] == "Porsche AG"), "manualInputs": N_MANUAL + N_GAPS, "manualValues": N_MANUAL,
+         "gaps": N_GAPS, "sourceRefs": 481, "auditFindings": 13, "excelFormulas": N_FORMULAS},
   "assumptions": assumptions,
 }
 with open(OUT, "w", encoding="utf-8") as fh_:

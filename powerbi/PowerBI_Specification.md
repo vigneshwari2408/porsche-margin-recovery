@@ -52,7 +52,7 @@ Fallback if TMDL view is unavailable: *Get data > Text/CSV* for each file in `da
 | **GuidanceInputs** | 6 | `core.fact_guidance` (mid = (low+high)/2, as in SQL) | Guidance as published |
 | **DimLevel** | 4 | labels | L0/L1/L2 headline, L3 sensitivity (`is_headline` = FALSE) |
 | **DimLevelStep / DimRevenueStep** | 3 / 3 | labels | Categories for the L0->L1->L2 and revenue waterfalls |
-| **FactLineage** | value / 236 | `core.fact_financial` (analysis window) | Every value with FACT/DERIVED, source, page |
+| **FactLineage** | value / 238 | `core.fact_financial` (analysis window) | Every value with FACT/DERIVED, source, page |
 | **DimSource / Assumption / Annotation** | 27 / 9 / 7 | `audit.dim_source`, `mart.assumption`, `mart.annotation` | Lineage and context |
 | **RefSQL** | 388 | every checked column of 10 mart views (incl. 77 delivery-mix shares), unpivoted, with tolerance = view rounding | QA page reference |
 
@@ -124,7 +124,7 @@ SWITCH ( SELECTEDVALUE ( DimLevel[level_id] ),
 
 ## 6. Page-by-page specification
 
-Layout grid 1280 x 720. Every page: title (top-left), one-line business question (subtitle), Period slicer (top-right), footer "Source: SQL mart porsche_lens (Phases 3-4), Excel PCL_05 (Phase 5). EUR m. L0 reported / L1, L2 adjusted headline / L3 sensitivity / scenarios not forecasts." Previews: `previews/page1..6*.png` (rendered from the reconciled values; layout mock-ups, not Power BI screenshots).
+Layout grid 1280 x 720. Every page: title (top-left), one-line business question (subtitle), Period slicer (top-right), footer "Source: SQL mart porsche_lens (Phases 3-4), Excel PCL_05 (Phase 5). EUR m. L0 reported / L1, L2 adjusted headline / L3 sensitivity / scenarios not forecasts." Final screenshots of the six pages: `powerbi/screenshots/`.
 
 ### Page 1 - Executive Overview
 **Business question:** Is the 2026 margin recovery real, i.e. does it survive once the disclosed one-offs are removed?
@@ -158,7 +158,7 @@ Layout grid 1280 x 720. Every page: title (top-left), one-line business question
 | 3.1 | 6 cards | `RD Total Costs`; `Capitalised Dev Costs` + `Cap Rate Calc` + `YoY Cap Rate (pp)`; `RD PL Charge`; `Net Capitalisation`; `Cap Rate Effect (SQL)`; `Clean DA` + `Impairments in DA` + `Impairment Status` | - | - | Total R&D 1,116; capitalised 487 (43.6%, -1.9 pp); P&L charge 1,334; net capitalisation -218; cap-rate effect +20.7 (extra charge); clean D&A 1,498 (61 impairments removed, A-04). |
 | 3.2 | Clustered column | X period, Y `RD Total Costs`, `RD PL Charge` | R&D costs vs R&D charged to the P&L (EUR m) | Charge above costs = amortisation of past capitalisation exceeds new capitalisation | Since H2 2024 the P&L charge exceeds total R&D costs: accounting is now a **headwind**, not a support. |
 | 3.3 | Line chart + data labels | X period, Y `Cap Rate Calc`; tooltip `Cap Rate Published` | Capitalisation rate (capitalised / total R&D costs) | Falling rate = more R&D hits the P&L immediately | 77.7% (H1 23) -> 45.5% (H1 25) -> 43.6% (H1 26). |
-| 3.4 | Stacked column | X period, Y `Clean DA`, `Impairments in DA` | Automotive D&A: clean vs impairments (EUR m) | Impairments already sit inside the exceptional items - removed to avoid double counting | H2 2025 impairments 905 (FY - H1, split undisclosed); H1 2026 61. |
+| 3.4 | Stacked column | X period, Y `Clean DA`, `Impairments in DA` | Automotive D&A: clean vs impairments (EUR m) | Impairments already sit inside the exceptional items - removed to avoid double counting | H2 2023 2, H2 2024 3, H2 2025 900 (FY - H1, split undisclosed); H1 2026 61. |
 | 3.5 | Line chart, hatched background | X period, Y `Margin by Level`, legend DimLevel filtered to L1 and L3; L3 dashed grey; text box `[L3 Warning]`; card `EBIT L3 Hybrid Sensitivity alt A-04` | SUPPLEMENTARY HYBRID SENSITIVITY: L3 vs L1 margin | L3 = L1 + clean auto D&A - capitalised dev. costs; mixes group and automotive items. Not underlying profitability | L3 14.3% vs L1 8.4%. Shown only to size the non-cash wedge; it is never compared with guidance or used as a KPI. |
 
 **Cannot tell:** the cash R&D spend (Porsche reports an accounting total); the cap-rate counterfactual holds amortisation fixed (illustrative).
@@ -188,7 +188,7 @@ Layout grid 1280 x 720. Every page: title (top-left), one-line business question
 | 5.5 | Slicers (tile, single-select) + card | `FactGuidance[case_rev]`, `[case_ros]`, `[case_ex]`; card `Scen Selected Label`, `Scen H2 Margin L1`, `Scen H2 L1 vs Latest H1 (pp)`, `Scen H2 Revenue`, `Scen H2 EBIT L0` | Explore one combination | Each slicer = one end of a published guidance range | Lets management see what each guidance end requires; defaults all "mid". |
 | 5.6 | Matrix | Rows `case_rev`, columns `case_ros`, values `Scen H2 Margin L1`; responds only to the `case_ex` slicer (edit interactions: rev/ros slicers = none) | H2 L1 margin: revenue end x RoS end | Extraordinary end from slicer; arithmetic grid | RoS end dominates: at mid extraordinary, low RoS -> ~7.4%, high RoS -> ~11.3%. |
 | 5.7 | Clustered bar with error bars (2 rows) | `Scen Auto Min/Mid/Max EBITDA/NCF Margin`, markers `Latest EBITDA Margin`, `Latest NCF Margin`; slicer `FactGuidanceAuto[case_m]` (revenue end follows 5.5 via TREATAS) | Automotive H2 2026 implied (9 combinations) | Uses A-05 (H1 automotive share 88.0%) | Implied H2 automotive EBITDA margin 11.8-15.8% vs 18.3% in H1; NCF margin -0.6-3.4% vs 6.7% in H1 - the guidance itself implies a much weaker H2 cash margin. |
-| 5.8 | Table | `GuidanceInputs[metric]`, `low_value`, `mid_value`, `high_value`, `unit_std`, `source_id`, `source_ref` | Guidance inputs as published | FACT, S016 slide 14 / S027 | - |
+| 5.8 | Table | `GuidanceInputs[metric]`, `low_value`, `mid_value`, `high_value`, `unit_std`, `source_id`, `source_ref` | Guidance inputs: published ranges (S016 slide 14) and the transcript figure for extraordinary expenses (S027, not written guidance) | FACT, S016 slide 14 / S027 | - |
 
 **Cannot tell:** which end of each range is more likely; H2 one-offs beyond the net guidance (A-06); H2 tariffs are assumed equal to H1 (A-07).
 

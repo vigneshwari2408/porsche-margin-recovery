@@ -2,10 +2,10 @@
 
 | Layer | Check | Result | Evidence |
 |---|---|---|---|
-| SQL | 305 data-quality and 118 model-quality checks (`sql/07`, `sql/10`) | 423 PASS, 0 FAIL, 28 INFO | [`../data/sql_outputs/dq_results.csv`](../data/sql_outputs/dq_results.csv) |
+| SQL | 305 data-quality and 116 model-quality checks (`sql/07`, `sql/10`) | 421 PASS, 0 FAIL, 26 INFO | [`../data/sql_outputs/dq_results.csv`](../data/sql_outputs/dq_results.csv) |
 | Excel | `Audit_Checks` sheet | ALL 50 CHECKS PASS | [`PCL_05_verification_report.txt`](PCL_05_verification_report.txt) |
 | Excel | 553 displayed values recomputed from the SQL data | 553 compared, 0 failures | [`PCL_05_verification_report.txt`](PCL_05_verification_report.txt) |
-| Excel | Formula portability lint | 2,997 formulas, 0 issues | [`PCL_05_verification_report.txt`](PCL_05_verification_report.txt) |
+| Excel | Formula portability lint | 3,003 formulas, 0 issues | [`PCL_05_verification_report.txt`](PCL_05_verification_report.txt) |
 | Power BI | In-report QA page vs SQL reference (`RefSQL`) | ALL 388 QA CHECKS PASS | [`../powerbi/screenshots/06_qa_lineage.png`](../powerbi/screenshots/06_qa_lineage.png) |
 | Cross-tool | Python reconciliation, R1–R5 | 1,524 comparisons, 0 failures | [`PCL_06_reconciliation_report.txt`](PCL_06_reconciliation_report.txt) |
 

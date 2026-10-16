@@ -5,7 +5,7 @@ Generated from the repository with qa/lint_portability.py and qa/verify_against_
 Overall model status: ALL 50 CHECKS PASS   (50 of 50 checks PASS)
 
 == Portability lint (all formulas) ==
-formulas scanned: 2997   portability issues: 0
+formulas scanned: 3003   portability issues: 0
 
 == calcPr in saved workbook ==
 <calcPr calcId="191029" calcMode="auto" fullCalcOnLoad="1" forceFullCalc="1" iterate="false" refMode="A1"/>
